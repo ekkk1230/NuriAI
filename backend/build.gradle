@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1' // 안정적인 3.4 버전 추천
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.nuri'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Web: API 서버 구축용
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // JPA: 데이터베이스 연동용
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // H2: 로컬 테스트용 인메모리 DB
+    runtimeOnly 'com.h2database:h2'
+
+    // Lombok: Getter, Setter 자동 생성
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Test: 테스트 코드 작성용
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
