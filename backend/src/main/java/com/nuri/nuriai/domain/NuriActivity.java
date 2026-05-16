@@ -11,27 +11,33 @@ public class NuriActivity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String domain;       // 누리과정 영역
-    private String activityName; // 활동명
+    private String domain;
+    private String groupType;    // 대집단, 소집단
+    private String activity;     // DTO의 activityType이 저장됨
+    private String activityName;
 
-    @ElementCollection // 단순 문자열 리스트를 저장할 때 사용
+    @ElementCollection
+    @CollectionTable(name = "NURI_ACTIVITY_OBJECTIVES", joinColumns = @JoinColumn(name = "activity_id"))
     private List<String> objectives;
 
     @ElementCollection
+    @CollectionTable(name = "NURI_ACTIVITY_MATERIALS", joinColumns = @JoinColumn(name = "activity_id"))
     private List<String> materials;
 
-    // 활동 방법 (도입, 전개, 마무리) - 별도 컬럼으로 관리
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT") // 긴 발문을 위해 TEXT 타입 필수
     private String introduction;
-    
+
     @Column(columnDefinition = "TEXT")
     private String development;
-    
+
     @Column(columnDefinition = "TEXT")
     private String conclusion;
 
     @ElementCollection
+    @CollectionTable(name = "NURI_ACTIVITY_PRECAUTIONS", joinColumns = @JoinColumn(name = "activity_id"))
     private List<String> precautions;
+
+    private String extensionActivity; // 연계 활동
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")

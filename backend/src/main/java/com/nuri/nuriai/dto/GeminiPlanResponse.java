@@ -4,53 +4,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.util.List;
 
 @Getter @Setter @ToString
 public class GeminiPlanResponse {
-    @JsonProperty("age")
     private String age;
-
-    @JsonProperty("mainTheme")
     private String mainTheme;
-
-    @JsonProperty("curriculum")
     private String curriculum;
-
-    @JsonProperty("plans")
     private List<PlanDTO> plans;
 
     @Getter @Setter @ToString
     public static class PlanDTO {
-        @JsonProperty("domain")
-        private String domain; // 누리과정 영역 (예: 사회관계)
-
-        @JsonProperty("activityName")
-        private String activityName; // 활동명
-
-        @JsonProperty("objectives")
-        private List<String> objectives; // 활동 목표 리스트
-
-        @JsonProperty("materials")
-        private List<String> materials; // 준비물 리스트
-
-        @JsonProperty("content")
-        private ActivityContentDTO content; // 도입-전개-마무리
-
-        @JsonProperty("precautions")
-        private List<String> precautions; // 유의점 리스트
+        private String domain;           // 누리과정 영역
+        private String groupType;        // 대집단 또는 소집단
+        private String activityType;     // 이야기 나누기, 게임 등 상세 유형
+        private String activityName;     // 활동명
+        private List<String> objectives; // 활동 목표
+        private List<String> materials;  // 준비물 (이제 잘 들어올 거예요!)
+        private ActivityContentDTO content;
+        private List<String> precautions; // 유의점
+        private String extensionActivity; // 추천 연계 활동 (추가)
     }
 
     @Getter @Setter @ToString
     public static class ActivityContentDTO {
-        @JsonProperty("introduction")
-        private String introduction; // 도입
-
-        @JsonProperty("development")
-        private String development; // 전개
-
-        @JsonProperty("conclusion")
-        private String conclusion; // 마무리
+        private String introduction;
+        private String development;
+        private String conclusion;
     }
 }

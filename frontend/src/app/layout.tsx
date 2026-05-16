@@ -1,4 +1,4 @@
-import StyledComponentsRegistry from '@/lib/registry';
+import Nav from './components/Nav/page';
 
 export default function RootLayout({
   children,
@@ -8,7 +8,12 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+          <div className="wrap">
+            <Nav />
+            <main>
+              {children}
+            </main>
+          </div>
       </body>
     </html>
   );

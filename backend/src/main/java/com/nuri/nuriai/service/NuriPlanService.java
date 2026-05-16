@@ -31,52 +31,61 @@ public class NuriPlanService {
 
     private final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=";
 
-    public String askGemini(String theme, int age, List<String> domains) {
-        String selectedDomains = String.join(", ", domains);
-
-        // 연령에 따른 과정 명칭 설정
+    public String askGemini(String theme, int age, List<String> selections, String groupType) {
+        // 1. 연령 및 과정 설정
         String curriculumName = (age <= 2) ? "제4차 표준보육과정(영아)" : "2019 개정 누리과정(유아)";
-        String expertRole = (age <= 2)
-            ? "영아 발달 및 표준보육과정 전문가"
-            : "유아 교육 및 누리과정 전문가";
+        String expertRole = (age <= 2) ? "영아 발달 및 표준보육과정 전문가" : "유아 교육 및 누리과정 전문가";
 
+        // 2. 집단 유형에 따른 라벨링
+        String selectionLabel = groupType.equals("대집단") ? "활동 유형" : "누리과정 영역";
+        String selectedItems = String.join(", ", selections);
+
+        // 3. 프롬프트 생성 (개별 생성 지침 강화)
         String prompt = String.format(
-            "당신은 대한민국 **%s**로서, **%s**에 정통한 20년 경력의 전문가입니다.\n\n" +
-                "요청 사항:\n" +
-                "1. 주제: '%s'\n" +
-                "2. 대상 연령: 만 %d세\n" +
-                "3. 선택 영역: [%s]\n\n" +
-                "전문가 지침:\n" +
-                "- 제시된 **각각의 영역([%s])별로 독립된 놀이 계획안을 하나씩 작성**하세요.\n" +
-                "- 예를 들어 영역이 2개라면, `plans` 배열 안에 2개의 독립된 활동 객체가 포함되어야 합니다.\n" +
-                "- 각 활동은 해당 영역의 핵심 목표를 완벽히 반영해야 하며, 만 %d세의 발달 수준에 최적화되어야 합니다.\n" +
-                "- 활동 내용은 '도입-전개-마무리'로 구성하고, 교사의 구체적인 발문을 포함하세요.\n\n" +
-                "답변 형식 (JSON):\n" +
-                "{\n" +
-                "  \"age\": \"만 %d세\",\n" +
-                "  \"mainTheme\": \"%s\",\n" +
-                "  \"curriculum\": \"%s\",\n" +
-                "  \"plans\": [\n" +
-                "    {\n" +
-                "      \"domain\": \"해당 영역명\",\n" +
-                "      \"activityName\": \"...\",\n" +
-                "      \"objectives\": [\"목표1\", \"목표2\"],\n" +
-                "      \"materials\": [\"준비물1\", \"준비물2\"],\n" +
-                "      \"content\": { \"introduction\": \"...\", \"development\": \"...\", \"conclusion\": \"...\" },\n" +
-                "      \"precautions\": [\"유의점1\"]\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}",
-            expertRole, curriculumName, theme, age, selectedDomains,
-            selectedDomains, age, age, theme, curriculumName
+                "당신은 대한민국 **%s**로서, **%s**에 정통한 20년 경력의 전문가입니다.\n\n" +
+                        "### 요청 사항:\n" +
+                        "1. 주제: '%s'\n" +
+                        "2. 대상 연령: 만 %d세\n" +
+                        "3. 집단 구성: **%s**\n" +
+                        "4. 선택한 %s: [%s]\n\n" +
+                        "### 전문가 지침 (필수 준수):\n" +
+                        "- **반드시 선택된 [%s] 목록에 있는 각각의 항목을 독립된 하나의 활동으로 작성하세요.**\n" + // 핵심 지침
+                        "- 예를 들어, 선택한 항목이 2개라면 결과 JSON의 `plans` 배열 안에는 반드시 2개의 객체가 있어야 합니다.\n" +
+                        "- 각 활동은 서로 섞이지 않게 해당 항목(영역 또는 유형)의 고유한 특성을 명확히 반영해야 합니다.\n" +
+                        "- **대집단**일 경우: 선택한 '활동 유형'의 절차와 상호작용(발문)을 중심으로 작성하세요.\n" +
+                        "- **소집단**일 경우: 선택한 '영역'의 발달 특성을 살린 유아 주도적인 놀이 지원 방안을 중심으로 작성하세요.\n" +
+                        "- 모든 활동 내용은 '도입-전개-마무리'로 구성하고, 교사의 구체적인 발문을 포함하세요.\n" +
+                        "- 마지막에는 이 활동과 연결하여 진행할 수 있는 '추천 연관 활동'을 한 줄로 제시하세요.\n\n" +
+                        "### 답변 형식 (JSON):\n" +
+                        "{\n" +
+                        "  \"age\": \"만 %d세\",\n" +
+                        "  \"mainTheme\": \"%s\",\n" +
+                        "  \"curriculum\": \"%s\",\n" +
+                        "  \"plans\": [\n" +
+                        "    {\n" +
+                        "      \"domain\": \"해당 영역명(소집단인 경우 선택한 영역명 그대로 작성)\",\n" +
+                        "      \"groupType\": \"%s\",\n" +
+                        "      \"activityType\": \"이야기 나누기, 게임, 신체표현 등 상세 유형\",\n" +
+                        "      \"activityName\": \"...\",\n" +
+                        "      \"objectives\": [\"목표1\", \"목표2\"],\n" +
+                        "      \"materials\": [\"준비물1\", \"준비물2\"],\n" +
+                        "      \"content\": { \"introduction\": \"...\", \"development\": \"...\", \"conclusion\": \"...\" },\n" +
+                        "      \"precautions\": [\"유의점1\"],\n" +
+                        "      \"extensionActivity\": \"이 활동 후 이어질 추천 연관 활동 내용\"\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "}",
+                expertRole, curriculumName, theme, age, groupType, selectionLabel, selectedItems,
+                selectedItems, age, theme, curriculumName, groupType
         );
 
+        // 4. API 호출 로직
         Map<String, Object> requestBody = Map.of(
-            "contents", new Object[]{
-                Map.of("parts", new Object[]{
-                    Map.of("text", prompt)
-                })
-            }
+                "contents", new Object[]{
+                        Map.of("parts", new Object[]{
+                                Map.of("text", prompt)
+                        })
+                }
         );
 
         String url = GEMINI_URL + apiKey;
@@ -92,30 +101,19 @@ public class NuriPlanService {
     public GeminiPlanResponse parseGeminiResponse(String rawResponse) {
         try {
             JsonNode rootNode = objectMapper.readTree(rawResponse);
+            String jsonText = rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
 
-            String jsonText = rootNode.path("candidates")
-                .get(0)
-                .path("content")
-                .path("parts")
-                .get(0)
-                .path("text")
-                .asText();
-
-            log.info("추출된 순수 JSON 텍스트: {}", jsonText);
-
+            // 마크다운 문법 제거 (```json ... ```)
             String cleanJson = jsonText.replaceAll("(?s)```json\\s*|\\s*```", "").trim();
 
             return objectMapper.readValue(cleanJson, GeminiPlanResponse.class);
-
         } catch (Exception e) {
-            log.error("JSON 추출 및 파싱 오류 발생: ", e);
+            log.error("JSON 파싱 오류: ", e);
             throw new RuntimeException("AI 데이터 변환 중 오류가 발생했습니다.");
         }
     }
 
     public void savePlan(GeminiPlanResponse dto) {
-        log.info("저장 전 DTO 상태: {}", dto);
-
         NuriPlan plan = new NuriPlan();
         plan.setAge(dto.getAge());
         plan.setTheme(dto.getMainTheme());
@@ -124,11 +122,15 @@ public class NuriPlanService {
             for (GeminiPlanResponse.PlanDTO planDto : dto.getPlans()) {
                 NuriActivity activity = new NuriActivity();
 
+                // 필드 매핑 (Entity와 DTO 필드 확인)
                 activity.setDomain(planDto.getDomain());
+                activity.setGroupType(planDto.getGroupType());
+                activity.setActivity(planDto.getActivityType()); // Entity 필드가 activity라면 유지
                 activity.setActivityName(planDto.getActivityName());
                 activity.setObjectives(planDto.getObjectives());
                 activity.setMaterials(planDto.getMaterials());
                 activity.setPrecautions(planDto.getPrecautions());
+                activity.setExtensionActivity(planDto.getExtensionActivity());
 
                 if (planDto.getContent() != null) {
                     activity.setIntroduction(planDto.getContent().getIntroduction());
@@ -139,7 +141,6 @@ public class NuriPlanService {
                 plan.addActivity(activity);
             }
         }
-
         nuriPlanRepository.save(plan);
     }
 
