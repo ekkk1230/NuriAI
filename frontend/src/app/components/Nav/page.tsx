@@ -27,7 +27,7 @@ function Nav() {
         </li>
         
         <li className={S.navItem}>
-          <Link href="/main" className={`${S.navLink} ${pathname === '/main' ? S.active : ''}`}>
+          <Link href="/workspace" className={`${S.navLink} ${pathname === '/workspace' ? S.active : ''}`}>
             <span className={S.Icon}><AiFillBulb /></span>
             워크스페이스
           </Link>

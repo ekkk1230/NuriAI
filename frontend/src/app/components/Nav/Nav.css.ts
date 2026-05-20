@@ -2,10 +2,13 @@ import { style, globalStyle } from "@vanilla-extract/css";
 
 export const navContainer = style({
   width: "26rem",
+  height: "100vh",
   background: "#fff",
   borderRight: "1px solid #eee",
   padding: "0 2rem",
-  position: "relative",
+  position: "sticky",
+  top: "0",
+  left: "0",
 });
 
 export const logoContainer = style({
