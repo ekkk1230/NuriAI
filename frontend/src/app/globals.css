@@ -1,5 +1,34 @@
-:root {
-  --main-gradient: linear-gradient(135deg, #0a70b9, #ad46ff, #e913c5);
+@import "tailwindcss";
+
+@theme {
+  --color-textMuted: #666666;
+  --color-textLight: #ffffff;
+  --color-bgFeature: #ecf3f7;
+  --color-bgPreview: #eff7f7;
+  --color-bgCard: #ffffff;
+
+  /* [연령별 배지 컬러] */
+  --color-age0: #fff5f5; --color-age0-text: #ff6b6b;
+  --color-age1: #fff0f6; --color-age1-text: #f06595;
+  --color-age2: #f8f0fc; --color-age2-text: #cc5de8;
+  --color-age3: #f3f0ff; --color-age3-text: #845ef7;
+  --color-age4: #e8f7ff; --color-age4-text: #1c7ed6;
+  --color-age5: #e3fafc; --color-age5-text: #0c8599;
+
+  /* [영역별 배지 컬러] */
+  --color-cate1: #fff9db; --color-cate1-text: #f59f00;
+  --color-cate2: #e7f5ff; --color-cate2-text: #339af0;
+  --color-cate3: #f4fce3; --color-cate3-text: #74b816;
+  --color-cate4: #fff0f6; --color-cate4-text: #d6336c;
+  --color-cate5: #ebfbee; --color-cate5-text: #37b24d;
+  --color-cate6: #f1f3f5; --color-cate6-text: #495057;
+
+  /* [그라디언트] */
+  --background-image-main-gradient: linear-gradient(135deg, #0a70b9, #ad46ff, #e913c5);
+  --background-image-bg-feature-1: linear-gradient(135deg, #057ea3, #74dbfa);
+  --background-image-bg-feature-2: linear-gradient(135deg, #a104d1, #ed73f8);
+  --background-image-bg-feature-3: linear-gradient(135deg, #f58403, #fae421);
+  --background-image-bg-feature-4: linear-gradient(135deg, #4cf5a6, #23e5ff);
 }
 
 * { margin: 0; padding: 0; border: 0; outline: 0; box-sizing: border-box; }
@@ -12,3 +41,24 @@ a { text-decoration: none; color: inherit; }
 main { width: calc(100% - 26rem); }
 
 .inner { width: 100%; padding: 0 8rem; }
+
+.badge-base {
+  @apply inline-block rounded-[60rem] text-[1.4rem] font-medium text-center whitespace-nowrap;
+  padding: 0.4rem 0.8rem;
+}
+
+.full-width-section { width: calc(100% + 16rem); position: relative; left: -8rem; padding: 8rem 0; }
+
+.btn-base {
+  @apply cursor-pointer font-medium inline-flex items-center justify-center gap-[0.8rem];
+}
+
+.badge-base {
+  @apply inline-block rounded-[60rem] text-[1.4rem] font-medium text-center whitespace-nowrap;
+}
+
+.icon-box-base {
+  @apply w-[6rem] h-[6rem] mb-[2rem] rounded-[1.6rem] text-white flex items-center justify-center;
+}
+
+.icon-box-base svg { @apply w-[3rem] h-[3rem] }
