@@ -2,9 +2,10 @@
 
 import { ChangeEvent, useState } from "react";
 import { ACTIVITY_TYPES, AGE_OPTIONS, AREA_TYPES } from "../constance/activityOptions";
+import { MdSave, MdSaveAlt } from "react-icons/md";
 
 function page() {
-    const [plan, setPlan] = useState(null);
+    const [plan, setPlan] = useState<boolean>(true);
     const [activeAge, setActiveAge] = useState<number | null>(null);
     const [activeForm, setActiveForm] = useState<string | null>("small");
     const [activeType, setActiveType] = useState<string[]>([]);
@@ -120,8 +121,8 @@ function page() {
 
     return (
         <div className="flex h-[100%] min-h-[100%]">
-            <div className="border-r-[.1rem] border-solid border-[#eee] w-[30rem] h-[100%] p-[2rem]">
-                <p className="text-[2.8rem] font-bold mb-5">설정</p>
+            <div className="border-r-[.1rem] border-solid border-[#eee] w-[40rem] h-[100%] p-[2rem]">
+                <p className="text-[2.6rem] font-bold mb-5">설정</p>
 
                 <form className="space-y-[2rem] mb-[6rem]">
                     <div className="flex flex-col">
@@ -181,11 +182,40 @@ function page() {
                 </div>
             </div>
             
-            <div className="plan-container">
+            <div className="w-[100%] bg-bgPreview">
                 {plan ? (
-                    <div>fds</div>
+                    <>
+                        <div className="border-b-[0.1rem] border-solid border-[#eee] bg-textLight p-[2rem] flex justify-between">
+                            <div>
+                                <p className="text-[1.6rem] font-bold">주제</p>
+                                <ul className="flex gap-[.4rem] mt-[.4rem] text-[1.4rem] text-textMuted">
+                                    <li className="flex after:content-['•'] after:ml-[.4rem]">만 4세</li>
+                                    <li className="flex after:content-['•'] after:ml-[.4rem]">소집단</li>
+                                    <li className="flex ">1개 영역</li>
+                                </ul>
+                            </div>
+                            <div className="flex gap-[.4rem]">
+                                <button className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-[#8744f3]"><MdSave className="text-[2rem]" /> 보관함에 저장</button>
+                                <button className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-[#357fe0]"><MdSaveAlt className="text-[2rem]" /> PDF 내보내기</button>
+                            </div>
+                        </div>
+
+                        <div className="bg-sub2-gradient mt-[2rem] w-[95%] mx-auto rounded-2xl p-[2rem] text-textLight">
+                            <p className="text-[2rem] font-bold  mb-[2rem]">활동 요약</p>
+                            <div className="text-[1.6rem]">
+                                adf 주제로 소집단 1개 영역의 통합 활동이 생성되었습니다. 만 4세 대상 활동입니다.
+                            </div>
+                        </div>
+                    </>
                 ) : (
-                    <div>AI 계획안을 생성해주세요.</div>
+                    <>
+                        <div className="w-[10rem] h-auto opacity-50 block m-[28rem_auto_6rem]">
+                            <img src="/document.png" alt="계획안이 여기에 표시됩니다." className="" />
+                        </div>
+                        <p className="text-[1.6rem] text-textMuted text-center font-semibold">
+                            왼쪽에서 주제와 영역을 선택하고<br /> 계획안을 생성해보세요!
+                        </p>
+                    </>
                 )}
             </div>
         </div>

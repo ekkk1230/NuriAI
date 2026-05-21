@@ -33,6 +33,7 @@
   /* [그라디언트] */
   --background-image-main-gradient: linear-gradient(135deg, #0a70b9, #ad46ff, #e913c5);
   --background-image-sub-gradient: linear-gradient(135deg, #74c0fc, #b197fc, #faa2c1);
+  --background-image-sub2-gradient: linear-gradient(135deg, #ad46ff, #e913c5);
   --background-image-feature-1: linear-gradient(135deg, #057ea3, #74dbfa);
   --background-image-feature-2: linear-gradient(135deg, #a104d1, #ed73f8);
   --background-image-feature-3: linear-gradient(135deg, #f58403, #fae421);
@@ -73,7 +74,7 @@ main { width: calc(100% - 26rem); }
 input[type="text"], 
 input[type="password"],
 input[type="search"] {
-  @apply w-full h-[4.4rem] px-[1.6rem] text-[1.6rem] border border-solid border-[#e2e8f0] rounded-[0.8rem] bg-white transition-all duration-200;
+  @apply w-full h-[4.4rem] px-[1.6rem] text-[1.4rem] border border-solid border-[#e2e8f0] rounded-[0.8rem] bg-white transition-all duration-200;
   @apply focus:outline-none focus:border-[#ad46ff] focus:ring-2 focus:ring-[rgba(173,70,255,0.2)];
   @apply placeholder:text-[#94a3b8];
 }
