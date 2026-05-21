@@ -8,30 +8,36 @@
   --color-bgCard: #ffffff;
 
   /* [연령별 배지 컬러] */
-  --color-age0: #fff5f5; --color-age0-text: #ff6b6b;
-  --color-age1: #fff0f6; --color-age1-text: #f06595;
-  --color-age2: #f8f0fc; --color-age2-text: #cc5de8;
-  --color-age3: #f3f0ff; --color-age3-text: #845ef7;
-  --color-age4: #e8f7ff; --color-age4-text: #1c7ed6;
-  --color-age5: #e3fafc; --color-age5-text: #0c8599;
+  --color-age0: #ffe3e3; --color-age0-text: #e03131;
+  --color-age1: #ffdeeb; --color-age1-text: #c2255c;
+  --color-age2: #f3d9fa; --color-age2-text: #9c36b5;
+  --color-age3: #e5dbff; --color-age3-text: #5f3dc4;
+  --color-age4: #d0ebff; --color-age4-text: #1971c2;
+  --color-age5: #c5f6fa; --color-age5-text: #0b7285;
 
   /* [영역별 배지 컬러] */
-  --color-cate1: #fff9db; --color-cate1-text: #f59f00;
-  --color-cate2: #e7f5ff; --color-cate2-text: #339af0;
-  --color-cate3: #f4fce3; --color-cate3-text: #74b816;
-  --color-cate4: #fff0f6; --color-cate4-text: #d6336c;
-  --color-cate5: #ebfbee; --color-cate5-text: #37b24d;
-  --color-cate6: #f1f3f5; --color-cate6-text: #495057;
+  --color-cate1: #e9ecef; --color-cate1-text: #343a40;
+  --color-cate2: #d0ebff; --color-cate2-text: #1971c2;
+  --color-cate3: #e2f9b8; --color-cate3-text: #5c940d;
+  --color-cate4: #ffdeeb; --color-cate4-text: #c2255c;
+  --color-cate5: #d3f9d8; --color-cate5-text: #2b8a3e;
+  --color-cate6: #fff3bf; --color-cate6-text: #e67700;
+
+  /* [활동별 배지 컬러] */
+  --color-act1: #f3f0ff; --color-act1-text: #6f42c1;
+  --color-act2: #fff5eb; --color-act2-text: #fd7e14;
+  --color-act3: #e6fffa; --color-act3-text: #0ca678;
+  --color-act4: #edf2ff; --color-act4-text: #4c6ef5;
+  --color-act5: #fdf2e9; --color-act5-text: #a65d24;
 
   /* [그라디언트] */
   --background-image-main-gradient: linear-gradient(135deg, #0a70b9, #ad46ff, #e913c5);
-  --background-image-bg-feature-1: linear-gradient(135deg, #057ea3, #74dbfa);
-  --background-image-bg-feature-2: linear-gradient(135deg, #a104d1, #ed73f8);
-  --background-image-bg-feature-3: linear-gradient(135deg, #f58403, #fae421);
-  --background-image-bg-feature-4: linear-gradient(135deg, #4cf5a6, #23e5ff);
+  --background-image-sub-gradient: linear-gradient(135deg, #74c0fc, #b197fc, #faa2c1);
+  --background-image-feature-1: linear-gradient(135deg, #057ea3, #74dbfa);
+  --background-image-feature-2: linear-gradient(135deg, #a104d1, #ed73f8);
+  --background-image-feature-3: linear-gradient(135deg, #f58403, #fae421);
+  --background-image-feature-4: linear-gradient(135deg, #4cf5a6, #23e5ff);
 }
-
-* { margin: 0; padding: 0; border: 0; outline: 0; box-sizing: border-box; }
 
 html, body { font-size: 10px; }
 ul, ol { list-style: none; }
@@ -43,15 +49,16 @@ main { width: calc(100% - 26rem); }
 .inner { width: 100%; padding: 0 8rem; }
 
 .badge-base {
-  @apply inline-block rounded-[60rem] text-[1.4rem] font-medium text-center whitespace-nowrap;
+  @apply block rounded-[60rem] text-[1.4rem] font-medium text-center whitespace-nowrap;
   padding: 0.4rem 0.8rem;
 }
 
 .full-width-section { width: calc(100% + 16rem); position: relative; left: -8rem; padding: 8rem 0; }
 
 .btn-base {
-  @apply cursor-pointer font-medium inline-flex items-center justify-center gap-[0.8rem];
+  @apply cursor-pointer font-medium items-center justify-center gap-[0.8rem] mx-auto block;
 }
+.btn-base svg { @apply inline-block relative -top-[-.15rem] }
 
 .badge-base {
   @apply inline-block rounded-[60rem] text-[1.4rem] font-medium text-center whitespace-nowrap;
@@ -62,3 +69,11 @@ main { width: calc(100% - 26rem); }
 }
 
 .icon-box-base svg { @apply w-[3rem] h-[3rem] }
+
+input[type="text"], 
+input[type="password"],
+input[type="search"] {
+  @apply w-full h-[4.4rem] px-[1.6rem] text-[1.6rem] border border-solid border-[#e2e8f0] rounded-[0.8rem] bg-white transition-all duration-200;
+  @apply focus:outline-none focus:border-[#ad46ff] focus:ring-2 focus:ring-[rgba(173,70,255,0.2)];
+  @apply placeholder:text-[#94a3b8];
+}

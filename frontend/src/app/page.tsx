@@ -1,4 +1,3 @@
-// page.tsx
 import { BsStars, BsSliders, BsGlobe, BsCheck2Circle } from "react-icons/bs";
 import { FaArrowRight } from "react-icons/fa";
 function page() {
@@ -31,85 +30,83 @@ function page() {
 
 	return (
 		<div className="inner">
-      
-		{/* 1. 메인 상단 섹션 */}
-		<section className="full-width-section bg-[url('/top-bg.png')] bg-no-repeat bg-center bg-cover !py-48">
-			<p className="text-textLight text-center text-[6rem] font-bold mb-12">현직 교사를 위한<br />AI 교육 플랫폼, NuriAI</p>
-			<p className="text-textLight text-center text-[3rem] leading-[1.6]">AI 기술을 활용하여 교육의 질을 높이고, 교사들의 업무 부담을 줄여드리는 서비스입니다.</p>
-			<button className="btn-base block mx-auto mt-16 rounded-[60rem] bg-textLight px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
-				지금 바로 시작하기 <FaArrowRight />
-			</button>
-		</section>
+		
+			{/* 1. 메인 상단 섹션 */}
+			<section className="full-width-section bg-[url('/top-bg.png')] bg-no-repeat bg-center bg-cover !py-48">
+				<p className="text-textLight text-center text-[6rem] font-bold mb-12">현직 교사를 위한<br />AI 교육 플랫폼, NuriAI</p>
+				<p className="text-textLight text-center text-[3rem] leading-[1.6]">AI 기술을 활용하여 교육의 질을 높이고, 교사들의 업무 부담을 줄여드리는 서비스입니다.</p>
+				<button className="btn-base mx-auto mt-16 rounded-[60rem] bg-textLight px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
+					지금 바로 시작하기 <FaArrowRight />
+				</button>
+			</section>
 
-		{/* 2. 샘플 미리보기 영역 */}
-		<section className="py-32">
-			<div className="mx-auto mb-16 text-center">
-				<p className="text-[4rem] font-bold mb-6">AI가 생성한 계획안 미리보기</p>
-				<p className="text-[1.8rem] color-textMuted font-medium">로그인 없이도 고퀄리티 교육 계획안 샘플을 확인해보세요.</p>
-			</div>
+			{/* 2. 샘플 미리보기 영역 */}
+			<section className="py-[8rem]">
+				<div className="mx-auto mb-16 text-center">
+					<p className="text-[4rem] font-bold mb-6">AI가 생성한 계획안 미리보기</p>
+					<p className="text-[1.8rem] text-textMuted font-medium">로그인 없이도 고퀄리티 교육 계획안 샘플을 확인해보세요.</p>
+				</div>
 
-			<div className="rounded-[2.4rem] bg-bgPreview padding-12 p-[3.2rem]">
-			<div className="relative rounded-[2rem] bg-bgCard p-[2.6rem]">
-				<p className="text-[2.8rem] font-bold mb-8">나비의 한살이</p>
+				<div className="rounded-[2.4rem] bg-bgPreview padding-12 p-[3.2rem]">
+				<div className="relative rounded-[2rem] bg-bgCard p-[2.6rem]">
+					<p className="text-[2.8rem] font-bold mb-8">나비의 한살이</p>
 
-				<ul className="absolute right-[1.4rem] top-[1.2rem] flex gap-[0.8rem]">
-				<li>
-					{/* 💡 badge-base 결합 및 config 컬러 매핑 */}
-					<span className="badge-base bg-age4 text-age4-text">만 4세</span>
-				</li>
-				<li>
-					<span className="badge-base bg-cate5 text-cate5-text">자연탐구</span>
-				</li>
+					<ul className="absolute right-[1.4rem] top-[1.2rem] flex gap-[0.8rem]">
+						<li>
+							<span className="badge-base bg-age4 text-age4-text">만 4세</span>
+						</li>
+						<li>
+							<span className="badge-base bg-cate5 text-cate5-text">자연탐구</span>
+						</li>
+					</ul>
+
+					<ul className="flex flex-col gap-6">
+					<li className="text-[1.6rem]">
+						<span className="font-medium">활동 목표: </span>
+						<span>나비의 성장 과정을 관찰하며 생명의 신비로움을 느낀다.</span>
+					</li>
+					<li className="text-[1.6rem]">
+						<span className="font-medium">준비물: </span>
+						<span>나비 그림 자료, 돋보기, 관찰 기록지</span>
+					</li>
+					</ul>
+					<p className="mt-6 text-[1.6rem]">더 많은 내용은 워크스페이스에서 확인하세요.</p>
+				</div>
+
+				<button className="btn-base rounded-[2rem] text-[2.4rem] p-8 w-full mt-6 text-textLight bg-main-gradient">
+					나만의 계획안 만들어보기 <FaArrowRight />
+				</button>
+				</div>
+			</section>
+
+			{/* 3. 특장점 영역 */}
+			<section className="full-width-section bg-bgFeature">
+				<div className="mx-auto mb-16 text-center">
+					<p className="text-[4rem] font-bold mb-6">NuriAI의 특장점</p>
+					<p className="text-[1.8rem] text-textMuted font-medium">현직 교사를 위한 똑똑한 AI 교육 플랫폼</p>
+				</div>
+
+				<ul className="grid grid-cols-2 gap-[2.4rem] mx-32">
+				{features.map((item, index) => (
+					<li key={index} className="bg-bgCard p-[3.2rem_2.8rem] rounded-[1.6rem] shadow-[0_0.8rem_2.4rem_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-3">
+						<div className={`icon-box-base bg-feature-${index} ${item.bgClass}`}>{item.icon}</div>
+						<p className="text-[2.6rem] font-medium mb-6">{item.tit}</p>
+						<p className="text-[1.8rem] break-keep h-[5.4rem]">{item.cont}</p>
+					</li>
+				))}
 				</ul>
+			</section>
 
-				<ul className="flex flex-col gap-6">
-				<li className="text-[1.6rem]">
-					<span className="font-medium">활동 목표: </span>
-					<span>나비의 성장 과정을 관찰하며 생명의 신비로움을 느낀다.</span>
-				</li>
-				<li className="text-[1.6rem]">
-					<span className="font-medium">준비물: </span>
-					<span>나비 그림 자료, 돋보기, 관찰 기록지</span>
-				</li>
-				</ul>
-				<p className="mt-6 text-[1.6rem]">더 많은 내용은 워크스페이스에서 확인하세요.</p>
-			</div>
-
-			<button className="btn-base rounded-[2rem] text-[2.4rem] p-8 w-full mt-6 text-textLight bg-main-gradient">
-				나만의 계획안 만들어보기 <FaArrowRight />
-			</button>
-			</div>
-		</section>
-
-		{/* 3. 특장점 영역 */}
-		<section className="full-width-section bg-bgFeature">
-			<div className="mx-auto mb-16 text-center">
-				<p className="text-[4rem] font-bold mb-6">NuriAI의 특장점</p>
-				<p className="text-[1.8rem] text-textMuted font-medium">현직 교사를 위한 똑똑한 AI 교육 플랫폼</p>
-			</div>
-
-			<ul className="grid grid-cols-2 gap-[2.4rem] mx-32">
-			{features.map((item, index) => (
-				<li key={index} className="bg-bgCard p-[3.2rem_2.8rem] rounded-[1.6rem] shadow-[0_0.8rem_2.4rem_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-3">
-					{/* 💡 배열 내부에서 들고 온 bg-feature-X 가 그대로 매핑되어 그라디언트가 뿜어져 나옵니다 */}
-					<div className={`icon-box-base ${item.bgClass}`}>{item.icon}</div>
-					<p className="text-[2.6rem] font-medium mb-6">{item.tit}</p>
-					<p className="text-[1.8rem] break-keep h-[5.4rem]">{item.cont}</p>
-				</li>
-			))}
-			</ul>
-		</section>
-
-		{/* 4. 하단 시작하기 배너 */}
-		<section className="full-width-section bg-main-gradient">
-			<div className="mx-auto mb-16 text-center">
-				<p className="text-[4rem] font-bold mb-6 text-textLight">지금 바로 시작해보세요!</p>
-				<p className="text-[1.8rem] text-textLight font-medium">회원가입 없이도 AI 교육 계획안 생성을 체험할 수 있습니다.</p>
-			</div>
-			<button className="btn-base block mx-auto mt-16 rounded-[60rem] bg-textLight px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
-				계획안 만들기 시작하기 <FaArrowRight />
-			</button>
-		</section>
+			{/* 4. 하단 시작하기 배너 */}
+			<section className="full-width-section bg-main-gradient">
+				<div className="mx-auto mb-16 text-center">
+					<p className="text-[4rem] font-bold mb-6 text-textLight">지금 바로 시작해보세요!</p>
+					<p className="text-[1.8rem] text-textLight font-medium">회원가입 없이도 AI 교육 계획안 생성을 체험할 수 있습니다.</p>
+				</div>
+				<button className="btn-base block mx-auto mt-16 rounded-[60rem] bg-textLight px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
+					계획안 만들기 시작하기 <FaArrowRight />
+				</button>
+			</section>
 		</div>
 	);
 }
