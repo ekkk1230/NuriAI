@@ -1,6 +1,5 @@
 'use client';
 
-import * as S from './Nav.css';
 import { IoMdHome } from "react-icons/io";
 import { AiFillBulb } from "react-icons/ai";
 import { IoIosListBox } from "react-icons/io";

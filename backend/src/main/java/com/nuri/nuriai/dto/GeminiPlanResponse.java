@@ -15,6 +15,7 @@ public class GeminiPlanResponse {
 
     @Getter @Setter @ToString
     public static class PlanDTO {
+        private Long id;
         private String domain;           // 누리과정 영역
         private String groupType;        // 대집단 또는 소집단
         private String activityType;     // 이야기 나누기, 게임 등 상세 유형

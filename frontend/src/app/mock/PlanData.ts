@@ -1,5 +1,6 @@
 export const mockPlanData = [
     {
+        "id": 0,
         "age": "만 5세",
         "mainTheme": "봄의 곤충",
         "curriculum": "2019 개정 누리과정(유아)",
@@ -51,6 +52,7 @@ export const mockPlanData = [
         ]
     },
     {
+        "id": 1,
         "age": "만 4세",
         "mainTheme": "우리 동네",
         "curriculum": "2019 개정 누리과정(유아)",
@@ -80,6 +82,7 @@ export const mockPlanData = [
         ]
     },
     {
+        "id": 2,
         "age": "만 1세",
         "mainTheme": "느낄 수 있어요",
         "curriculum": "제4차 표준보육과정(영아)",
@@ -132,6 +135,7 @@ export const mockPlanData = [
     },
 
     {
+        "id": 3,
         "age": "만 5세",
         "mainTheme": "봄의 곤충",
         "curriculum": "2019 개정 누리과정(유아)",
@@ -184,6 +188,7 @@ export const mockPlanData = [
     },
 
     {
+        "id": 4,
         "age": "만 5세",
         "mainTheme": "봄의 곤충",
         "curriculum": "2019 개정 누리과정(유아)",

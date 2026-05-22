@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { DOMAIN_STYLES, TYPE_STYLES, KEYWORD_STYLES } from "@/app/constance/activityOptions";
 
-function PlanItem({ plan, id }: any) {
+interface PlanItemProps {
+    plan: any;
+    onClick?: () => void;
+};
+
+function PlanItem({ plan, onClick }: PlanItemProps) {
     const [isChecked, setIsChecked] = useState(false);
 
     const getActivityStyle = (type: string) => {
@@ -20,7 +25,7 @@ function PlanItem({ plan, id }: any) {
     };
 
     return (
-        <div className="rounded-[2.4rem] bg-bgCard hover:-top-[.5rem] relative cursor-pointer transition-all duration-200 border border-solid border-[#eee] shadow-sm overflow-hidden">
+        <div className="rounded-[2.4rem] bg-bgCard hover:-top-[.5rem] relative cursor-pointer transition-all duration-200 border border-solid border-[#eee] shadow-sm overflow-hidden" onClick={onClick}>
             
             <div className="bg-sub2-gradient p-[1.6rem] relative">
                 <p className="text-textLight text-[1.8rem] font-semibold mb-[1rem]">{plan.mainTheme}</p>
@@ -32,7 +37,7 @@ function PlanItem({ plan, id }: any) {
                 <label className="absolute top-[1.6rem] right-[1.6rem] cursor-pointer select-none">
                     <input 
                         type="checkbox" 
-                        value={id} 
+                        value={plan.id} 
                         checked={isChecked}
                         onChange={(e) => setIsChecked(e.target.checked)}
                         className="peer hidden" 
