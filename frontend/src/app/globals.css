@@ -4,7 +4,7 @@
   --color-textMuted: #666666;
   --color-textLight: #ffffff;
   --color-bgFeature: #ecf3f7;
-  --color-bgPreview: #ececec;
+  --color-bgPreview: #f2f2f2;
   --color-bgCard: #ffffff;
   --color-main: #3f07b6;
   --color-hoverMain: #300986;
@@ -31,10 +31,12 @@
 
   /* [활동별 배지 컬러] */
   --color-act0: #f3f0ff; --color-act0-text: #6f42c1;
-  --color-act1: #fff5eb; --color-act1-text: #fd7e14;
+  --color-act1: #fff5eb;  --color-act1-text: #fd7e14;
   --color-act2: #e6fffa; --color-act2-text: #0ca678;
   --color-act3: #edf2ff; --color-act3-text: #4c6ef5;
-  --color-act4: #fdf2e9; --color-act4-text: #a65d24;
+  --color-act4: #fdf2e9;  --color-act4-text: #a65d24;
+  --color-act5: #fff0f6;  --color-act5-text: #d6336c;
+
 
   /* [그라디언트] */
   --background-image-main-gradient: linear-gradient(135deg, #0a70b9, #ad46ff, #e913c5);
@@ -68,7 +70,7 @@ main { width: calc(100% - 26rem); }
 .btn-base svg { @apply inline-block relative -top-[-.15rem] }
 
 .badge-base {
-  @apply inline-block rounded-[60rem] text-[1.4rem] font-medium text-center whitespace-nowrap;
+  @apply inline-block rounded-[60rem] text-[1.4rem] font-semibold text-center whitespace-nowrap;
 }
 
 .icon-box-base {

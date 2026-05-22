@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { usePlanStore } from "../store/usePlanStore"
 import { AGE_OPTIONS } from "../constance/activityOptions";
 import PlanItem from "../components/Planner/PlanItem";
@@ -11,6 +12,7 @@ const SORT_OPTIONS = [
 ];
 
 function page() {
+    const router = useRouter();
     const { planStorage } = usePlanStore();
     const [searchTit, setSearchTit]  = useState<string>("");
     const [searchAge, setSearchAge] = useState<string>("");
@@ -27,6 +29,7 @@ function page() {
         return `${baseAgeSelectBtnClass} ${bgClass}`;
     };
 
+    // 2. 버튼 렌더링 함수 수정
     const ArrToBtn = (arr: any[], type: string) => {
         const setType = type === "age" ? setSearchAge : setSortType;
         
@@ -41,18 +44,26 @@ function page() {
                         type="button"
                         className={ActiveSelectBtnClass(String(item.value), type)} 
                         onClick={() => setType(String(item.value))} 
-                        value={item.value}
                     >
                         {item.label}
                     </button>
                 </li>
             ))
-        )
+        );
     };
 
-    // console.log(planStorage)
+    // console.log(searchAge)
+    const displayedPlans = planStorage.filter(plan => {
+        const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
+        const matchesAge = (!searchAge || searchAge === "전체") 
+            ? true 
+            : plan.age === `만 ${searchAge}세`;
+
+        return matchesTitle && matchesAge;
+    });
+
     return (
-        <div className="bg-bgCard">
+        <div className="bg-bgCard flex flex-col h-[100%]">
             <div className="border-b-[.1rem] border-solid border-[#eee] p-[2.6rem]">
                 <p className="text-[2.8rem] font-bold mb-[1rem]">보관함</p>
                 <p className="text-[1.8rem] font-semibold text-textMuted">생성된 교육 계획안을 관리할 수 있습니다.</p>
@@ -72,13 +83,33 @@ function page() {
                 </div>
             </div>
 
-            <div className="bg-bgPreview w-[100%] h-[100%] p-[2.6rem]">
-                {planStorage.length >= 1 ? (
-                    <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
-                        {planStorage.map((plan, index) => (<PlanItem plan={plan} key={`${index}`} />))}
-                    </div>
+            <div className="bg-bgPreview w-[100%] h-[100%] p-[2.6rem] flex-1">
+                {displayedPlans.length >= 1 ? (
+                    <>
+                        <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
+                        <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
+                            {displayedPlans.map((plan, index) => (<PlanItem plan={plan} key={`${index}`} />))}
+                        </div>
+                    </>
                 ) : (
-                    "no"
+                    <>
+                        <div className="mt-[10rem] text-center flex flex-col gap-[0.6rem] mb-[2.4rem]">
+                            <p className="text-[1.8rem] font-bold text-[#212529]">
+                                보관된 계획안이 없습니다
+                            </p>
+                            <p className="text-[1.4rem] font-medium text-[#868e96]">
+                                AI계획안을 생성해 보세요!
+                            </p>
+                        </div>
+
+                        <button 
+                            type="button" 
+                            className="block mx-auto bg-main hover:bg-main/90 text-white font-semibold text-[1.4rem] p-[1rem_2rem] rounded-[60rem] shadow-sm transition-all duration-200 active:scale-95"
+                            onClick={() => router.push('/workspace')}
+                        >
+                            첫 계획안 만들러 가기
+                        </button>
+                    </>
                 )}
             </div>
         </div>

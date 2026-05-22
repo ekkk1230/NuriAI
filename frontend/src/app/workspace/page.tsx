@@ -14,7 +14,7 @@ function page() {
     const [areaType, setAreaType] = useState<string[]>([]);
 
     const baseBtnClass = "flex-1 rounded-[0.8rem] text-textLight text-[1.4rem] font-semibold text-center transition-all duration-200 shadow-sm whitespace-nowrap";
-    const baseTypeBtnClass = "border-[.2rem] border-solid border-[#eee] rounded-[60rem] p-[1.2rem] whitespace-nowrap flex-1 text-[1.4rem] font-semibold"
+    const baseTypeBtnClass = "w-[100%] border-[.2rem] border-solid border-[#eee] rounded-[60rem] p-[1.2rem_0] text-center whitespace-nowrap text-[1.4rem] font-semibold"
 
 
     const activeAgeBtnClass = (value: number) => {
@@ -45,54 +45,57 @@ function page() {
     };
 
     const actBgStyles: Record<number, string> = {
-        0: "bg-[var(--color-act1)]/20",
-        1: "bg-[var(--color-act2)]/20",
-        2: "bg-[var(--color-act3)]/20",
-        3: "bg-[var(--color-act4)]/20",
-        4: "bg-[var(--color-act5)]/20",
+        0: "bg-[var(--color-act0)]/20",
+        1: "bg-[var(--color-act1)]/20",
+        2: "bg-[var(--color-act2)]/20",
+        3: "bg-[var(--color-act3)]/20",
+        4: "bg-[var(--color-act4)]/20",
+        5: "bg-[var(--color-act5)]/20",
     };
 
     const cateBgStyles: Record<number, string> = {
-        0: "bg-[var(--color-cate1)]/20",
-        1: "bg-[var(--color-cate2)]/20",
-        2: "bg-[var(--color-cate3)]/20",
-        3: "bg-[var(--color-cate4)]/20",
-        4: "bg-[var(--color-cate5)]/20",
-        5: "bg-[var(--color-cate6)]/20",
+        0: "bg-[var(--color-cate0)]/20",
+        1: "bg-[var(--color-cate1)]/20",
+        2: "bg-[var(--color-cate2)]/20",
+        3: "bg-[var(--color-cate3)]/20",
+        4: "bg-[var(--color-cate4)]/20",
+        5: "bg-[var(--color-cate5)]/20",
     };
 
     const actBorderStyles: Record<number, string> = {
-        0: "border-[var(--color-act1)]",
-        1: "border-[var(--color-act2)]",
-        2: "border-[var(--color-act3)]",
-        3: "border-[var(--color-act4)]",
-        4: "border-[var(--color-act5)]",
+        0: "border-[var(--color-act0)]",
+        1: "border-[var(--color-act1)]",
+        2: "border-[var(--color-act2)]",
+        3: "border-[var(--color-act3)]",
+        4: "border-[var(--color-act4)]",
+        5: "border-[var(--color-act5)]",
     }
 
     const actTextStyles: Record<number, string> = {
-        0: "text-[var(--color-act1-text)]",
-        1: "text-[var(--color-act2-text)]",
-        2: "text-[var(--color-act3-text)]",
-        3: "text-[var(--color-act4-text)]",
-        4: "text-[var(--color-act5-text)]",
+        0: "text-[var(--color-act0-text)]",
+        1: "text-[var(--color-act1-text)]",
+        2: "text-[var(--color-act2-text)]",
+        3: "text-[var(--color-act3-text)]",
+        4: "text-[var(--color-act4-text)]",
+        5: "text-[var(--color-act5-text)]",
     }
 
     const cateBorderStyles: Record<number, string> = {
-        0: "border-[var(--color-cate1)]",
-        1: "border-[var(--color-cate2)]",
-        2: "border-[var(--color-cate3)]",
-        3: "border-[var(--color-cate4)]",
-        4: "border-[var(--color-cate5)]",
-        5: "border-[var(--color-cate6)]",
+        0: "border-[var(--color-cate0)]",
+        1: "border-[var(--color-cate1)]",
+        2: "border-[var(--color-cate2)]",
+        3: "border-[var(--color-cate3)]",
+        4: "border-[var(--color-cate4)]",
+        5: "border-[var(--color-cate5)]",
     };
       
     const cateTextStyles: Record<number, string> = {
-        0: "text-[var(--color-cate1-text)]",
-        1: "text-[var(--color-cate2-text)]",
-        2: "text-[var(--color-cate3-text)]",
-        3: "text-[var(--color-cate4-text)]",
-        4: "text-[var(--color-cate5-text)]",
-        5: "text-[var(--color-cate6-text)]",
+        0: "text-[var(--color-cate0-text)]",
+        1: "text-[var(--color-cate1-text)]",
+        2: "text-[var(--color-cate2-text)]",
+        3: "text-[var(--color-cate3-text)]",
+        4: "text-[var(--color-cate4-text)]",
+        5: "text-[var(--color-cate5-text)]",
     };
       
     const activeAreaTypeBtnClass = (value: string, index: number, type: string) => {
@@ -110,11 +113,12 @@ function page() {
 
     const writeTypeBtn = (obj: any, mode: 'type' | 'area') => {
         return (
-            <div className="flex flex-wrap gap-[.4rem]">
+            <div className="grid grid-cols-2 gap-[.4rem]">
                 {
                     obj.map((type: string, index: number) => {
                         const uniqueValue = `${mode}-${index}`;
-                        return <button className={activeAreaTypeBtnClass(uniqueValue, index, mode)} onClick={(e) => handleSelectType(e, mode)} type="button" key={index} value={`${mode}-${index}`}>{type}</button>;
+                        const id = index;
+                        return <button className={activeAreaTypeBtnClass(uniqueValue, index, mode)} onClick={(e) => handleSelectType(e, mode)} type="button" id={`${id}`} key={index} value={`${mode}-${index}`}>{type}</button>;
                     })
                 }
             </div>
@@ -186,7 +190,7 @@ function page() {
                     >AI 계획안 생성하기</button>
                 </form>
 
-                <div className="border-[0.2rem] border-solid border-[#a5d8ff] bg-[#92c8f233] p-[1rem]">
+                <div className="border-[0.2rem] border-solid border-[#a5d8ff] bg-[#92c8f233] p-[1rem] rounded-[1.2rem]">
                     <p className="text-[1.4rem] font-semibold mb-[1rem] text-[#113d90]">사용 팁</p>
                     <ul className="space-y-1">
                         <li className="text-[#113d90] text-[1.2rem]">만 0-2세는 소집단 영역 활동만 가능합니다.</li>
