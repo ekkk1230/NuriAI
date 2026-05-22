@@ -1,11 +1,13 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { ACTIVITY_TYPES, AGE_OPTIONS, AREA_TYPES } from "../constance/activityOptions";
-import { MdSave, MdSaveAlt } from "react-icons/md";
+import PlanPreview from "../components/Planner/PlanPreview";
+import NoPlan from "../components/Planner/NoPlan";
+
 
 function page() {
-    const [plan, setPlan] = useState<boolean>(true);
+    const [plan, setPlan] = useState<boolean>(false);
     const [activeAge, setActiveAge] = useState<number | null>(null);
     const [activeForm, setActiveForm] = useState<string | null>("small");
     const [activeType, setActiveType] = useState<string[]>([]);
@@ -17,13 +19,13 @@ function page() {
 
     const activeAgeBtnClass = (value: number) => {
         const isActive = activeAge === value;
-        const bgClass = isActive ? "bg-[#07726f]" : "bg-[#666] hover:bg-[#555]";
+        const bgClass = isActive ? "bg-[#07726f]" : "bg-disabled hover:bg-hoverDisabled";
         return `${baseBtnClass} ${bgClass} p-[1rem_1.6rem]`;
     };
 
     const activeFormBtnClass = (value: string) => {
         const isActive = activeForm === value;
-        const bgClass = isActive ? "bg-[#3f07b6]" : "bg-[#666] hover:bg-[#555]";
+        const bgClass = isActive ? "bg-main" : "bg-disabled hover:bg-hoverDisabled";
         return `${baseBtnClass} ${bgClass} p-[1rem]`;
     };
 
@@ -117,6 +119,17 @@ function page() {
                 }
             </div>
         );
+    };
+
+    const handleMakeAIPlan = async() => {
+        try {
+            const response = await '';
+
+            setPlan(true);
+        } catch (err) {
+            console.error(`handleMakeAIPlan 실패: ${err}`);
+            setPlan(false);
+        }
     }
 
     return (
@@ -168,7 +181,9 @@ function page() {
                         )}
                     </div>
                 
-                    <button className="p-[1rem] w-[100%] flex justify-center bg-sub-gradient rounded-[.8rem] text-textLight text-2xl font-bold mb-[2rem]">AI 계획안 생성하기</button>
+                    <button type="button" className="p-[1rem] w-[100%] flex justify-center bg-sub-gradient rounded-[.8rem] text-textLight text-2xl font-bold mb-[2rem]"
+                        onClick={handleMakeAIPlan}
+                    >AI 계획안 생성하기</button>
                 </form>
 
                 <div className="border-[0.2rem] border-solid border-[#a5d8ff] bg-[#92c8f233] p-[1rem]">
@@ -184,38 +199,9 @@ function page() {
             
             <div className="w-[100%] bg-bgPreview">
                 {plan ? (
-                    <>
-                        <div className="border-b-[0.1rem] border-solid border-[#eee] bg-textLight p-[2rem] flex justify-between">
-                            <div>
-                                <p className="text-[1.6rem] font-bold">주제</p>
-                                <ul className="flex gap-[.4rem] mt-[.4rem] text-[1.4rem] text-textMuted">
-                                    <li className="flex after:content-['•'] after:ml-[.4rem]">만 4세</li>
-                                    <li className="flex after:content-['•'] after:ml-[.4rem]">소집단</li>
-                                    <li className="flex ">1개 영역</li>
-                                </ul>
-                            </div>
-                            <div className="flex gap-[.4rem]">
-                                <button className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-[#8744f3]"><MdSave className="text-[2rem]" /> 보관함에 저장</button>
-                                <button className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-[#357fe0]"><MdSaveAlt className="text-[2rem]" /> PDF 내보내기</button>
-                            </div>
-                        </div>
-
-                        <div className="bg-sub2-gradient mt-[2rem] w-[95%] mx-auto rounded-2xl p-[2rem] text-textLight">
-                            <p className="text-[2rem] font-bold  mb-[2rem]">활동 요약</p>
-                            <div className="text-[1.6rem]">
-                                adf 주제로 소집단 1개 영역의 통합 활동이 생성되었습니다. 만 4세 대상 활동입니다.
-                            </div>
-                        </div>
-                    </>
+                    <PlanPreview />
                 ) : (
-                    <>
-                        <div className="w-[10rem] h-auto opacity-50 block m-[28rem_auto_6rem]">
-                            <img src="/document.png" alt="계획안이 여기에 표시됩니다." className="" />
-                        </div>
-                        <p className="text-[1.6rem] text-textMuted text-center font-semibold">
-                            왼쪽에서 주제와 영역을 선택하고<br /> 계획안을 생성해보세요!
-                        </p>
-                    </>
+                    <NoPlan />
                 )}
             </div>
         </div>

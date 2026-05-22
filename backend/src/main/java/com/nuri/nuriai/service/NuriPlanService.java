@@ -55,6 +55,7 @@ public class NuriPlanService {
                         "- **대집단**일 경우: 선택한 '활동 유형'의 절차와 상호작용(발문)을 중심으로 작성하세요.\n" +
                         "- **소집단**일 경우: 선택한 '영역'의 발달 특성을 살린 유아 주도적인 놀이 지원 방안을 중심으로 작성하세요.\n" +
                         "- 모든 활동 내용은 '도입-전개-마무리'로 구성하고, 교사의 구체적인 발문을 포함하세요.\n" +
+                        "- **활동 목표(`objectives`)는 유아의 지식, 기술, 태도가 명확히 드러나도록 2개 이상 구체적으로 작성하고, 이와 관련된 누리과정/보육과정의 세부 내용(`relatedCurriculum`)도 함께 명시하세요.**\n" + // 💡 지침 추가
                         "- 마지막에는 이 활동과 연결하여 진행할 수 있는 '추천 연관 활동'을 한 줄로 제시하세요.\n\n" +
                         "### 답변 형식 (JSON):\n" +
                         "{\n" +
@@ -68,6 +69,7 @@ public class NuriPlanService {
                         "      \"activityType\": \"이야기 나누기, 게임, 신체표현 등 상세 유형\",\n" +
                         "      \"activityName\": \"...\",\n" +
                         "      \"objectives\": [\"목표1\", \"목표2\"],\n" +
+                        "      \"relatedCurriculum\": [\"관련 누리과정 내용 (예: 의사소통 > 말하기 > 자신의 느낌, 생각, 경험 말하기)\"],\n" + // 💡 JSON 키 추가
                         "      \"materials\": [\"준비물1\", \"준비물2\"],\n" +
                         "      \"content\": { \"introduction\": \"...\", \"development\": \"...\", \"conclusion\": \"...\" },\n" +
                         "      \"precautions\": [\"유의점1\"],\n" +
@@ -116,7 +118,8 @@ public class NuriPlanService {
     public void savePlan(GeminiPlanResponse dto) {
         NuriPlan plan = new NuriPlan();
         plan.setAge(dto.getAge());
-        plan.setTheme(dto.getMainTheme());
+        plan.setMainTheme(dto.getMainTheme());
+        plan.setCurriculum(dto.getCurriculum());
 
         if (dto.getPlans() != null) {
             for (GeminiPlanResponse.PlanDTO planDto : dto.getPlans()) {
@@ -125,9 +128,10 @@ public class NuriPlanService {
                 // 필드 매핑 (Entity와 DTO 필드 확인)
                 activity.setDomain(planDto.getDomain());
                 activity.setGroupType(planDto.getGroupType());
-                activity.setActivity(planDto.getActivityType()); // Entity 필드가 activity라면 유지
+                activity.setActivity(planDto.getActivityType());
                 activity.setActivityName(planDto.getActivityName());
                 activity.setObjectives(planDto.getObjectives());
+                activity.setRelatedCurriculum(planDto.getRelatedCurriculum());
                 activity.setMaterials(planDto.getMaterials());
                 activity.setPrecautions(planDto.getPrecautions());
                 activity.setExtensionActivity(planDto.getExtensionActivity());

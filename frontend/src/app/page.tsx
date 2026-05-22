@@ -35,7 +35,7 @@ function page() {
 			<section className="full-width-section bg-[url('/top-bg.png')] bg-no-repeat bg-center bg-cover !py-48">
 				<p className="text-textLight text-center text-[6rem] font-bold mb-12">현직 교사를 위한<br />AI 교육 플랫폼, NuriAI</p>
 				<p className="text-textLight text-center text-[3rem] leading-[1.6]">AI 기술을 활용하여 교육의 질을 높이고, 교사들의 업무 부담을 줄여드리는 서비스입니다.</p>
-				<button className="btn-base mx-auto mt-16 rounded-[60rem] bg-textLight px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
+				<button className="btn-base mx-auto mt-16 rounded-[60rem] bg-bgCard px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
 					지금 바로 시작하기 <FaArrowRight />
 				</button>
 			</section>
@@ -103,7 +103,7 @@ function page() {
 					<p className="text-[4rem] font-bold mb-6 text-textLight">지금 바로 시작해보세요!</p>
 					<p className="text-[1.8rem] text-textLight font-medium">회원가입 없이도 AI 교육 계획안 생성을 체험할 수 있습니다.</p>
 				</div>
-				<button className="btn-base block mx-auto mt-16 rounded-[60rem] bg-textLight px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
+				<button className="btn-base block mx-auto mt-16 rounded-[60rem] bg-bgCard px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
 					계획안 만들기 시작하기 <FaArrowRight />
 				</button>
 			</section>

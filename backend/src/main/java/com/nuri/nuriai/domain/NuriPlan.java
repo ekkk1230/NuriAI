@@ -13,15 +13,16 @@ public class NuriPlan {
     private Long id;
 
     private String age;
-    private String theme;
+    private String mainTheme;
+    private String curriculum;
 
     // cascade 설정으로 Plan 저장 시 Activity도 같이 저장되게 함
     @OneToMany(mappedBy = "nuriPlan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<NuriActivity> activities = new ArrayList<>();
+    private List<NuriActivity> plans = new ArrayList<>();
 
     // 연관관계 편의 메서드
     public void addActivity(NuriActivity activity) {
-        activities.add(activity);
+        plans.add(activity);
         activity.setNuriPlan(this);
     }
 }

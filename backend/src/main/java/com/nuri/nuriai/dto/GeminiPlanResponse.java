@@ -20,10 +20,11 @@ public class GeminiPlanResponse {
         private String activityType;     // 이야기 나누기, 게임 등 상세 유형
         private String activityName;     // 활동명
         private List<String> objectives; // 활동 목표
-        private List<String> materials;  // 준비물 (이제 잘 들어올 거예요!)
+        private List<String> relatedCurriculum;
+        private List<String> materials;  // 준비물
         private ActivityContentDTO content;
         private List<String> precautions; // 유의점
-        private String extensionActivity; // 추천 연계 활동 (추가)
+        private String extensionActivity; // 추천 연계 활동
     }
 
     @Getter @Setter @ToString

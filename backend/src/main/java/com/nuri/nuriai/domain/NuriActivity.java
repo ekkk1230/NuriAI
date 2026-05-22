@@ -3,6 +3,8 @@ package com.nuri.nuriai.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,6 +21,10 @@ public class NuriActivity {
     @ElementCollection
     @CollectionTable(name = "NURI_ACTIVITY_OBJECTIVES", joinColumns = @JoinColumn(name = "activity_id"))
     private List<String> objectives;
+
+    @ElementCollection
+    @CollectionTable(name = "NURI_ACTIVITY_CURRICULUMS", joinColumns = @JoinColumn(name = "activity_id")) // 💡 plan_id에서 activity_id로 수정!
+    private List<String> relatedCurriculum = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "NURI_ACTIVITY_MATERIALS", joinColumns = @JoinColumn(name = "activity_id"))
