@@ -20,6 +20,17 @@ export const DOMAIN_STYLES: Record<string, string> = {
     "자연탐구": "bg-[var(--color-cate5)] text-[var(--color-cate5-text)] border-[var(--color-cate5-text)]/20",
 };
 
+export const DOMAIN_COLORS: Record<string, string> = {
+    "기본생활": "[var(--color-cate0)]",
+    "기본생활·신체": "[var(--color-cate0)]",
+    "신체운동": "[var(--color-cate1)]",
+    "신체운동·건강": "[var(--color-cate1)]",
+    "의사소통": "[var(--color-cate2)]",
+    "사회관계": "[var(--color-cate3)]",
+    "예술경험": "[var(--color-cate4)]",
+    "자연탐구": "[var(--color-cate5)]",
+};
+
 export const TYPE_STYLES: Record<string, string> = {
     "이야기 나누기": "bg-[var(--color-act0)] text-[var(--color-act0-text)] border-[var(--color-act0-text)]/20",
     "동화·동시 감상/동극": "bg-[var(--color-act1)] text-[var(--color-act1-text)] border-[var(--color-act1-text)]/20",

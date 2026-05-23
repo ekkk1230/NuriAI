@@ -41,7 +41,7 @@
   /* [그라디언트] */
   --background-image-main-gradient: linear-gradient(135deg, #0a70b9, #ad46ff, #e913c5);
   --background-image-sub-gradient: linear-gradient(135deg, #74c0fc, #b197fc, #faa2c1);
-  --background-image-sub2-gradient: linear-gradient(135deg, #ad46ff, #e913c5);
+  --background-image-sub2-gradient: linear-gradient(135deg, #ad46ff, #ff58e3);
   --background-image-feature-1: linear-gradient(135deg, #057ea3, #74dbfa);
   --background-image-feature-2: linear-gradient(135deg, #a104d1, #ed73f8);
   --background-image-feature-3: linear-gradient(135deg, #f58403, #fae421);
