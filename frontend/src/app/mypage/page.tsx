@@ -1,6 +1,8 @@
 'use client';
 
-import { usePlanStore } from "../store/usePlanStore"
+import { useState } from "react";
+import { usePlanStore } from "../store/usePlanStore";
+import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp  } from "react-icons/md";
 
 export const MOCK_INQUIRIES: any[] = [
     {
@@ -25,8 +27,12 @@ export const MOCK_INQUIRIES: any[] = [
 
 function page() {
     const { planStorage } = usePlanStore();
+    const [answerOpen, setAnswerOpen] = useState<boolean>();
 
-    const useItemBoxClass = "rounded-[.8rem] p-[1.6rem_1rem] flex-1 text-center"
+    const useItemBoxClass = "rounded-[.8rem] p-[1.6rem_1rem] flex-1 text-center";
+    const statusClass = "rounded-[60rem] p-[.8rem_1.2rem]";
+    const isActiveStatus = "bg-[#eeffe6] text-[#309e8c]";
+    const noActiveStatus = "bg-[#fffbf3] text-[#e28c0c]";
 
     return (
         <div className="bg-bgCard flex flex-col h-[100%]">
@@ -55,19 +61,22 @@ function page() {
                     </ul>
                 </div>
 
-                <div className="bg-bgCard w-[60%] mx-auto p-[2rem] rounded-[1.2rem] shadow-sm">
+                <div className="bg-bgCard w-[60%] mx-auto p-[2rem] rounded-[1.2rem] shadow-sm relative">
                     <p className="text-[2rem] font-semibold mb-[1.2rem]">문의 게시판</p>
 
-                    <ul>
+                    <button className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] absolute right-[2rem] top-[2rem]">문의하기</button>
+
+                    <ul className="mt-[2.8rem]">
                         {MOCK_INQUIRIES.length >= 1 ? (
                             MOCK_INQUIRIES.map(item => (
-                                <li key={item.id}>
-                                    <button>
-                                        <p>{item.title}</p>
-                                        <p>{item.createdAt}</p>
-                                        <p>{item.status}</p>
+                                <li key={item.id} className="border-b border-solid border-[#eee] last:border-b-0 py-[1rem]">
+                                    <button className="flex items-center text-[1.4rem] w-full gap-[1rem]">
+                                        <p className="mr-auto font-semibold">{item.title}</p>
+                                        <p className="text-textMuted">{item.createdAt}</p>
+                                        <p className={`${statusClass} ${item.status === "ANSWERED" ? isActiveStatus : noActiveStatus}`}>{item.status === "ANSWERED" ? "답변완료" : "답변대기"}</p>
+                                        <span><MdOutlineKeyboardArrowUp /></span>
                                     </button>
-                                    {item.state === "ANSWERED" && (
+                                    {item.status === "ANSWERED" && (
                                         <div>
                                             <div>{item.answer.content}</div>
                                             <p>{item.answer.answeredAt}</p>
