@@ -75,14 +75,14 @@ function EditModal({ plan }: { plan: Plan }) {
                             {activity.domain} 영역 설정
                         </div>
 
-                        <form>
-                            <label>
-                                <p>활동명</p>
+                        <form className="space-y-[2rem]">
+                            <label className="block">
+                                <p className="text-[1.6rem] mb-[1rem] font-semibold">활동명</p>
                                 <input type="text" value={activity.activityName} />
                             </label>
 
-                            <label>
-                                <p>활동 목표</p>
+                            <label className="block">
+                                <p className="text-[1.6rem] mb-[1rem] font-semibold">활동 목표</p>
                                 <DynamicInput arr={activity.objectives} inputName="object" />
                                 {/* {activity.objectives.map((item, idx) => (
                                     <>
@@ -95,33 +95,32 @@ function EditModal({ plan }: { plan: Plan }) {
                                 ))} */}
                             </label>
 
-                            <label>
-                                <p>교육과정</p>
+                            <label className="block">
+                                <p className="text-[1.6rem] mb-[1rem] font-semibold">교육과정</p>
                                 <DynamicInput arr={activity.relatedCurriculum} inputName="curriculum" />
                             </label>
 
-                            <label>
-                                <p>준비물</p>
+                            <label className="block">
+                                <p className="text-[1.6rem] mb-[1rem] font-semibold">준비물</p>
                                 <DynamicInput arr={activity.materials} inputName="material" />
                             </label>
 
-                            <label>
-                                <p>활동 방법</p>
+                            <label className="block">
+                                <p className="text-[1.6rem] mb-[1rem] font-semibold">활동 방법</p>
                                 {[
                                     { key: 'introduction' as const, label: '1. 도입', color: 'text-blueActive' },
                                     { key: 'development' as const, label: '2. 전개', color: 'text-main' },
                                     { key: 'conclusion' as const, label: '3. 마무리', color: 'text-[#e67d0c]' }
                                 ].map(step => (
-                                    <label key={step.key}>
-                                        <p className={`${step.color}`}>{step.label}</p>
-                                        <textarea name="content" value={activity.content[step.key] || ""} />
-                                       
+                                    <label key={step.key} className="last:mt-0 mt-[1.2rem] block">
+                                        <p className={`${step.color} text-[1.4rem] font-semibold mb-[1.2rem]`}>{step.label}</p>
+                                        <textarea className="p-[1rem]" name="content" value={activity.content[step.key] || ""} />
                                     </label>
                                 ))}
                             </label>
 
-                            <label>
-                                <p>유의점</p>
+                            <label className="block">
+                                <p className="text-[1.6rem] mb-[1rem] font-semibold">유의점</p>
                                 <DynamicInput arr={activity.precautions} inputName="pricuation" />
                             </label>
                         </form>
