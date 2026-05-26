@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ACTIVITY_TYPES, AGE_OPTIONS, AREA_TYPES } from "../constance/activityOptions";
-import PlanPreview from "../components/Planner/PlanPreview";
-import NoPlan from "../components/Planner/NoPlan";
+import { ACTIVITY_TYPES, AGE_OPTIONS, AREA_TYPES } from "@/constance/activityOptions";
+import PlanPreview from "@/components/Planner/PlanPreview";
+import NoPlan from "@/components/Planner/NoPlan";
 
 
 function page() {

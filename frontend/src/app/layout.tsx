@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from 'next/navigation';
-import Nav from './components/Nav/page';
+import Nav from '@/components/Nav/page';
 import './globals.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

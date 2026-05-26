@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
-import { usePlanStore } from "../store/usePlanStore"
-import { AGE_OPTIONS } from "../constance/activityOptions";
-import PlanItem from "../components/Planner/PlanItem";
+import { usePlanStore } from "@/store/usePlanStore"; 
+import { AGE_OPTIONS } from "@/constance/activityOptions"; 
+import PlanItem from "@/components/Planner/PlanItem";
 
 const SORT_OPTIONS = [
     { value: "latest", label: "최신 순" },

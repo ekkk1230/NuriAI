@@ -1,9 +1,9 @@
 "use client";
 
 import { MdOutlineKeyboardArrowUp  } from "react-icons/md";
-import { useMypage } from "../hook/useMypage";
+import { useMypage } from "@/hook/useMypage";
 import { IoCloseCircle } from "react-icons/io5";
-import { formatDate } from "../util/format";
+import { formatDate } from "@/util/format";
 
 function page() {
     const { 

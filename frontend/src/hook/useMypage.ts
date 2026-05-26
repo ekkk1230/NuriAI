@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
-import { useMypageStore } from "../store/useMypageStore";
-import { usePlanStore } from "../store/usePlanStore";
+import { useMypageStore } from "@/store/useMypageStore";
+import { usePlanStore } from "@/store/usePlanStore";
 import { useForm } from "./useForm";
 
 export const useMypage = () => {
@@ -59,7 +59,7 @@ export const useMypage = () => {
         updateInquiry(updatedInquiry);
         setEditingId(null);
         resetForm();
-    }
+    };
 
     return { 
         planStorage, 

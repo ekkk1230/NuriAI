@@ -1,9 +1,9 @@
 "use client";
 
 import { useParams } from 'next/navigation';
-import { usePlanStore } from "../../store/usePlanStore";
+import { usePlanStore } from '@/store/usePlanStore'; 
 import { IoArrowBackOutline } from "react-icons/io5";
-import { DOMAIN_STYLES } from '@/app/constance/activityOptions';
+import { DOMAIN_STYLES } from '@/constance/activityOptions';
 import { useEffect, useState } from 'react';
 
 function page() {
