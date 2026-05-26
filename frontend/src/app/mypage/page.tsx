@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { usePlanStore } from "../store/usePlanStore";
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp  } from "react-icons/md";
 
@@ -29,6 +29,11 @@ export const MOCK_INQUIRIES: any[] = [
 function page() {
     const { planStorage } = usePlanStore();
     const [answerOpen, setAnswerOpen] = useState<Record<number, boolean>>({});
+    const [writeInQuiry, setWriteInquiry] = useState<boolean>(false);
+    const [inquiryForm, setInquiryForm] = useState({
+        inquryTit: "",
+        inquryCont: "",
+    });
     
     const useItemBoxClass = "rounded-[.8rem] p-[1.6rem_1rem] flex-1 text-center";
     const statusClass = "rounded-[60rem] p-[.8rem_1.2rem]";
@@ -39,6 +44,17 @@ function page() {
         setAnswerOpen((prev) => ({
             ...prev,
             [id]: !prev[id]
+        }));
+    };
+
+    const handleWrite = () => setWriteInquiry(true);
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+
+        setInquiryForm(prev => ({
+            ...prev,
+            [name]: value
         }));
     };
 
@@ -72,7 +88,20 @@ function page() {
                 <div className="bg-bgCard w-[60%] mx-auto p-[2rem] rounded-[1.2rem] shadow-sm relative">
                     <p className="text-[2rem] font-semibold mb-[1.2rem]">문의 게시판</p>
 
-                    <button className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] absolute right-[2rem] top-[2rem]">문의하기</button>
+                    <button onClick={handleWrite} className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] absolute right-[2rem] top-[2rem]">문의하기</button>
+
+                    {writeInQuiry && (
+                        <div className="bg-[#efefef] rounded-[.8rem] p-[2.4rem_1.6rem] my-[2rem]">
+                            <form>
+                                <input type="text" onChange={e => handleChange(e)} value={inquiryForm.inquryTit} name="inquryTit" placeholder="제목을 입력하세요." />
+                                <textarea className="my-[1.2rem] p-[1.6rem]" name="inquryCont" onChange={e => handleChange(e)} value={inquiryForm.inquryCont} placeholder="내용을 입력하세요."></textarea>
+
+                                <button 
+                                    disabled={!inquiryForm.inquryTit.trim() || !inquiryForm.inquryCont.trim()}
+                                    className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] block ml-auto disabled:bg-[#c7adff]">등록</button>
+                            </form>
+                        </div>
+                    )}
 
                     <ul className="mt-[2.8rem]">
                         {MOCK_INQUIRIES.length >= 1 ? (

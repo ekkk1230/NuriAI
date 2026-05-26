@@ -51,6 +51,8 @@
 html, body { font-size: 10px; }
 ul, ol { list-style: none; }
 a { text-decoration: none; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: auto; }
 
 .wrap { display: flex; width: 100%; height: 100%; }
 main { width: calc(100%); }
@@ -79,9 +81,12 @@ main { width: calc(100%); }
 
 .icon-box-base svg { @apply w-[3rem] h-[3rem] }
 
+textarea { resize: none; min-height: 12rem;  }
+
 input[type="text"], 
 input[type="password"],
-input[type="search"] {
+input[type="search"],
+textarea {
   @apply w-full h-[4.4rem] px-[1.6rem] text-[1.4rem] border border-solid border-[#e2e8f0] rounded-[0.8rem] bg-white transition-all duration-200;
   @apply focus:outline-none focus:border-[#ad46ff] focus:ring-2 focus:ring-[rgba(173,70,255,0.2)];
   @apply placeholder:text-[#94a3b8];
