@@ -5,16 +5,23 @@ import { usePlanStore } from '@/store/usePlanStore';
 import { IoArrowBackOutline } from "react-icons/io5";
 import { DOMAIN_STYLES } from '@/constance/activityOptions';
 import { useEffect, useState } from 'react';
+import { useUiStore } from '@/store/useUiStore';
+import EditModal from '@/components/Modal/modalContents/EditModal';
 
 function page() {
     const { id: planId } = useParams();
     const { planStorage } = usePlanStore();
+    const { isOpen, openModal } = useUiStore();
     
     const plan = planStorage.find(p => p.id === Number(planId));
 
     const baseBtnClass = "flex items-center text-[1.4rem] font-semibold cursor-pointer rounded-[0.8rem] p-[.8rem] min-w-[12rem] justify-center";
 
     const [ageGroup, setAgeGroup] = useState<string>("");
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [planForm, setPlanForm] = useState({
+
+    })
 
     useEffect(() => {
         if (!plan?.age) return;
@@ -25,6 +32,19 @@ function page() {
             setAgeGroup(group); 
         }
     }, [plan]);
+
+    if (!plan) {
+        return <div className="p-10 text-[1.6rem]">존재하지 않거나 삭제된 계획안입니다.</div>;
+    }
+
+    const handleClickEdit = () => {
+        setIsEditing(true);
+        openModal(
+            "계획안 수정",
+            "CONFIRM",
+            <EditModal plan={plan} />
+        );
+    };
 
     return (
         <>
@@ -43,7 +63,7 @@ function page() {
                             <button className={`${baseBtnClass} bg-blueActive hover:bg-[#1f69ca] text-textLight`}>
                                 내보내기
                             </button>
-                            <button className={`${baseBtnClass} bg-main hover:bg-hoverMain text-textLight`}>
+                            <button onClick={handleClickEdit} className={`${baseBtnClass} bg-main hover:bg-hoverMain text-textLight`}>
                                 활동 수정
                             </button>
                             <button className={`${baseBtnClass} bg-red-600 hover:bg-red-700 text-textLight`}>

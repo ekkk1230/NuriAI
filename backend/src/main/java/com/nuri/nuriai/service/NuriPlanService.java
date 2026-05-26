@@ -125,8 +125,6 @@ public class NuriPlanService {
             for (GeminiPlanResponse.PlanDTO planDto : dto.getPlans()) {
                 NuriActivity activity = new NuriActivity();
 
-                // 필드 매핑 (Entity와 DTO 필드 확인)
-                activity.setId(planDto.getId());
                 activity.setDomain(planDto.getDomain());
                 activity.setGroupType(planDto.getGroupType());
                 activity.setActivity(planDto.getActivityType());
@@ -146,6 +144,7 @@ public class NuriPlanService {
                 plan.addActivity(activity);
             }
         }
+
         nuriPlanRepository.save(plan);
     }
 

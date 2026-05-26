@@ -13,10 +13,11 @@ const SORT_OPTIONS = [
 
 function page() {
     const router = useRouter();
-    const { planStorage } = usePlanStore();
+    const { planStorage, deleteSelectedPlans } = usePlanStore();
     const [searchTit, setSearchTit]  = useState<string>("");
     const [searchAge, setSearchAge] = useState<string>("");
     const [sortType, setSortType] = useState<string>("latest");
+    const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
     const baseAgeSelectBtnClass = "rounded-[60rem] p-[.8rem_1.8rem] text-[1.4rem] font-semibold text-textLight";
 
@@ -62,6 +63,15 @@ function page() {
         return matchesTitle && matchesAge;
     });
 
+    const handleCheckToggle = (id: number) => {
+        setCheckedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id] );
+    };
+
+    const handleRemove = () => {
+        deleteSelectedPlans(checkedIds);
+        setCheckedIds([]);
+    };
+
     return (
         <div className="bg-bgCard flex flex-col h-[100%]">
             <div className="border-b-[.1rem] border-solid border-[#eee] p-[2.6rem]">
@@ -70,7 +80,10 @@ function page() {
             </div>
 
             <div className="border-b-[.1rem] border-solid border-[#eee] p-[1.8rem_2.6rem]">
-                <input type="text" value={searchTit} onChange={e => setSearchTit(e.target.value)} placeholder="주제로 계획안을 검색할 수 있습니다." />
+                <div className="flex gap-[.4rem]">
+                    <input type="text" value={searchTit} onChange={e => setSearchTit(e.target.value)} placeholder="주제로 계획안을 검색할 수 있습니다." />
+                    {checkedIds.length >= 1 && <button onClick={handleRemove} className="rounded-[.8rem] w-[15rem] text-center p-[1rem_1.6rem] bg-red-600 text-textLight hover:bg-red-700 whitespace-nowrap text-[1.4rem]">선택 삭제 ({checkedIds.length}개)</button>}
+                </div>
 
                 <div className="flex justify-between items-center mt-[1.2rem]">
                     <ul className="space-x-[.6rem] flex">
@@ -88,7 +101,7 @@ function page() {
                     <>
                         <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
                         <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
-                            {displayedPlans.map((plan) => (<PlanItem plan={plan} key={plan.id} onClick={() => router.push(`/storage/${plan.id}`)} />))}
+                            {displayedPlans.map((plan) => (<PlanItem plan={plan} key={plan.id} checkHandle={handleCheckToggle} onClick={() => router.push(`/storage/${plan.id}`)} />))}
                         </div>
                     </>
                 ) : (

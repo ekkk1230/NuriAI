@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter @Setter @ToString
@@ -12,6 +14,8 @@ public class GeminiPlanResponse {
     private String mainTheme;
     private String curriculum;
     private List<PlanDTO> plans;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
     @Getter @Setter @ToString
     public static class PlanDTO {
