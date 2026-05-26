@@ -1,62 +1,24 @@
-'use client';
+"use client";
 
-import { ChangeEvent, useState } from "react";
-import { usePlanStore } from "../store/usePlanStore";
-import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp  } from "react-icons/md";
-
-export const MOCK_INQUIRIES: any[] = [
-    {
-        id: 2,
-        title: "AI 계획안 생성 시 누리과정 특정 영역 제외 가능 여부",
-        inquiryContent: "안녕하세요! nuriAI 서비스로 '봄의 곤충' 대주제 계획안을 추출하고 있는데요. 이번 주차에는 '예술경험' 영역을 제외하고 '의사소통'과 '자연탐구' 2개 영역 위주로만 AI 학습 모델을 정렬하여 계획안을 생성하고 싶습니다. 특정 누리과정 영역을 선택 해제하는 필터 기능이 지원되는지 문의드립니다.",
-        status: "PENDING",
-        createdAt: "2026-05-23"
-    },
-    {
-        id: 1,
-        title: "생성된 교수학습 계획안의 연령 기준 변경 안내 요청",
-        inquiryContent: "AI가 생성해 준 계획안 퀄리티가 너무 좋아서 만족하며 사용 중입니다! 한 가지 궁금한 점이 있는데, '만 5세' 유아 대상 계획안으로 잘못 선택해서 생성을 완료했습니다. 이미 완성된 계획안의 연령 설정을 '만 3세'로 변경하여 AI 발문이나 기대 효과를 재추출하는 기능이 있을까요? 아니면 새로 생성권을 차감해야 하는지 답변 부탁드립니다.",
-        status: "ANSWERED", 
-
-        createdAt: "2026-05-20",
-        answer: {
-            answerContent: "안녕하세요, 선생님! nuriAI 교수학습 서비스를 이용해 주시고 긍정적인 피드백을 남겨주셔서 진심으로 감사드립니다. 문의하신 '연령 설정 변경 및 재추출'의 경우, 현재 시스템 구조상 이미 생성이 완료된 계획안의 연령을 마이페이지에서 직접 변경하는 것은 어렵습니다. 유아 연령별 발문(교사 대사) 및 누리과정 연계 성취 기준 데이터가 다르게 파싱되기 때문인데요. 번거로우시겠지만 새로운 연령으로 '재생성'을 진행해 주셔야 하며, 잘못 생성된 계획안의 생성권 복구 조치를 위해 가입하신 계정 정보와 함께 고객센터로 메일 주시면 신속히 처리해 드리겠습니다. 감사합니다!",
-            answeredAt: "2026-05-21"
-        }
-    }
-];
+import { MdOutlineKeyboardArrowUp  } from "react-icons/md";
+import { useMypage } from "../hook/useMypage";
+import { IoCloseCircle } from "react-icons/io5";
+import { formatDate } from "../util/format";
 
 function page() {
-    const { planStorage } = usePlanStore();
-    const [answerOpen, setAnswerOpen] = useState<Record<number, boolean>>({});
-    const [writeInQuiry, setWriteInquiry] = useState<boolean>(false);
-    const [inquiryForm, setInquiryForm] = useState({
-        inquryTit: "",
-        inquryCont: "",
-    });
-    
+    const { 
+        planStorage, 
+        inquries, inquiryForm, 
+        answerOpen, toggleAnswer,
+        writeInQuiry, handleWrite,
+        handleChange, onSubmitInquiry, handleDelete, 
+        editingId, setEditingId, onClickEdit, handleUpdate
+    } = useMypage();
+
     const useItemBoxClass = "rounded-[.8rem] p-[1.6rem_1rem] flex-1 text-center";
     const statusClass = "rounded-[60rem] p-[.8rem_1.2rem]";
     const isActiveStatus = "bg-[#eeffe6] text-[#309e8c]";
     const noActiveStatus = "bg-[#fffbf3] text-[#e28c0c]";
-
-    const toggleAnswer = (id: number) => {
-        setAnswerOpen((prev) => ({
-            ...prev,
-            [id]: !prev[id]
-        }));
-    };
-
-    const handleWrite = () => setWriteInquiry(true);
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-
-        setInquiryForm(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
 
     return (
         <div className="bg-bgCard flex flex-col h-[100%]">
@@ -91,28 +53,29 @@ function page() {
                     <button onClick={handleWrite} className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] absolute right-[2rem] top-[2rem]">문의하기</button>
 
                     {writeInQuiry && (
-                        <div className="bg-[#efefef] rounded-[.8rem] p-[2.4rem_1.6rem] my-[2rem]">
-                            <form>
-                                <input type="text" onChange={e => handleChange(e)} value={inquiryForm.inquryTit} name="inquryTit" placeholder="제목을 입력하세요." />
-                                <textarea className="my-[1.2rem] p-[1.6rem]" name="inquryCont" onChange={e => handleChange(e)} value={inquiryForm.inquryCont} placeholder="내용을 입력하세요."></textarea>
+                        <div className="bg-[#efefef] rounded-[.8rem] p-[5.2rem_1.6rem_2rem] my-[2rem] relative">
+                            <button type="button" className="absolute right-[1rem] top-[1rem] text-[3.2rem]" onClick={handleWrite}><IoCloseCircle /></button>
+                            <form onSubmit={onSubmitInquiry}>
+                                <input type="text" onChange={handleChange} value={inquiryForm.title} name="title" placeholder="제목을 입력하세요." />
+                                <textarea className="my-[1.2rem] p-[1.6rem]" name="inquiryContent" onChange={handleChange} value={inquiryForm.inquiryContent} placeholder="내용을 입력하세요."></textarea>
 
                                 <button 
-                                    disabled={!inquiryForm.inquryTit.trim() || !inquiryForm.inquryCont.trim()}
+                                    disabled={!inquiryForm.title.trim() || !inquiryForm.inquiryContent.trim()}
                                     className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] block ml-auto disabled:bg-[#c7adff]">등록</button>
                             </form>
                         </div>
                     )}
 
                     <ul className="mt-[2.8rem]">
-                        {MOCK_INQUIRIES.length >= 1 ? (
-                            MOCK_INQUIRIES.map(item => (
+                        {inquries.length >= 1 ? (
+                            inquries.map(item => (
                                 <li key={item.id} className="border-b border-solid border-[#eee] last:border-b-0 py-[1rem]">
                                     <button 
                                         onClick={() => toggleAnswer(item.id)} 
                                         className="flex items-center text-[1.4rem] w-full gap-[1rem]"
                                     >
                                         <p className="mr-auto font-semibold">{item.title}</p>
-                                        <p className="text-textMuted">{item.createdAt}</p>
+                                        <p className="text-textMuted">{formatDate(item.createdAt)}</p>
                                         <p className={`${statusClass} ${item.status === "ANSWERED" ? isActiveStatus : noActiveStatus}`}>
                                             {item.status === "ANSWERED" ? "답변완료" : "답변대기"}
                                         </p>
@@ -123,20 +86,78 @@ function page() {
                                     
                                     {answerOpen[item.id] && (
                                         <>
-                                             <div className="rounded-[.8rem] my-[1rem] bg-[#f7f7f7] p-[1rem] text-[1.2rem]">
-                                                <p className="font-semibold text-[#333] mb-[.6rem]">문의 내용</p>
-                                                <div className="">{item.inquiryContent}</div>
-                                            </div>
+                                            {answerOpen[item.id] && (
+                                            <>
+                                                {editingId === item.id ? (
+                                                    <form onSubmit={handleUpdate} className="bg-[#efefef] rounded-[.8rem] p-[1.6rem_1rem] my-[1rem]">
+                                                        <input 
+                                                            type="text" 
+                                                            name="title" 
+                                                            value={inquiryForm.title} 
+                                                            onChange={handleChange} 
+                                                            className="w-full p-[.8rem] rounded-[.4rem] mb-[1rem] border"
+                                                            placeholder="수정할 제목"
+                                                        />
+                                                        <textarea 
+                                                            name="inquiryContent" 
+                                                            value={inquiryForm.inquiryContent} 
+                                                            onChange={handleChange} 
+                                                            className="w-full p-[1rem] rounded-[.4rem] h-[10rem] border"
+                                                            placeholder="수정할 내용"
+                                                        />
+                                                        <div className="flex justify-end gap-[.8rem] mt-[1rem]">
+                                                            <button 
+                                                                type="button" 
+                                                                onClick={() => setEditingId(null)}
+                                                                className="text-[1.2rem] text-textMuted px-[1rem] py-[.6rem]"
+                                                            >
+                                                                취소
+                                                            </button>
+                                                            <button 
+                                                                type="submit" 
+                                                                className="bg-main text-textLight text-[1.2rem] p-[.6rem_1rem] rounded-[.8rem]"
+                                                            >
+                                                                저장
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                ) : (
+                                                    <>
+                                                        <div className="rounded-[.8rem] my-[1rem] bg-[#f7f7f7] p-[1.6rem_1rem_1rem_1rem] text-[1.2rem] relative">
+                                                            <div className="flex justify-between items-center mb-[.6rem]">
+                                                                <p className="font-semibold text-[#333]">문의 내용</p>
+                                                                
+                                                                {item.status === "PENDING" && (
+                                                                    <div className="flex gap-[.8rem] text-[1.1rem] text-textMuted font-medium">
+                                                                        <button 
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                onClickEdit(item);
+                                                                            }} 
+                                                                            className="hover:text-main transition-colors"
+                                                                        >
+                                                                            수정
+                                                                        </button>
+                                                                        <span className="text-[#ddd]">|</span>
+                                                                        <button onClick={(e) => { e.stopPropagation(); /* 삭제로직 */ }} className="hover:text-red-500 transition-colors">삭제</button>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-textDark leading-relaxed">{item.inquiryContent}</div>
+                                                        </div>
 
-                                            
-                                            {item.answer ? (
-                                                <div className="bg-[#ecdbff] text-textMuted p-[1rem] text-[1.2rem] rounded-[.8rem]">
-                                                    <p className="text-main font-semibold">답변</p>
-                                                    <div>{item.answer.answerContent}</div>
-                                                </div>
-                                            ) : (
-                                                <div className="bg-[#fffbf3] text-[#e28c0c] p-[1rem] text-[1.2rem] rounded-[.8rem]">답변을 준비중 입니다. 잠시만 기다려 주세요.</div>
-                                            )}
+                                                        {item.answer ? (
+                                                            <div className="bg-[#ecdbff] text-textMuted p-[1rem] text-[1.2rem] rounded-[.8rem]">
+                                                                <p className="text-main font-semibold">답변</p>
+                                                                <div>{item.answer.answerContent}</div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="bg-[#fffbf3] text-[#e28c0c] p-[1rem] text-[1.2rem] rounded-[.8rem]">답변을 준비중 입니다. 잠시만 기다려 주세요.</div>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
                                         </>
                                     )}
                                 </li>
