@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { usePlanStore } from '@/store/usePlanStore'; 
 import { IoArrowBackOutline } from "react-icons/io5";
-import { DOMAIN_STYLES } from '@/constance/activityOptions';
+import { DOMAIN_STYLES } from '@/constants/activityOptions';
 import { useEffect, useState } from 'react';
 import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
@@ -11,17 +11,13 @@ import EditModal from '@/components/Modal/modalContents/EditModal';
 function page() {
     const { id: planId } = useParams();
     const { planStorage } = usePlanStore();
-    const { isOpen, openModal } = useUiStore();
+    const { openModal } = useUiStore();
     
     const plan = planStorage.find(p => p.id === Number(planId));
 
     const baseBtnClass = "flex items-center text-[1.4rem] font-semibold cursor-pointer rounded-[0.8rem] p-[.8rem] min-w-[12rem] justify-center";
 
     const [ageGroup, setAgeGroup] = useState<string>("");
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [planForm, setPlanForm] = useState({
-
-    })
 
     useEffect(() => {
         if (!plan?.age) return;
@@ -38,7 +34,6 @@ function page() {
     }
 
     const handleClickEdit = () => {
-        setIsEditing(true);
         openModal(
             "계획안 수정",
             "CONFIRM",

@@ -10,17 +10,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	const pathname = usePathname() || "";
 
 	const isDetailPage = pathname.startsWith('/storage');
-	const isLoginPage = pathname.startsWith('/login');
-	const isJoinPage = pathname.startsWith('/join');
+	const isWelcomePage = pathname.startsWith('/welcome');
  	const { isOpen } = useUiStore();
 
   return (
     <html>
       	<body>
 			{isOpen && <ModalLayout />}
-			
+
 			<div className="wrap">
-				{!isDetailPage && !isLoginPage && !isJoinPage && <Nav />}
+				{!isDetailPage && !isWelcomePage && <Nav />}
 				<main>
 					{children}
 				</main>

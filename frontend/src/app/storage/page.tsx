@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePlanStore } from "@/store/usePlanStore"; 
-import { AGE_OPTIONS } from "@/constance/activityOptions"; 
+import { AGE_OPTIONS } from "@/constants/activityOptions"; 
 import PlanItem from "@/components/Planner/PlanItem";
 
 const SORT_OPTIONS = [

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { DOMAIN_STYLES, TYPE_STYLES, KEYWORD_STYLES } from "@/constance/activityOptions"
+import { DOMAIN_STYLES, TYPE_STYLES, KEYWORD_STYLES } from "@/constants/activityOptions"
 
 interface PlanItemProps {
     plan: any;
