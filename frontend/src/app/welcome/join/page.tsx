@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { AGE_OPTIONS } from "@/constants/activityOptions"
 import Link from "next/link"
 import { useForm } from "@/hook/useForm";
+import { UserRegisterForm } from "@/type/User";
+import { useWelcomeStore } from "@/store/useWelcomeStore";
+import { useUiStore } from "@/store/useUiStore";
+import TextModal from "@/components/Modal/modalContents/TextModal";
+import { useRef } from "react";
+import DuplicateModal from "@/components/Modal/modalContents/DuplicateModal";
 
-const initialUserValues: User = {
+const initialUserValues: UserRegisterForm = {
     userId: "",
     userNickname: "",
     userPwd: "",
@@ -14,7 +19,69 @@ const initialUserValues: User = {
 };
 
 function page() {
-    const { form: userForm, setForm, handleChange, resetForm } = useForm<User>(initialUserValues);
+    const { openModal, closeModal } = useUiStore();
+    const { joinUser, confirmData } = useWelcomeStore();
+    const { form: userForm, setForm, handleChange, resetForm } = useForm<UserRegisterForm>(initialUserValues);
+
+    const userIdRef = useRef<HTMLInputElement>(null);
+    const userNicknameRef = useRef<HTMLInputElement>(null);
+    const confirmPwdRef = useRef<HTMLInputElement>(null);
+
+    const handleJoin = () => {
+        if (userForm.userPwd !== userForm.userConfirmPwd) {
+            openModal(
+                "비밀번호 오류",
+                "CHECK",
+                <TextModal 
+                    txt={"비밀번호를 잘못 입력했습니다."} 
+                    onConfirm={() => {
+                        closeModal();
+                        confirmPwdRef.current?.focus();
+                    }} 
+                />
+            )
+            return;
+        };
+        
+        const { userConfirmPwd, ...serverData } = userForm;
+        joinUser(serverData);
+    };
+
+    const handleDuplication = (type: "userId" | "userNickname") => {
+        const tgText = type === "userId" ? "아이디" : "닉네임"
+        const ref = type === "userId" ? userIdRef : userNicknameRef;
+        const value = userForm[type];
+
+        if (!value.trim()) {
+            openModal(
+                "오류",
+                "CHECK",
+                <TextModal 
+                    txt={`${tgText}을(를) 입력해주세요.`}
+                    onConfirm={() => {
+                        closeModal();
+                        ref.current?.focus();
+                    }} 
+                />
+            )
+        };
+
+        try {
+            const result = confirmData(type, value);
+
+            openModal(
+                `${tgText} 확인 결과`,
+                "CHECK",
+                <DuplicateModal
+                    typeText={tgText}
+                    value={value}
+                    isDuplicated
+                />
+            )
+        } catch (err) {
+            
+        }
+    };
 
     return (
         <form>
@@ -22,12 +89,18 @@ function page() {
 
             <label className="block">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">아이디</p>
-                <input type="text" onChange={handleChange} value={userForm.userId} name="userId" />
+                <div className="flex gap-[.8rem]">
+                    <input type="text" ref={userIdRef} onChange={handleChange} value={userForm.userId} name="userId" />
+                    <button type="button" onClick={() => handleDuplication("userId")} className="rounded-[.8rem] p-[1rem_1.4rem] bg-[#f7ecfe] text-main font-semibold text-[1.4rem] whitespace-nowrap">중복확인</button>
+                </div>
             </label>
 
-            <label className="block">
+            <label className="block mt-[2rem]">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">닉네임</p>
-                <input type="text" onChange={handleChange} value={userForm.userNickname} name="userNickname" />
+                <div className="flex gap-[.8rem]">
+                    <input type="text" ref={userNicknameRef} onChange={handleChange} value={userForm.userNickname} name="userNickname" />
+                    <button type="button" onClick={() => handleDuplication("userNickname")} className="rounded-[.8rem] p-[1rem_1.4rem] bg-[#f7ecfe] text-main font-semibold text-[1.4rem] whitespace-nowrap">중복확인</button>
+                </div>
             </label>
 
             <label className="block mt-[2rem]">
@@ -37,7 +110,7 @@ function page() {
 
             <label className="block mt-[2rem]">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">비밀번호 확인</p>
-                <input type="password" onChange={handleChange} value={userForm.userConfirmPwd} name="userConfirmPwd" />
+                <input type="password" ref={confirmPwdRef} onChange={handleChange} value={userForm.userConfirmPwd} name="userConfirmPwd" />
             </label>
 
             <div className="block mt-[2rem]">
@@ -58,8 +131,8 @@ function page() {
             </div>
 
             <div className="my-[2rem] flex gap-[1rem]">
-                <button onClick={resetForm} className="bg-[#777] rounded-[.8rem] p-[1rem] w-full block text-textLight font-semibold text-[1.8rem]">취소</button>
-                <button className="bg-blueActive rounded-[.8rem] p-[1rem] w-full block text-textLight font-semibold text-[1.8rem]">회원가입</button>
+                <button type="button" onClick={resetForm} className="bg-[#777] rounded-[.8rem] p-[1rem] w-full block text-textLight font-semibold text-[1.8rem]">취소</button>
+                <button type="button" onClick={handleJoin} className="bg-blueActive rounded-[.8rem] p-[1rem] w-full block text-textLight font-semibold text-[1.8rem]">회원가입</button>
             </div>
 
             <p className="text-[1.6rem] text-textMuted mt-[1rem] text-center">이미 계정이 있으신가요? <Link href="/welcome/login" className="font-semibold !text-main">로그인</Link></p>
