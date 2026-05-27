@@ -2,12 +2,16 @@
 
 import { useForm } from "@/hook/useForm";
 import DynamicInput from "./DynamicInput";
-import { Activity, ChangeEvent } from "react";
+import ModalFooter from "../ModalFooter";
+import { useUiStore } from "@/store/useUiStore";
+import { usePlanStore } from "@/store/usePlanStore";
 
 function EditModal({ plan }: { plan: Plan }) {
-    const { form: planForm, handleChange, setForm } = useForm<Plan>(plan);
+    const { form: planForm, handleChange, setForm, handleActiveChange } = useForm<Plan>(plan);
+    const { closeModal } = useUiStore();
+    const { updatePlan } = usePlanStore();
 
-    const handleAddItem = (activityIdx: number, field: "objectives") => {
+    const handleAddItem = (activityIdx: number, field: "objectives" | "relatedCurriculum" | "materials" | "precautions") => {
         setForm(prev => {
             const updatedPlans = [...prev.plans];
 
@@ -23,19 +27,19 @@ function EditModal({ plan }: { plan: Plan }) {
         });
     };
 
-    const handleDeleteItem = (activityIdx: number, field: "objectives", itemIdx: number) => {
+    const handleDeleteItem = (activityIdx: number, field: "objectives" | "relatedCurriculum" | "materials" | "precautions", itemIdx: number) => {
         setForm(prev => {
             const updatedPlans = [...prev.plans];
             const currentArray = updatedPlans[activityIdx][field] || [];
             updatedPlans[activityIdx] = {
                 ...updatedPlans[activityIdx],
-                [field]: currentArray.filter((_: any, idx: number) => idx !== itemIdx)
+                [field]: currentArray.filter((_item: any, idx: number) => idx !== itemIdx)
             };
             return { ...prev, plans: updatedPlans };
         });
     };
 
-    const handleUpdateItem = (activityIdx: number, field: "objectives", itemIdx: number, value: any) => {
+    const handleUpdateItem = (activityIdx: number, field: "objectives" | "relatedCurriculum" | "materials" | "precautions", itemIdx: number, value: any) => {
         setForm(prev => {
             const updatedPlans = [...prev.plans];
             const updatedArray = [...updatedPlans[activityIdx][field]];
@@ -49,7 +53,13 @@ function EditModal({ plan }: { plan: Plan }) {
 
             return { ...prev, plans: updatedPlans };
         })
-    }
+    };
+
+    const handleSave = () => { 
+        // console.log(planForm) 
+        updatePlan(planForm);
+        closeModal();
+    };
 
     return (
         <div className="p-[1.6rem] max-h-[75vh] overflow-y-auto text-[1.4rem] w-[80rem]">
@@ -75,15 +85,18 @@ function EditModal({ plan }: { plan: Plan }) {
                             {activity.domain} 영역 설정
                         </div>
 
-                        <form className="space-y-[2rem]">
+                        <div className="space-y-[2rem]">
                             <label className="block">
                                 <p className="text-[1.6rem] mb-[1rem] font-semibold">활동명</p>
-                                <input type="text" value={activity.activityName} />
+                                <input type="text" value={activity.activityName} name="activityName" onChange={(e) => handleActiveChange(activityIdx, e)} />
                             </label>
 
                             <label className="block">
                                 <p className="text-[1.6rem] mb-[1rem] font-semibold">활동 목표</p>
-                                <DynamicInput arr={activity.objectives} inputName="object" />
+                                <DynamicInput arr={activity.objectives} inputName="object"
+                                    onAddItem={() => handleAddItem(activityIdx, "objectives")}
+                                    onDeleteItem={(idx) => handleDeleteItem(activityIdx, "objectives", idx)}
+                                    onUpdateItem={(idx, value) => handleUpdateItem(activityIdx, "objectives", idx, value)} />
                                 {/* {activity.objectives.map((item, idx) => (
                                     <>
                                     <div className="flex gap-[.8rem]">
@@ -97,12 +110,18 @@ function EditModal({ plan }: { plan: Plan }) {
 
                             <label className="block">
                                 <p className="text-[1.6rem] mb-[1rem] font-semibold">교육과정</p>
-                                <DynamicInput arr={activity.relatedCurriculum} inputName="curriculum" />
+                                <DynamicInput arr={activity.relatedCurriculum} inputName="curriculum"
+                                    onAddItem={() => handleAddItem(activityIdx, "relatedCurriculum")}
+                                    onDeleteItem={(idx) => handleDeleteItem(activityIdx, "relatedCurriculum", idx)}
+                                    onUpdateItem={(idx, value) => handleUpdateItem(activityIdx, "relatedCurriculum", idx, value)} />
                             </label>
 
                             <label className="block">
                                 <p className="text-[1.6rem] mb-[1rem] font-semibold">준비물</p>
-                                <DynamicInput arr={activity.materials} inputName="material" />
+                                <DynamicInput arr={activity.materials} inputName="material"
+                                    onAddItem={() => handleAddItem(activityIdx, "materials")}
+                                    onDeleteItem={(idx) => handleDeleteItem(activityIdx, "materials", idx)}
+                                    onUpdateItem={(idx, value) => handleUpdateItem(activityIdx, "materials", idx, value)} />
                             </label>
 
                             <label className="block">
@@ -112,21 +131,26 @@ function EditModal({ plan }: { plan: Plan }) {
                                     { key: 'development' as const, label: '2. 전개', color: 'text-main' },
                                     { key: 'conclusion' as const, label: '3. 마무리', color: 'text-[#e67d0c]' }
                                 ].map(step => (
-                                    <label key={step.key} className="last:mt-0 mt-[1.2rem] block">
+                                    <div key={step.key} className="last:mt-0 mt-[1.2rem]">
                                         <p className={`${step.color} text-[1.4rem] font-semibold mb-[1.2rem]`}>{step.label}</p>
-                                        <textarea className="p-[1rem]" name="content" value={activity.content[step.key] || ""} />
-                                    </label>
+                                        <textarea className="p-[1rem]" name="content" data-step={step.key} onChange={(e) => handleActiveChange(activityIdx, e)} value={activity.content[step.key] || ""} />
+                                    </div>
                                 ))}
                             </label>
 
                             <label className="block">
                                 <p className="text-[1.6rem] mb-[1rem] font-semibold">유의점</p>
-                                <DynamicInput arr={activity.precautions} inputName="pricuation" />
+                                <DynamicInput arr={activity.precautions} inputName="pricuation"
+                                    onAddItem={() => handleAddItem(activityIdx, "precautions")}
+                                    onDeleteItem={(idx) => handleDeleteItem(activityIdx, "precautions", idx)}
+                                    onUpdateItem={(idx, value) => handleUpdateItem(activityIdx, "precautions", idx, value)} />
                             </label>
-                        </form>
+                        </div>
                     </div>
                 ))}
             </form>
+                                    
+            <ModalFooter confirmTxt={"저장"} onConfirm={handleSave} />
         </div>
     );
 }
