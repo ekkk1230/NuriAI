@@ -9,11 +9,17 @@ import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
 
 function page() {
-    const { id: planId } = useParams();
-    const { planStorage } = usePlanStore();
+    const { id } = useParams();
+    const { planStorage, fetchPlanById } = usePlanStore();
     const { openModal } = useUiStore();
+
+    console.log(id)
+
+    useEffect(() => {
+        fetchPlanById(Number(id));
+    }, [])
     
-    const plan = planStorage.find(p => p.id === Number(planId));
+    const plan = planStorage.find(p => p.id === Number(id));
 
     const baseBtnClass = "flex items-center text-[1.4rem] font-semibold cursor-pointer rounded-[0.8rem] p-[.8rem] min-w-[12rem] justify-center";
 
@@ -74,7 +80,9 @@ function page() {
                         <p className="text-textLight text-[2rem] mb-[1.2rem]">👶 {plan?.age}</p>
                         <ul className="flex gap-[1rem]">
                             {plan?.plans.map((item: any, idx: number) => {
-                                const domainStyle = DOMAIN_STYLES[item.domain];
+                                const domainStyle = DOMAIN_STYLES[item.domain.split(' ')[0]];
+                                console.log(DOMAIN_STYLES)
+                                console.log(item.domain)
 
                                 return  <li key={`${item}-${idx}`} className={`${domainStyle} p-[.8rem_1.2rem] rounded-[60rem] font-semibold text-[1.2rem]`}>{item.domain}</li>
                             })}

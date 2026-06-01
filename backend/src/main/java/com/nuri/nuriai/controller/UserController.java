@@ -20,10 +20,6 @@ public class UserController {
     public UserDto.UserResponse loginUser(@RequestBody java.util.Map<String, String> map) {
         String userId = map.get("userId");
         String userPwd = map.get("userPwd");
-
-        System.out.println("🔥 Map으로 가로챈 ID: " + userId);
-        System.out.println("🔥 Map으로 가로챈 PWD: " + userPwd);
-
         return userService.loginUser(userId, userPwd);
     }
 

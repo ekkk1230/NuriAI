@@ -55,6 +55,16 @@ public class PlanController {
 //        return ResponseEntity.ok("테스트 성공: [" + theme + "] 계획안이 DB에 저장되었습니다.");
 //    }
 
+    @GetMapping
+    public List<PlanDto.GeminiResponse> getAll() {
+        return planService.getAll();
+    }
+
+    @GetMapping("/storage/{id}")
+    public PlanDto.GeminiResponse getOne(@PathVariable("id") Long id) {
+        return planService.getOne(id);
+    }
+
     @PostMapping("/generate")
     public ResponseEntity<PlanDto.GeminiResponse> generatePlan(@RequestBody PlanRequest request) {
         // 1. AI 호출 (수정된 파라미터 전달)
@@ -67,9 +77,9 @@ public class PlanController {
 
         // 2. 파싱 및 저장
         PlanDto.GeminiResponse responseDto = planService.parseGeminiResponse(rawResponse);
-        planService.savePlan(responseDto);
+        PlanDto.GeminiResponse savedDto = planService.savePlan(responseDto);
 
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.ok(savedDto);
     }
 
     @GetMapping("/all")

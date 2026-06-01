@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,6 +35,18 @@ public class PlanService {
     private String apiKey;
 
     private final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=";
+
+    public List<PlanDto.GeminiResponse> getAll() {
+        return planRepository.findAll().stream()
+                .map(plan -> {
+                    return new PlanDto.GeminiResponse(plan);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public PlanDto.GeminiResponse getOne(Long id) {
+        return planRepository.findById(id).map(PlanDto.GeminiResponse::new).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다. " + id));
+    }
 
     public String askGemini(String theme, int age, List<String> selections, String groupType) {
         // 1. 연령 및 과정 설정
@@ -122,7 +135,7 @@ public class PlanService {
     }
 
     @Transactional
-    public void savePlan(PlanDto.GeminiResponse dto) {
+    public PlanDto.GeminiResponse savePlan(PlanDto.GeminiResponse dto) {
         String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
         String authorNickname = userRepository.findByUserId(currentUserId).map(User::getUserNickname).orElse("알 수 없는 사용자" + currentUserId);
 
@@ -158,7 +171,12 @@ public class PlanService {
             }
         }
 
-        planRepository.save(plan);
+        log.info("저장 직전 활동 리스트: {}", plan.getActivities());
+        plan.getActivities().forEach(a -> {
+            log.info("활동명: {}, 계획안 연결 여부: {}", a.getActivityName(), a.getPlan() != null);
+        });
+        Plan savedPlan = planRepository.save(plan);
+        return new PlanDto.GeminiResponse(savedPlan);
     }
 
     public List<Plan> getAllPlans() {

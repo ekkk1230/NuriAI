@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { usePlanStore } from "@/store/usePlanStore"; 
 import { AGE_OPTIONS } from "@/constants/activityOptions"; 
@@ -13,11 +13,18 @@ const SORT_OPTIONS = [
 
 function page() {
     const router = useRouter();
-    const { planStorage, deleteSelectedPlans } = usePlanStore();
+    const { planStorage, isLoaded, deleteSelectedPlans, fetchAllPlans } = usePlanStore();
     const [searchTit, setSearchTit]  = useState<string>("");
     const [searchAge, setSearchAge] = useState<string>("");
     const [sortType, setSortType] = useState<string>("latest");
     const [checkedIds, setCheckedIds] = useState<number[]>([]);
+
+    useEffect(() => {
+        fetchAllPlans();
+    }, [fetchAllPlans]);
+
+    if (!isLoaded) return <div className="p-10">로딩 중...</div>;
+    
 
     const baseAgeSelectBtnClass = "rounded-[60rem] p-[.8rem_1.8rem] text-[1.4rem] font-semibold text-textLight";
 
@@ -101,7 +108,20 @@ function page() {
                     <>
                         <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
                         <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
-                            {displayedPlans.map((plan) => (<PlanItem plan={plan} key={plan.id} checkHandle={handleCheckToggle} onClick={() => router.push(`/storage/${plan.id}`)} />))}
+                            {displayedPlans.map((plan) => {
+                                console.log("렌더링되는 플랜 ID:", plan); 
+                                
+                                if (!plan || !plan.id) return null;
+
+                                return (
+                                    <PlanItem 
+                                        plan={plan} 
+                                        key={plan.id} 
+                                        checkHandle={handleCheckToggle} 
+                                        onClick={() => router.push(`/storage/${plan.id}`)} 
+                                    />
+                                );
+                            })}
                         </div>
                     </>
                 ) : (
