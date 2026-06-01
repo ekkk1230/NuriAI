@@ -9,6 +9,7 @@ import { useUiStore } from "@/store/useUiStore";
 import TextModal from "@/components/Modal/modalContents/TextModal";
 import { useRef } from "react";
 import DuplicateModal from "@/components/Modal/modalContents/DuplicateModal";
+import { useRouter } from "next/navigation";
 
 const initialUserValues: UserRegisterForm = {
     userId: "",
@@ -19,6 +20,7 @@ const initialUserValues: UserRegisterForm = {
 };
 
 function page() {
+    const router = useRouter();
     const { openModal, closeModal } = useUiStore();
     const { joinUser, confirmData } = useWelcomeStore();
     const { form: userForm, setForm, handleChange, resetForm } = useForm<UserRegisterForm>(initialUserValues);
@@ -27,7 +29,7 @@ function page() {
     const userNicknameRef = useRef<HTMLInputElement>(null);
     const confirmPwdRef = useRef<HTMLInputElement>(null);
 
-    const handleJoin = () => {
+    const handleJoin = async () => {
         if (userForm.userPwd !== userForm.userConfirmPwd) {
             openModal(
                 "비밀번호 오류",
@@ -44,10 +46,28 @@ function page() {
         };
         
         const { userConfirmPwd, ...serverData } = userForm;
-        joinUser(serverData);
+
+        try {
+            await joinUser(serverData);
+
+            openModal(
+                "가입완료",
+                "CONFIRM",
+                <TextModal 
+                    txt={"회원가입이 정상적으로 완료되었습니다!"} 
+                    onConfirm={() => {
+                        closeModal();
+                        router.push("/welcome/login"); 
+                    }} 
+                />
+            )
+        } catch (err) {
+            openModal("오류", "CHECK", <TextModal txt={"회원가입 처리 중 오류가 발생했습니다."} />);
+        }
+
     };
 
-    const handleDuplication = (type: "userId" | "userNickname") => {
+    const handleDuplication = async(type: "userId" | "userNickname") => {
         const tgText = type === "userId" ? "아이디" : "닉네임"
         const ref = type === "userId" ? userIdRef : userNicknameRef;
         const value = userForm[type];
@@ -67,19 +87,19 @@ function page() {
         };
 
         try {
-            const result = confirmData(type, value);
+            const result = await confirmData(type, value);
 
             openModal(
                 `${tgText} 확인 결과`,
                 "CHECK",
                 <DuplicateModal
-                    typeText={tgText}
-                    value={value}
-                    isDuplicated
+                    typeText={result.typeText}
+                    value={result.value}
+                    isDuplicated={result.isDuplicated}
                 />
             )
         } catch (err) {
-            
+            openModal("오류", "CONFIRM", <TextModal txt={"중복 확인 중 오류가 발생했습니다"} />);
         }
     };
 

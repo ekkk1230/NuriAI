@@ -1,4 +1,3 @@
-// hook/useForm.ts
 import { ChangeEvent, useState } from "react";
 
 export const useForm = <T>(initialState: T) => {

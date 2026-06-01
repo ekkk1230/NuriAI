@@ -10,12 +10,12 @@ export interface UserRegisterForm extends User {
 }
 
 export interface LoginUserForm {
-    userId: string,
-    userPwd: string,
+    userId: string;
+    userPwd: string;
 }
 
 export interface ConfirmResult {
-    typeText: string,
-    value: string,
-    isDuplicated: boolean,
+    typeText: string;
+    value: string;
+    isDuplicated: boolean;
 }
