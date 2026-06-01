@@ -1,6 +1,8 @@
 "use client";
 
+import TextModal from "@/components/Modal/modalContents/TextModal";
 import { useForm } from "@/hook/useForm";
+import { useUiStore } from "@/store/useUiStore";
 import { useWelcomeStore } from "@/store/useWelcomeStore";
 import { LoginUserForm } from "@/type/User";
 import Link from "next/link"
@@ -14,6 +16,7 @@ const initialLoginValue: LoginUserForm = {
 function page() {
     const router = useRouter();
     const { loginUser } = useWelcomeStore();
+    const { openModal } = useUiStore();
     const { form: loginForm, handleChange } = useForm<LoginUserForm>(initialLoginValue);
 
 
@@ -25,12 +28,16 @@ function page() {
 
         try {
             await loginUser(user);
-
             router.push("/");
         } catch (err) {
-
+            openModal(
+                "로그인 실패",
+                "CHECK",
+                <TextModal txt="아이디 또는 비밀번호를 확인해주세요" />
+            )
+            console.error(err);
         }
-    }
+    };
 
     return (
         <form>

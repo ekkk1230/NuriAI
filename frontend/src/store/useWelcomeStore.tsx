@@ -21,12 +21,13 @@ export const useWelcomeStore = create<WelcomeStore>((set) => ({
                 body: JSON.stringify(user),
             });
 
-            if (!response.ok) throw new Error("존재하지 않는 회원정보 입니다.");
+            // if (!response.ok) throw new Error("존재하지 않는 회원정보 입니다.");
             const loginUser = await response.json();
 
             set({ user: loginUser });
         } catch (err) {
-            console.error(`loginUser 실패: ${err}`);
+            // console.error(`loginUser 실패: ${err}`);
+            throw err;
         };
     },
     logoutUser: () => set({ user: null }),

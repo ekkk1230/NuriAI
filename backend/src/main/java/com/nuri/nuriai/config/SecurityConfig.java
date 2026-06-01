@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
-        System.out.println("보안 설정이 적용되었습니다!");
+//        System.out.println("보안 설정이 적용되었습니다");
 
         return http.build();
     }

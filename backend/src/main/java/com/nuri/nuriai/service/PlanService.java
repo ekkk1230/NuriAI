@@ -47,19 +47,21 @@ public class PlanService {
         // 3. 프롬프트 생성 (개별 생성 지침 강화)
         String prompt = String.format(
                 "당신은 대한민국 **%s**로서, **%s**에 정통한 20년 경력의 전문가입니다.\n\n" +
-                        "### 요청 사항:\n" +
+                        "### [매우 중요] 요청 사항:\n" +
+                        "- **반드시 주제: '%s'와 관련된 활동을 생성하세요.**\n" +
+                        "- 절대로 임의로 주제를 변경하지 마세요.\n" +
                         "1. 주제: '%s'\n" +
                         "2. 대상 연령: 만 %d세\n" +
                         "3. 집단 구성: **%s**\n" +
                         "4. 선택한 %s: [%s]\n\n" +
                         "### 전문가 지침 (필수 준수):\n" +
-                        "- **반드시 선택된 [%s] 목록에 있는 각각의 항목을 독립된 하나의 활동으로 작성하세요.**\n" + // 핵심 지침
+                        "- **반드시 선택된 [%s] 목록에 있는 각각의 항목을 독립된 하나의 활동으로 작성하세요.**\n" +
                         "- 예를 들어, 선택한 항목이 2개라면 결과 JSON의 `plans` 배열 안에는 반드시 2개의 객체가 있어야 합니다.\n" +
                         "- 각 활동은 서로 섞이지 않게 해당 항목(영역 또는 유형)의 고유한 특성을 명확히 반영해야 합니다.\n" +
                         "- **대집단**일 경우: 선택한 '활동 유형'의 절차와 상호작용(발문)을 중심으로 작성하세요.\n" +
                         "- **소집단**일 경우: 선택한 '영역'의 발달 특성을 살린 유아 주도적인 놀이 지원 방안을 중심으로 작성하세요.\n" +
                         "- 모든 활동 내용은 '도입-전개-마무리'로 구성하고, 교사의 구체적인 발문을 포함하세요.\n" +
-                        "- **활동 목표(`objectives`)는 유아의 지식, 기술, 태도가 명확히 드러나도록 2개 이상 구체적으로 작성하고, 이와 관련된 누리과정/보육과정의 세부 내용(`relatedCurriculum`)도 함께 명시하세요.**\n" + // 💡 지침 추가
+                        "- **활동 목표(`objectives`)는 유아의 지식, 기술, 태도가 명확히 드러나도록 2개 이상 구체적으로 작성하고, 이와 관련된 누리과정/보육과정의 세부 내용(`relatedCurriculum`)도 함께 명시하세요.**\n" +
                         "- 마지막에는 이 활동과 연결하여 진행할 수 있는 '추천 연관 활동'을 한 줄로 제시하세요.\n\n" +
                         "### 답변 형식 (JSON):\n" +
                         "{\n" +
@@ -73,7 +75,7 @@ public class PlanService {
                         "      \"activityType\": \"이야기 나누기, 게임, 신체표현 등 상세 유형\",\n" +
                         "      \"activityName\": \"...\",\n" +
                         "      \"objectives\": [\"목표1\", \"목표2\"],\n" +
-                        "      \"relatedCurriculum\": [\"관련 누리과정 내용 (예: 의사소통 > 말하기 > 자신의 느낌, 생각, 경험 말하기)\"],\n" + // 💡 JSON 키 추가
+                        "      \"relatedCurriculum\": [\"관련 누리과정 내용\"],\n" +
                         "      \"materials\": [\"준비물1\", \"준비물2\"],\n" +
                         "      \"content\": { \"introduction\": \"...\", \"development\": \"...\", \"conclusion\": \"...\" },\n" +
                         "      \"precautions\": [\"유의점1\"],\n" +
@@ -81,8 +83,8 @@ public class PlanService {
                         "    }\n" +
                         "  ]\n" +
                         "}",
-                expertRole, curriculumName, theme, age, groupType, selectionLabel, selectedItems,
-                selectedItems, age, theme, curriculumName, groupType
+                expertRole, curriculumName, theme, theme, age, groupType, selectionLabel, selectedItems,
+                selectedItems, age, theme, curriculumName, groupType, groupType
         );
 
         // 4. API 호출 로직
@@ -119,6 +121,7 @@ public class PlanService {
         }
     }
 
+    @Transactional
     public void savePlan(PlanDto.GeminiResponse dto) {
         String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
         String authorNickname = userRepository.findByUserId(currentUserId).map(User::getUserNickname).orElse("알 수 없는 사용자" + currentUserId);
@@ -140,6 +143,7 @@ public class PlanService {
                         .domain(detail.getDomain())
                         .groupType(detail.getGroupType())
                         .activityType(detail.getActivityType())
+                        .activityName(detail.getActivityName())
                         .objectives(detail.getObjectives())
                         .relatedCurriculum(detail.getRelatedCurriculum())
                         .materials(detail.getMaterials())

@@ -26,6 +26,8 @@ export const usePlanStore = create<PlanStore>((set) => ({
 
             const planData = await response.json();
 
+            console.log(`planData: ${planData}`);
+
             set(state => ({ planStorage: [planData, ...state.planStorage] }));
         } catch (err) {
             console.error(`addPlanStorage 실패: ${err}`);

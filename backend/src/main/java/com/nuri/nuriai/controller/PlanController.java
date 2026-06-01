@@ -19,7 +19,7 @@ public class PlanController {
 
     @Getter @Setter
     public static class PlanRequest {
-        private String theme;
+        private String mainTheme;
         private int age;
         private String groupType;      // 대집단 / 소집단
         private List<String> selections; // 활동 유형들 또는 영역들
@@ -56,20 +56,20 @@ public class PlanController {
 //    }
 
     @PostMapping("/generate")
-    public ResponseEntity<String> generatePlan(@RequestBody PlanRequest request) {
+    public ResponseEntity<PlanDto.GeminiResponse> generatePlan(@RequestBody PlanRequest request) {
         // 1. AI 호출 (수정된 파라미터 전달)
-        String rawJson = planService.askGemini(
-                request.getTheme(),
+        String rawResponse = planService.askGemini(
+                request.getMainTheme(),
                 request.getAge(),
                 request.getSelections(),
                 request.getGroupType()
         );
 
         // 2. 파싱 및 저장
-        PlanDto.GeminiResponse dto = planService.parseGeminiResponse(rawJson);
-        planService.savePlan(dto);
+        PlanDto.GeminiResponse responseDto = planService.parseGeminiResponse(rawResponse);
+        planService.savePlan(responseDto);
 
-        return ResponseEntity.ok("성공적으로 계획안이 생성되고 저장되었습니다!");
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/all")
