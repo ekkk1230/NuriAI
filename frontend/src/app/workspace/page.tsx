@@ -4,14 +4,30 @@ import { useState } from "react";
 import { ACTIVITY_TYPES, AGE_OPTIONS, AREA_TYPES } from "@/constants/activityOptions";
 import PlanPreview from "@/components/Planner/PlanPreview";
 import NoPlan from "@/components/Planner/NoPlan";
+import { useWelcomeStore } from "@/store/useWelcomeStore";
+import { useForm } from "@/hook/useForm";
+import type { GenerateAIPlanForm } from "@/type/Plan"
+import { usePlanStore } from "@/store/usePlanStore";
 
+const initailPlanDataForm: GenerateAIPlanForm = {
+    mainTheme: "",
+    age: null,
+    selections: [],
+    groupType: ""
+};
 
 function page() {
+    const { user } = useWelcomeStore();
+    const { addPlanStorage } = usePlanStore();
+    const { form: planForm, handleChange, resetForm } = useForm<GenerateAIPlanForm>(initailPlanDataForm);
+
     const [plan, setPlan] = useState<boolean>(false);
     const [activeAge, setActiveAge] = useState<number | null>(null);
     const [activeForm, setActiveForm] = useState<string | null>("small");
     const [activeType, setActiveType] = useState<string[]>([]);
     const [areaType, setAreaType] = useState<string[]>([]);
+
+    // console.log(user)
 
     const baseBtnClass = "flex-1 rounded-[0.8rem] text-textLight text-[1.4rem] font-semibold text-center transition-all duration-200 shadow-sm whitespace-nowrap";
     const baseTypeBtnClass = "w-[100%] border-[.2rem] border-solid border-[#eee] rounded-[60rem] p-[1.2rem_0] text-center whitespace-nowrap text-[1.4rem] font-semibold"
@@ -118,16 +134,32 @@ function page() {
                     obj.map((type: string, index: number) => {
                         const uniqueValue = `${mode}-${index}`;
                         const id = index;
-                        return <button className={activeAreaTypeBtnClass(uniqueValue, index, mode)} onClick={(e) => handleSelectType(e, mode)} type="button" id={`${id}`} key={index} value={`${mode}-${index}`}>{type}</button>;
+                        return <button name="selections" className={activeAreaTypeBtnClass(uniqueValue, index, mode)} onClick={(e) => handleSelectType(e, mode)} type="button" id={`${id}`} key={index} value={`${mode}-${index}`}>{type}</button>;
                     })
                 }
             </div>
         );
     };
 
+
     const handleMakeAIPlan = async() => {
+        const getLabel = (val: string) => {
+            const [mode, indexStr] = val.split('-');
+            const index = parseInt(indexStr);
+            return mode === 'type' ? ACTIVITY_TYPES[index] : AREA_TYPES[index];
+        };
+    
+        const selectionsLabels = (activeForm === "large" ? activeType : areaType).map(getLabel);
+    
+        const planData = {
+            mainTheme: planForm.mainTheme,
+            age: activeAge,
+            groupType: activeForm === "large" ? "대집단" : "소집단",
+            selections: selectionsLabels 
+        };
+        console.log(planData)
         try {
-            const response = await '';
+            await addPlanStorage(planData);
 
             setPlan(true);
         } catch (err) {
@@ -146,16 +178,16 @@ function page() {
                         <label htmlFor="topic" className="font-medium text-[1.6rem] mb-[1.2rem]">
                             주제 <span className="text-[#ad46ff]">*</span>
                         </label>
-                        <input type="text" id="topic" placeholder="주제를 입력해주세요." />
+                        <input type="text" id="topic" name="mainTheme" onChange={handleChange} placeholder="주제를 입력해주세요." />
                     </div>
 
                     <div className="flex flex-col">
-                        <label htmlFor="topic" className="font-medium text-[1.6rem] mb-[1.2rem]">
+                        <label htmlFor="" className="font-medium text-[1.6rem] mb-[1.2rem]">
                             대상연령 <span className="text-[#ad46ff]">*</span>
                         </label>
                         <div className="flex gap-[.4rem] flex-wrap">
                             {AGE_OPTIONS.map(op => (
-                                <button type="button" key={op.value} value={op.value} onClick={() => setActiveAge(op.value)} className={activeAgeBtnClass(op.value)}>{op.label}</button>
+                                <button type="button" name="age" key={op.value} value={op.value} onClick={() => setActiveAge(op.value)} className={activeAgeBtnClass(op.value)}>{op.label}</button>
                             ))}
                         </div>
                     </div>
@@ -167,8 +199,8 @@ function page() {
                             </label>
                             
                             <div className="flex gap-[.4rem]">
-                                <button type="button" onClick={() => handleSelectFormat("large")} className={activeFormBtnClass("large")}>대집단</button>
-                                <button type="button" onClick={() => handleSelectFormat("small")} className={activeFormBtnClass("small")}>소집단</button>
+                                <button type="button" name="groupType" onClick={() => handleSelectFormat("large")} className={activeFormBtnClass("large")}>대집단</button>
+                                <button type="button" name="groupType" onClick={() => handleSelectFormat("small")} className={activeFormBtnClass("small")}>소집단</button>
                             </div>
                         </div>
                     )}

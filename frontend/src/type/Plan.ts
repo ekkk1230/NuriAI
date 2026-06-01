@@ -1,4 +1,4 @@
-interface Plan {
+export interface Plan {
     id: number;
     age: string;
     mainTheme: string;
@@ -7,3 +7,10 @@ interface Plan {
     createdAt: string;
     updatedAt: string;
 };
+
+export interface GenerateAIPlanForm {
+    age: number | null;
+    mainTheme: string;
+    selections: string[];
+    groupType: string;
+}

@@ -5,6 +5,7 @@ import DynamicInput from "./DynamicInput";
 import ModalFooter from "../ModalFooter";
 import { useUiStore } from "@/store/useUiStore";
 import { usePlanStore } from "@/store/usePlanStore";
+import { Plan } from "@/type/Plan";
 
 function EditModal({ plan }: { plan: Plan }) {
     const { form: planForm, handleChange, setForm, handleActiveChange } = useForm<Plan>(plan);

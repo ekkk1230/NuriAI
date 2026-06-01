@@ -101,7 +101,7 @@ function page() {
 			<section className="full-width-section bg-main-gradient">
 				<div className="mx-auto mb-16 text-center">
 					<p className="text-[4rem] font-bold mb-6 text-textLight">지금 바로 시작해보세요!</p>
-					<p className="text-[1.8rem] text-textLight font-medium">회원가입 없이도 AI 교육 계획안 생성을 체험할 수 있습니다.</p>
+					{/* <p className="text-[1.8rem] text-textLight font-medium">회원가입 없이도 AI 교육 계획안 생성을 체험할 수 있습니다.</p> */}
 				</div>
 				<button className="btn-base block mx-auto mt-16 rounded-[60rem] bg-bgCard px-16 py-8 text-[1.6rem] text-[#ad46ff] transition-transform duration-300 hover:scale-110">
 					계획안 만들기 시작하기 <FaArrowRight />

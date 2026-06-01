@@ -4,11 +4,15 @@ import { IoMdHome } from "react-icons/io";
 import { AiFillBulb } from "react-icons/ai";
 import { IoIosListBox } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
+import { IoLogOut } from "react-icons/io5";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useWelcomeStore } from "@/store/useWelcomeStore";
 
 function Nav() {
   	const pathname = usePathname();
+
+	const { logoutUser } = useWelcomeStore();
 
 	const getLinkClass = (path: string) => {
 		const baseClass = "text-[1.6rem] flex items-center p-[1rem_2rem] rounded-[0.8rem] hover:bg-[rgba(114,118,124,0.1)] transition-colors duration-200";
@@ -49,6 +53,13 @@ function Nav() {
 				<Link href="/mypage" className={getLinkClass('/mypage')}>
 					<span className="block text-[2rem] mr-[.8rem]"><FaUser /></span>
 					마이페이지
+				</Link>
+				</li>
+
+				<li>
+				<Link href="/welcome/login" onClick={logoutUser} className={getLinkClass('/mypage')}>
+					<span className="block text-[2rem] mr-[.8rem]"><IoLogOut /></span>
+					로그아웃
 				</Link>
 				</li>
 			</ul>

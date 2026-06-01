@@ -2,6 +2,10 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://loca
 
 export const API_ROUTES = {
     USER: {
-        BASE: `${API_BASE_URL}/api/user`,
+        BASE: `${API_BASE_URL}/api/users`,
     },
+    PLAN: {
+        BASE: `${API_BASE_URL}/api/plans`,
+        DETAIL: (planId: number | string) => `${API_BASE_URL}/api/plans/${planId}`,
+    }
 } as const;

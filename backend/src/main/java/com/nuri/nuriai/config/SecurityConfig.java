@@ -40,10 +40,13 @@ public class SecurityConfig {
                 // 4. 주소 매핑 오류를 방지하기 위해 AntPathRequestMatcher로 명시적 허용
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll() // h2 콘솔 뚫기
-                        .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()    // 로그인/회원가입 API 뚫기
+                        .requestMatchers(new AntPathRequestMatcher("/api/users/**")).permitAll()    // 로그인/회원가입 API 뚫기
+                        .requestMatchers(new AntPathRequestMatcher("/api/plans/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/**", "OPTIONS")).permitAll() // 프론트 OPTIONS 요청 뚫기
                         .anyRequest().authenticated()
                 );
+
+        System.out.println("보안 설정이 적용되었습니다!");
 
         return http.build();
     }

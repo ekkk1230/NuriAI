@@ -1,19 +1,15 @@
 package com.nuri.nuriai.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -22,5 +18,11 @@ public class User {
     private String userNickname;
     private Integer userClassAge;
 
-    private LocalDateTime createdAt;
+    @Builder
+    public User (String userId, String userPwd, String userNickname, Integer userClassAge) {
+        this.userId = userId;
+        this.userPwd = userPwd;
+        this.userNickname = userNickname;
+        this.userClassAge = userClassAge;
+    }
 }

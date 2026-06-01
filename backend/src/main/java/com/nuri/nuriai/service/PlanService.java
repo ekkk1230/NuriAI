@@ -2,13 +2,16 @@ package com.nuri.nuriai.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nuri.nuriai.domain.NuriActivity;
-import com.nuri.nuriai.domain.NuriPlan;
-import com.nuri.nuriai.dto.GeminiPlanResponse;
-import com.nuri.nuriai.repository.NuriPlanRepository;
+import com.nuri.nuriai.domain.Activity;
+import com.nuri.nuriai.domain.Plan;
+import com.nuri.nuriai.domain.User;
+import com.nuri.nuriai.dto.PlanDto;
+import com.nuri.nuriai.repository.PlanRepository;
+import com.nuri.nuriai.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j; // log 사용을 위해 추가
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -20,9 +23,10 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class NuriPlanService {
+public class PlanService {
 
-    private final NuriPlanRepository nuriPlanRepository;
+    private final PlanRepository planRepository;
+    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -100,7 +104,7 @@ public class NuriPlanService {
         }
     }
 
-    public GeminiPlanResponse parseGeminiResponse(String rawResponse) {
+    public PlanDto.GeminiResponse parseGeminiResponse(String rawResponse) {
         try {
             JsonNode rootNode = objectMapper.readTree(rawResponse);
             String jsonText = rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
@@ -108,47 +112,52 @@ public class NuriPlanService {
             // 마크다운 문법 제거 (```json ... ```)
             String cleanJson = jsonText.replaceAll("(?s)```json\\s*|\\s*```", "").trim();
 
-            return objectMapper.readValue(cleanJson, GeminiPlanResponse.class);
+            return objectMapper.readValue(cleanJson, PlanDto.GeminiResponse.class);
         } catch (Exception e) {
             log.error("JSON 파싱 오류: ", e);
             throw new RuntimeException("AI 데이터 변환 중 오류가 발생했습니다.");
         }
     }
 
-    public void savePlan(GeminiPlanResponse dto) {
-        NuriPlan plan = new NuriPlan();
-        plan.setAge(dto.getAge());
-        plan.setMainTheme(dto.getMainTheme());
-        plan.setCurriculum(dto.getCurriculum());
+    public void savePlan(PlanDto.GeminiResponse dto) {
+        String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String authorNickname = userRepository.findByUserId(currentUserId).map(User::getUserNickname).orElse("알 수 없는 사용자" + currentUserId);
+
+        Plan plan = Plan.builder()
+                .age(dto.getAge())
+                .mainTheme(dto.getMainTheme())
+                .curriculum(dto.getCurriculum())
+                .author(authorNickname)
+                .build();
 
         if (dto.getPlans() != null) {
-            for (GeminiPlanResponse.PlanDTO planDto : dto.getPlans()) {
-                NuriActivity activity = new NuriActivity();
+            for (PlanDto.ActivityDetail detail : dto.getPlans()) {
+                String intro = (detail.getContent() != null) ? detail.getContent().getIntroduction() : null;
+                String dev = (detail.getContent() != null) ? detail.getContent().getDevelopment() : null;
+                String conc = (detail.getContent() != null) ? detail.getContent().getConclusion() : null;
 
-                activity.setDomain(planDto.getDomain());
-                activity.setGroupType(planDto.getGroupType());
-                activity.setActivity(planDto.getActivityType());
-                activity.setActivityName(planDto.getActivityName());
-                activity.setObjectives(planDto.getObjectives());
-                activity.setRelatedCurriculum(planDto.getRelatedCurriculum());
-                activity.setMaterials(planDto.getMaterials());
-                activity.setPrecautions(planDto.getPrecautions());
-                activity.setExtensionActivity(planDto.getExtensionActivity());
-
-                if (planDto.getContent() != null) {
-                    activity.setIntroduction(planDto.getContent().getIntroduction());
-                    activity.setDevelopment(planDto.getContent().getDevelopment());
-                    activity.setConclusion(planDto.getContent().getConclusion());
-                }
+                Activity activity = Activity.builder()
+                        .domain(detail.getDomain())
+                        .groupType(detail.getGroupType())
+                        .activityType(detail.getActivityType())
+                        .objectives(detail.getObjectives())
+                        .relatedCurriculum(detail.getRelatedCurriculum())
+                        .materials(detail.getMaterials())
+                        .precautions(detail.getPrecautions())
+                        .introduction(intro)
+                        .development(dev)
+                        .conclusion(conc)
+                        .extensionActivity(detail.getExtensionActivity())
+                        .build();
 
                 plan.addActivity(activity);
             }
         }
 
-        nuriPlanRepository.save(plan);
+        planRepository.save(plan);
     }
 
-    public List<NuriPlan> getAllPlans() {
-        return nuriPlanRepository.findAll();
+    public List<Plan> getAllPlans() {
+        return planRepository.findAll();
     }
 }

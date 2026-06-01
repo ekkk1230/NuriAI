@@ -26,7 +26,6 @@ public class UserService {
                 .userPwd(encodedPassword)
                 .userNickname(request.getUserNickname())
                 .userClassAge(request.getUserClassAge())
-                .createdAt(LocalDateTime.now())
                 .build();
 
         userRepository.save(newUser);
