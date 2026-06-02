@@ -9,17 +9,15 @@ import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
 
 function page() {
-    const { id } = useParams();
+    const { id: planId } = useParams();
     const { planStorage, fetchPlanById } = usePlanStore();
     const { openModal } = useUiStore();
 
-    console.log(id)
-
     useEffect(() => {
-        fetchPlanById(Number(id));
+        fetchPlanById(Number(planId));
     }, [])
     
-    const plan = planStorage.find(p => p.id === Number(id));
+    const plan = planStorage.find(p => p.id === Number(planId));
 
     const baseBtnClass = "flex items-center text-[1.4rem] font-semibold cursor-pointer rounded-[0.8rem] p-[.8rem] min-w-[12rem] justify-center";
 

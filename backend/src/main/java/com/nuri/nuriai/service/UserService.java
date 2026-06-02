@@ -51,4 +51,9 @@ public class UserService {
 
         throw new IllegalArgumentException("잘못된 중복 확인 타입입니다: " + type);
     }
+
+    public UserDto.UserResponse getCurrentUser(String userId) {
+        User findUser = userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보 입니다."));
+        return new UserDto.UserResponse(findUser);
+    }
 }

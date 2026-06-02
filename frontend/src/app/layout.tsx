@@ -14,13 +14,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	const isDetailPage = pathname.startsWith('/storage');
 	const isWelcomePage = pathname.startsWith('/welcome');
  	const { isOpen } = useUiStore();
-	const { user } = useWelcomeStore();
+	const { user, fetchUserInfo } = useWelcomeStore();
 
 	const router = useRouter();
 
 	useEffect(() => {
 		if (!user) router.push("/welcome/login")
 	}, []);
+
+	useEffect(() => {
+        fetchUserInfo();
+    }, [fetchUserInfo]);
 
   return (
     <html>

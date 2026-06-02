@@ -56,13 +56,15 @@ public class PlanController {
 //    }
 
     @GetMapping
-    public List<PlanDto.GeminiResponse> getAll() {
-        return planService.getAll();
+    public ResponseEntity<List<PlanDto.GeminiResponse>> getAll() {
+        List<PlanDto.GeminiResponse> list = planService.getAll();
+        return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/storage/{id}")
-    public PlanDto.GeminiResponse getOne(@PathVariable("id") Long id) {
-        return planService.getOne(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<PlanDto.GeminiResponse> getOne(@PathVariable("id") Long id) {
+        PlanDto.GeminiResponse planItem = planService.getOne(id);
+        return ResponseEntity.ok(planItem);
     }
 
     @PostMapping("/generate")

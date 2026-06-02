@@ -1,9 +1,11 @@
 import { ConfirmResult, LoginUserForm, User } from "@/type/User";
 import { API_ROUTES } from "@/constants/api";
 import { create } from "zustand";
+import { apiFetch } from "@/util/api";
 
 interface WelcomeStore {
     user: User | null,
+    fetchUserInfo: () => Promise<void>;
     loginUser: (user: LoginUserForm) => Promise<void>;
     logoutUser: () => void;
 
@@ -13,6 +15,19 @@ interface WelcomeStore {
 
 export const useWelcomeStore = create<WelcomeStore>((set) => ({
     user: null,
+    fetchUserInfo: async () => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) return;
+
+        const response = await apiFetch(`${API_ROUTES.USER.BASE}/me`);
+        
+        if (response.ok) {
+            const userData = await response.json();
+            set({ user: userData });
+        } else {
+            localStorage.removeItem("accessToken");
+        }
+    },
     loginUser: async(user) => {
         try {
             const response = await fetch(`${API_ROUTES.USER.BASE}/login`, {
@@ -21,10 +36,15 @@ export const useWelcomeStore = create<WelcomeStore>((set) => ({
                 body: JSON.stringify(user),
             });
 
-            // if (!response.ok) throw new Error("존재하지 않는 회원정보 입니다.");
-            const loginUser = await response.json();
+            if (!response.ok) throw new Error("로그인에 실패했습니다");
+            const data = await response.json();
 
-            set({ user: loginUser });
+            if (data.accessToken) {
+                localStorage.setItem("accessToken", data.accessToken);
+                set({ user: data.user }); 
+            } else {
+                throw new Error("서버에서 토큰을 받지 못했습니다.");
+            }
         } catch (err) {
             // console.error(`loginUser 실패: ${err}`);
             throw err;

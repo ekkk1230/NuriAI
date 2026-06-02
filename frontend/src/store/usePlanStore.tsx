@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { mockPlanData } from "../mock/PlanData";
 import { API_ROUTES } from "@/constants/api";
 import { GenerateAIPlanForm, Plan } from "@/type/Plan";
+import { apiFetch } from "@/util/api";
 
 interface PlanStore {
     planStorage: Plan[];
@@ -18,13 +19,12 @@ export const usePlanStore = create<PlanStore>((set) => ({
     isLoaded: false,
     fetchAllPlans: async () => {
         try {
-            const response = await fetch(`${API_ROUTES.PLAN}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            });
+            const response = await apiFetch(`${API_ROUTES.PLAN.BASE}`); 
+            // console.log("응답 상태:", response.status);
             if (!response.ok) throw new Error("전체 목록 조회 실패");
             const data = await response.json();
-            set({ planStorage: Array.isArray(data) ? data : [data] });
+            // console.log("가져온 데이터:", data);
+            set({ planStorage: Array.isArray(data) ? data : [data], isLoaded: true });
         } catch (err) {
             console.error(err);
             set({ isLoaded: true });
@@ -32,11 +32,10 @@ export const usePlanStore = create<PlanStore>((set) => ({
     },
 
     fetchPlanById: async (id: number) => {
+        const url = API_ROUTES.PLAN.DETAIL(id);
+        console.log("생성된 URL:", url);
         try {
-            const response = await fetch(`${API_ROUTES.PLAN}/${id}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            });
+            const response = await apiFetch(url);
             if (!response.ok) throw new Error("단일 계획안 조회 실패");
             const planData = await response.json();
             
@@ -52,12 +51,8 @@ export const usePlanStore = create<PlanStore>((set) => ({
 
     addPlanStorage: async (plan) => {
         try {
-            const response = await fetch(`${API_ROUTES.PLAN.BASE}/generate`, {
+            const response = await apiFetch(`${API_ROUTES.PLAN.BASE}/generate`, {
                 method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-                },
                 body: JSON.stringify(plan),
             });
 
@@ -77,9 +72,8 @@ export const usePlanStore = create<PlanStore>((set) => ({
     })),
     updatePlan: async (plan) => {
         try {
-            const response = await fetch(`${API_ROUTES.PLAN.DETAIL(plan.id)}`, {
+            const response = await apiFetch(`${API_ROUTES.PLAN.DETAIL(plan.id)}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(plan),
             })
 
