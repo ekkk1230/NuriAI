@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { AGE_OPTIONS, AREA_TYPES } from "@/constants/activityOptions"; 
+import { AGE_OPTIONS, AREA_TYPES, DOMAIN_COLORS, DOMAIN_STYLES } from "@/constants/activityOptions"; 
 import { useWelcomeStore } from "@/store/useWelcomeStore";
 import { usePlanStore } from "@/store/usePlanStore";
 import NoPlan from "@/components/Planner/NoPlan";
+import { FaUserLarge, FaHeart, FaEye } from "react-icons/fa6";
+import { MdOutlineAccessTime } from "react-icons/md";
 
 
 function page() {
@@ -36,93 +38,102 @@ function page() {
             </div>
 
             <div className="border-b-[.1rem] border-solid border-[#eee] p-[1.8rem_2.6rem] bg-bgPreview">
-                <div className="flex gap-[.4rem]">
-                    <input type="text" value={searchTit} onChange={e => setSearchTit(e.target.value)} placeholder="제목이나 내용으로 계획안을 검색할 수 있습니다." />
-                </div>
+                <div className="mt-[2rem] shadow-sm p-[2rem] rounded-[.8rem] bg-bgCard">
+                    <div className="flex gap-[.4rem]">
+                        <input type="text" value={searchTit} onChange={e => setSearchTit(e.target.value)} placeholder="제목이나 내용으로 계획안을 검색할 수 있습니다." />
+                    </div>
 
-                <div className="flex w-full mt-[1.2rem] items-center">
-                    <label className="flex items-center">
-                        <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">연령</span>
-                        <select name="" id="" className="text-[1.4rem]">
-                            <option value="">전체</option>
-                            {AGE_OPTIONS.map(item => (
-                                <option key={item.value} value={item.value}>{item.label}</option>
-                            ))}
-                        </select>
-                    </label>
+                    <div className="flex w-full mt-[1.2rem] items-center">
+                        <label className="flex items-center mr-[1.2rem]">
+                            <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">연령</span>
+                            <select name="" id="" className="text-[1.4rem] !w-[15rem]">
+                                <option value="">전체</option>
+                                {AGE_OPTIONS.map(item => (
+                                    <option key={item.value} value={item.value}>{item.label}</option>
+                                ))}
+                            </select>
+                        </label>
 
-                    <label className="flex items-center mx-[1.2rem]">
-                        <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">영역</span>
-                        <select name="" id="" className="text-[1.4rem]">
-                            <option value="">전체</option>
-                            {AREA_TYPES.map((item, idx) => (
-                                <option key={idx} value={idx}>{item}</option>
-                            ))}
-                        </select>
-                    </label>
+                        <label className="flex items-center mx-[1.2rem]">
+                            <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">영역</span>
+                            <select name="" id="" className="text-[1.4rem] !w-[15rem]">
+                                <option value="">전체</option>
+                                {AREA_TYPES.map((item, idx) => (
+                                    <option key={idx} value={idx}>{item}</option>
+                                ))}
+                            </select>
+                        </label>
 
-                    <div className="flex items-center ml-auto">
-                        <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">정렬</span>
-                        <ul className="flex p-[.4rem] rounded-[.8rem] bg-[#efefef] gap-[.4rem]">
-                        <ul className="flex p-[.4rem] rounded-[.8rem] bg-[#efefef] gap-[.4rem]">
-                            {[
-                                { id: "rank", label: "인기순" },
-                                { id: "date", label: "최신순" },
-                                { id: "view", label: "조회순" }
-                            ].map((item) => (
-                                <li key={item.id}>
-                                    <button 
-                                        type="button" 
-                                        onClick={() => setSortType(item.id)}
-                                        className={getSortBtnClass(item.id)}
-                                    >
-                                        {item.label}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                        </ul>
+                        <div className="flex items-center ml-auto">
+                            <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">정렬</span>
+                            <ul className="flex p-[.4rem] rounded-[.8rem] bg-[#efefef] gap-[.4rem]">
+                            <ul className="flex p-[.4rem] rounded-[.8rem] bg-[#efefef] gap-[.4rem]">
+                                {[
+                                    { id: "rank", label: "인기순" },
+                                    { id: "date", label: "최신순" },
+                                    { id: "view", label: "조회순" }
+                                ].map((item) => (
+                                    <li key={item.id}>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setSortType(item.id)}
+                                            className={getSortBtnClass(item.id)}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
                 {planStorage.length >= 1 
                     ? (
-                        planStorage.map(plan => (
-                            <div key={plan.id} className="border-solid border-[#000] border-[.1rem]">
-                                <p>{plan.mainTheme}</p>
-                                <p>{plan.author} 선생님</p>
-                                <div>
-                                    <p>{plan.age}</p>
-                                    <p>{plan.plans.length}개 활동</p>
-
-                                    {/* 활동 영역 */}
-                                    <ul className="flex flex-col">
-                                        {plan.plans.map((item, idx) => (
-                                        <li>
-                                            {item.activityType}
-                                        </li>
-                                        ))}
+                        <div className="grid grid-cols-3 gap-[1.6rem] mt-[4rem]">
+                            {planStorage.map(plan => (
+                                <div key={plan.id} className="relative bg-bgCard rounded-[.8rem] shadow-sm before:content-[''] before:absolute before:left-0 before:top-0 before:rounded-[.8rem_.8rem_0_0] p-[1.6rem] before:bg-main-gradient before:w-full before:h-[.4rem]">
+                                    <p className="text-[2rem] font-bold mb-[1rem]">{plan.mainTheme}</p>
+                                    <ul className="flex gap-[.4rem] items-center text-[1.4rem] text-textMuted mb-[1rem]">
+                                        <li className="after:content-['|'] flex gap-[.4rem] items-center text-[1.4rem] text-textMuted"><FaUserLarge />{plan.author} 선생님</li>
+                                        <li className="text-[1.4rem] ">{plan.age}</li>
                                     </ul>
 
-                                    {/* 활동 목표 */}
-                                    <ul>
-                                    {plan.plans.map((item, idx) => (
-                                        item.objectives && item.objectives.length > 0 && (
-                                            <li key={`object-${idx}`}>
-                                                {item.objectives[0]}
-                                            </li>
-                                        )
-                                    ))}
-                                    </ul>
+                                    <div>
+                                        <div className="flex gap-[.4rem] mb-[.8rem] items-center">
+                                            <p className="text-[1.4rem]">{plan.plans.length}개 활동 - </p>
+                                            {/* 활동 영역 */}
+                                            <ul className="flex gap-[.4rem]">
+                                                {plan.plans.map((item, idx) => {
+                                                    const domain = item.domain.split(" ")[0];
+                                                    const domainStyle = DOMAIN_STYLES[domain];
+                                                    // console.log(DOMAIN_STYLES[domain])
 
-                                    {plan.viewCount} | {plan.likeCount}
+                                                    return (
+                                                        <li 
+                                                            key={idx} 
+                                                            className={`text-[1.2rem] px-[.8rem] py-[.4rem] rounded-[60rem] ${domainStyle}`}
+                                                        >
+                                                            {item.domain}
+                                                        </li>
+                                                    )
+                                                })}
+                                            </ul>
+                                        </div>
 
-                                    <p>{plan.createdAt}</p>
+                                        {/* 활동 목표 */}
+                                        <div className="text-[1.4rem] mt-[1rem] line-clamp-2">{plan.activeIntro}</div>
 
-
+                                        <div className="flex gap-[1.2rem] mt-[.8rem]">
+                                            <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaHeart className="text-red-500" />{plan.likeCount}</p>
+                                            <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaEye />{plan.viewCount}</p>
+                                            <p className="text-[1.4rem] text-textMuted flex gap-[.4rem] text-textMuted items-center ml-auto"><MdOutlineAccessTime />{plan.createdAt.split('T')[0]}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
 
                         /**
                          *  나비의 한살이

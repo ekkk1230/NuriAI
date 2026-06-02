@@ -1,12 +1,20 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { useMypageStore } from "@/store/useMypageStore";
 import { usePlanStore } from "@/store/usePlanStore";
 import { useForm } from "./useForm";
+import { useWelcomeStore } from "@/store/useWelcomeStore";
 
 export const useMypage = () => {
-    const { planStorage } = usePlanStore();
+    const { userPlans, fetchUserPlans } = usePlanStore();
+    const { user } = useWelcomeStore();
     const { inquries, addInquriy, deleteInquiry, updateInquiry } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
+
+    useEffect(() => {
+        if (user) {
+            fetchUserPlans(user);
+        }
+    }, [user, fetchUserPlans]);
 
     const [editingId, setEditingId] = useState<number | null>(null);
     const [answerOpen, setAnswerOpen] = useState<Record<number, boolean>>({});
@@ -62,7 +70,7 @@ export const useMypage = () => {
     };
 
     return { 
-        planStorage, 
+        userPlans, 
         inquries, inquiryForm, 
         answerOpen, toggleAnswer,
         writeInQuiry, handleWrite,

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { DOMAIN_STYLES, TYPE_STYLES, KEYWORD_STYLES } from "@/constants/activityOptions"
+import { FaRegCalendarAlt, FaPen } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 interface PlanItemProps {
     plan: any;
@@ -25,13 +27,19 @@ function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
         return "bg-[#f1f3f5] text-[#495057]"; 
     };
 
+    const uitilBtnClass = "p-[1rem_0.8rem] rounded-[0.8rem] flex-1 flex items-center justify-center";
+
     return (
         <div className="rounded-[2.4rem] bg-bgCard hover:-top-[.5rem] relative cursor-pointer transition-all duration-200 border border-solid border-[#eee] shadow-sm overflow-hidden" onClick={onClick}>
             
             <div className="bg-sub2-gradient p-[1.6rem] relative">
                 <p className="text-textLight text-[1.8rem] font-semibold mb-[1rem]">{plan.mainTheme}</p>
                 <ul className="flex gap-[.4rem]">
-                    <li className="flex items-center text-[1.4rem] text-textLight">{plan.age}</li>
+                    <li className="flex items-center text-[1.4rem] text-textLight">
+                        <FaRegCalendarAlt className="mr-[.4rem]" />
+                        {plan.createdAt.split('T')[0]}
+                    </li>
+                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight">{plan.age}</li>
                     <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight">{plan.plans.length}개 활동</li>
                 </ul>
 
@@ -74,7 +82,7 @@ function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
 
                         // 2. 누리과정 5대 영역 스타일 (의사소통, 신체운동 등)
                         const domainStyle = DOMAIN_STYLES[item.domain] || "bg-gray-100 text-gray-600 border-gray-200";
-
+                        // console.log("domainStyle:", domainStyle)
                         // 3. 세부 활동 유형 (이야기 나누기, 신체표현 등) 스타일 매핑
                         const typeStyle = TYPE_STYLES[item.activityType] || "bg-[#f1f3f5] text-[#495057] border-[#e9ecef]";
 
@@ -98,6 +106,12 @@ function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
                                 <p className="font-medium w-[100%] text-[1.4rem] font-semibold truncate">
                                     {item.activityName}
                                 </p>
+
+
+                                <div className="mt-[.8rem] flex gap-[.4rem] w-full">
+                                    <button type="button" className={`${uitilBtnClass} bg-blue-200 hover:bg-blue-300 text-blue-600`}><FaPen /></button>
+                                    <button type="button" className={`${uitilBtnClass} bg-red-200 hover:bg-red-300 text-red-600`}><MdDelete /></button>
+                                </div>
                             </div>
                         );
                     })}

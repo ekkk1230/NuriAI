@@ -7,7 +7,7 @@ import { formatDate } from "@/util/format";
 
 function page() {
     const { 
-        planStorage, 
+        userPlans, 
         inquries, inquiryForm, 
         answerOpen, toggleAnswer,
         writeInQuiry, handleWrite,
@@ -33,15 +33,15 @@ function page() {
 
                     <ul className="flex gap-[1.2rem]">
                         <li className={`${useItemBoxClass} bg-[#f0deff]`}>
-                            <p className="text-[3rem] mb-[2rem] font-bold text-[#8146b9]">{planStorage.length}</p>
+                            <p className="text-[3rem] mb-[2rem] font-bold text-[#8146b9]">{userPlans.length}</p>
                             <p className="text-[1.6rem] font-semibold text-textMuted">생성한 계획안</p>
                         </li>
                         <li className={`${useItemBoxClass} bg-[#def3ff]`}>
-                            <p className="text-[3rem] mb-[2rem] font-bold text-[#375ea8]">{planStorage.length}</p>
+                            <p className="text-[3rem] mb-[2rem] font-bold text-[#375ea8]">{userPlans.length}</p>
                             <p className="text-[1.6rem] font-semibold text-textMuted">보관함 저장</p>
                         </li>
                         <li className={`${useItemBoxClass} bg-[#eeffe6]`}>
-                            <p className="text-[3rem] mb-[2rem] font-bold text-[#309e8c]">{planStorage.length}</p>
+                            <p className="text-[3rem] mb-[2rem] font-bold text-[#309e8c]">{userPlans.length}</p>
                             <p className="text-[1.6rem] font-semibold text-textMuted">PDF 다운로드</p>
                         </li>
                     </ul>

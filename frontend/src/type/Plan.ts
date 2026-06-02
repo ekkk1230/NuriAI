@@ -10,6 +10,7 @@ export interface Plan {
     viewCount: number;
     likeCount: number;
     saveCount: number;
+    activeIntro: string;
 };
 
 export interface GenerateAIPlanForm {

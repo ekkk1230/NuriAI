@@ -25,7 +25,7 @@ function page() {
 
     useEffect(() => {
         if (!plan?.age) return;
-        const ageMatch = plan.age.match(/\d+/);
+        const ageMatch = plan?.age.match(/\d+/);
         if (ageMatch) {
             const ageNum = parseInt(ageMatch[0], 10);
             const group = ageNum < 3 ? "영아" : "유아"; 
@@ -44,6 +44,9 @@ function page() {
             <EditModal plan={plan} />
         );
     };
+
+    
+    if (!plan) return <div>Plan not found</div>
 
     return (
         <>
@@ -74,10 +77,10 @@ function page() {
 
                 <div className="w-[70%] mx-auto mt-[2rem] flex-1">
                     <div className="bg-sub2-gradient p-[3rem] rounded-[1.2rem] mb-[2rem]">
-                        <p className="text-textLight text-[2.8rem] font-bold mb-[1.2rem]">{plan?.mainTheme}</p>
-                        <p className="text-textLight text-[2rem] mb-[1.2rem]">👶 {plan?.age}</p>
+                        <p className="text-textLight text-[2.8rem] font-bold mb-[1.2rem]">{plan.mainTheme}</p>
+                        <p className="text-textLight text-[2rem] mb-[1.2rem]">👶 {plan.age}</p>
                         <ul className="flex gap-[1rem]">
-                            {plan?.plans.map((item: any, idx: number) => {
+                            {plan.plans.map((item: any, idx: number) => {
                                 const domainKeys = Object.keys(DOMAIN_STYLES);
                                 const foundKey = domainKeys.find(key => item.domain.includes(key));
                                 const domainStyle = foundKey ? DOMAIN_STYLES[foundKey] : ""
@@ -89,11 +92,12 @@ function page() {
 
                     <div className="bg-bgCard rounded-[1.2rem] mb-[2rem] shadow-sm p-[3rem]">
                         <p className="text-[2.4rem] font-bold mb-[1rem]">활동 개요</p>
-                        <div className="text-[1.6rem] text-textMuted font-semibold">이 계획안은 <span className="text-blueActive font-bold">"{plan?.mainTheme}"</span> 주제로 <span className="text-blueActive font-bold">{plan?.plans.length}개</span> 교육과정 영역을 통합한 <span className="text-blueActive font-bold">{plan?.age} {ageGroup} 대상</span> 교육 계획안입니다.</div>
+                        <div className="text-[1.6rem] text-textMuted font-semibold">{plan.activeIntro}</div>
                     </div>
 
-                    {plan?.plans.map((item, idx) => {
+                    {plan.plans.map((item, idx) => {
                         const domainStyle = DOMAIN_STYLES[item.domain];
+                        console.log(domainStyle)
                         return (
                             <div 
                                 key={idx}
@@ -154,62 +158,52 @@ function page() {
                                     
                                     <div className="flex flex-col gap-[2.4rem] pl-[0.4rem] relative before:content-[''] before:absolute before:left-[1.5rem] before:top-[1rem] before:w-[0.2rem] before:h-[calc(100%-2rem)] before:bg-[#eee]">
                                         
+                                        {/* 도입 */}
                                         {item.content.introduction && (
-                                            <div className="relative pl-[3.6rem]">
+                                            <div className="relative pl-[3.6rem] mb-[2rem]">
                                                 <div className="absolute left-[0.5rem] top-[0.4rem] w-[1.6rem] h-[1.6rem] rounded-full bg-blueActive border-[4px] border-solid border-white shadow-sm z-10" />
                                                 
-                                                <div className="flex flex-col gap-[0.6rem]">
+                                                <div className="flex flex-col gap-[0.8rem]">
                                                     <span className="text-[1.4rem] font-bold text-blueActive">도입</span>
-                                                    <p className="text-[1.6rem] text-[#333] leading-relaxed">
-                                                        {item.content.introduction.split("'")[0]}
-                                                    </p>
-                                                    {item.content.introduction.includes("'") && (
-                                                        <div className="bg-[#f4f7fa] p-[1.2rem_1.6rem] rounded-[0.8rem] text-[1.5rem] font-medium text-[#495057] italic before:content-['“'] after:content-['”'] before:text-blueActive/40 before:mr-[0.4rem] after:text-blueActive/40 after:ml-[0.4rem]">
-                                                            {item.content.introduction.match(/'([^']+)'/)?.[1]}
-                                                        </div>
-                                                    )}
+                                                    
+                                                    <div className="bg-white border border-[#e9ecef] p-[1.6rem] rounded-[1.2rem] shadow-sm">
+                                                        <p className="text-[1.6rem] text-[#333] leading-relaxed whitespace-pre-line">
+                                                            {item.content.introduction}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}
 
+                                        {/* 전개 */}
                                         {item.content.development && (
-                                            <div className="relative pl-[3.6rem]">
+                                            <div className="relative pl-[3.6rem] mb-[2rem]">
                                                 <div className="absolute left-[0.5rem] top-[0.4rem] w-[1.6rem] h-[1.6rem] rounded-full bg-main border-[4px] border-solid border-white shadow-sm z-10" />
                                                 
                                                 <div className="flex flex-col gap-[0.6rem]">
                                                     <span className="text-[1.4rem] font-bold text-main">전개</span>
                                                     
-                                                    <div className="flex flex-col gap-[0.8rem]">
-                                                        {item.content.development.split(/(?=\d+\. )/).filter(Boolean).map((part, i) => (
-                                                            <p key={i} className="text-[1.6rem] text-[#333] leading-relaxed">
-                                                                {part.trim()}
-                                                            </p>
-                                                        ))}
+                                                    <div className="bg-white border border-[#e9ecef] p-[1.6rem] rounded-[1.2rem] shadow-sm">
+                                                        <p className="text-[1.6rem] text-[#333] leading-relaxed whitespace-pre-line">
+                                                            {item.content.development}
+                                                        </p>
                                                     </div>
-
-                                                    {item.content.development.includes("'") && (
-                                                        <div className="bg-[#fcf8f2] p-[1.2rem_1.6rem] rounded-[0.8rem] text-[1.5rem] font-medium text-[#495057] italic before:content-['“'] after:content-['”'] before:text-main/40 before:mr-[0.4rem] after:text-main/40 after:ml-[0.4rem] mt-[0.8rem]">
-                                                            {item.content.development.match(/'([^']+)'/)?.[1]}
-                                                        </div>
-                                                    )}
                                                 </div>
                                             </div>
                                         )}
 
+                                        {/* 마무리 */}
                                         {item.content.conclusion && (
                                             <div className="relative pl-[3.6rem]">
                                                 <div className="absolute left-[0.5rem] top-[0.4rem] w-[1.6rem] h-[1.6rem] rounded-full bg-gray-400 border-[4px] border-solid border-white shadow-sm z-10" />
-                                                
                                                 <div className="flex flex-col gap-[0.6rem]">
                                                     <span className="text-[1.4rem] font-bold text-gray-500">마무리</span>
-                                                    <p className="text-[1.6rem] text-[#333] leading-relaxed">
-                                                        {item.content.conclusion.split("'")[0]}
-                                                    </p>
-                                                    {item.content.conclusion.includes("'") && (
-                                                        <div className="bg-[#f8f9fa] p-[1.2rem_1.6rem] rounded-[0.8rem] text-[1.5rem] font-medium text-[#495057] italic before:content-['“'] after:content-['”'] before:text-gray-400/40 before:mr-[0.4rem] after:text-gray-400/40 after:ml-[0.4rem]">
-                                                            {item.content.conclusion.match(/'([^']+)'/)?.[1]}
-                                                        </div>
-                                                    )}
+                                                    
+                                                    <div className="bg-white border border-[#e9ecef] p-[1.6rem] rounded-[1.2rem] shadow-sm">
+                                                        <p className="text-[1.6rem] text-[#333] leading-relaxed whitespace-pre-line">
+                                                            {item.content.conclusion}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}

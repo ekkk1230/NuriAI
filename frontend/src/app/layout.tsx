@@ -19,7 +19,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	const router = useRouter();
 
 	useEffect(() => {
-		if (!user) router.push("/plans")
+		if (!user) router.push("/welcome/login");
+		// if (!user) router.push("/plans");
 	}, []);
 
 	useEffect(() => {
