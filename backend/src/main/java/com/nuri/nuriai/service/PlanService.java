@@ -144,6 +144,8 @@ public class PlanService {
             .mainTheme(dto.getMainTheme())
             .curriculum(dto.getCurriculum())
             .author(authorNickname)
+            .likeCount(dto.getLikeCount())
+            .viewCount(dto.getViewCount())
             .build();
 
         if (dto.getPlans() != null) {

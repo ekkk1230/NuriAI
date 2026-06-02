@@ -6,6 +6,10 @@ export interface Plan {
     plans: Activity[];
     createdAt: string;
     updatedAt: string;
+    author: string;
+    viewCount: number;
+    likeCount: number;
+    saveCount: number;
 };
 
 export interface GenerateAIPlanForm {

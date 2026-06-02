@@ -87,6 +87,7 @@ textarea { resize: none; min-height: 12rem;  }
 input[type="text"], 
 input[type="password"],
 input[type="search"],
+select,
 textarea {
   @apply w-full h-[4.4rem] px-[1.6rem] text-[1.4rem] border border-solid border-[#e2e8f0] rounded-[0.8rem] bg-white transition-all duration-200;
   @apply focus:outline-none focus:border-[#ad46ff] focus:ring-2 focus:ring-[rgba(173,70,255,0.2)];

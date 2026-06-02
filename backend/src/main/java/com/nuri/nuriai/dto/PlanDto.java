@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,10 @@ public class PlanDto {
         private String mainTheme;
         private String curriculum;
         private String author;
+        private Long viewCount;
+        private Long likeCount;
+        private Long saveCount;
+        private LocalDateTime createdAt;
 
         @JsonProperty("plans")
         private List<ActivityDetail> plans;
@@ -44,6 +49,11 @@ public class PlanDto {
             this.mainTheme = plan.getMainTheme();
             this.curriculum = plan.getCurriculum();
             this.author = plan.getAuthor();
+            this.viewCount = (plan.getViewCount() != null) ? plan.getViewCount() : 0L;
+            this.likeCount = (plan.getLikeCount() != null) ? plan.getLikeCount() : 0L;
+            this.saveCount = (plan.getSaveCount() != null) ? plan.getSaveCount() : 0L;
+            this.createdAt = plan.getCreatedAt();
+
 
             this.plans = plan.getActivities().stream()
                     .map(activity -> ActivityDetail.builder()

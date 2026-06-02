@@ -58,14 +58,12 @@ export const usePlanStore = create<PlanStore>((set) => ({
             if (!response.ok) throw new Error("사용자 계획안 조회 실패");
             const planData = await response.json();
 
-            // 데이터 저장과 동시에 로딩 완료 처리
             set({ 
                 userPlans: Array.isArray(planData) ? planData : [planData],
                 isLoaded: true 
             });
         } catch (err) {
             console.error(`fetchUserPlans 실패: ${err}`);
-            // 에러가 나도 로딩은 끝내야 화면이 나옵니다
             set({ isLoaded: true }); 
         }
     },

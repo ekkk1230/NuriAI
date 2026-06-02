@@ -3,6 +3,7 @@
 import { IoMdHome } from "react-icons/io";
 import { AiFillBulb } from "react-icons/ai";
 import { IoIosListBox } from "react-icons/io";
+import { RiFileDownloadFill } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import Link from 'next/link';
@@ -43,8 +44,15 @@ function Nav() {
 				</li>
 				
 				<li className="">
-				<Link href="/storage" className={getLinkClass('/storage')}>
+				<Link href="/plans" className={getLinkClass('/plans')}>
 					<span className="block text-[2rem] mr-[.8rem]"><IoIosListBox /></span>
+					계획안 둘러보기
+				</Link>
+				</li>
+				
+				<li className="">
+				<Link href="/storage" className={getLinkClass('/storage')}>
+					<span className="block text-[2rem] mr-[.8rem]"><RiFileDownloadFill /></span>
 					보관함
 				</Link>
 				</li>

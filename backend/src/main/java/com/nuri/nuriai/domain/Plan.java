@@ -20,16 +20,23 @@ public class Plan extends BaseTimeEntity {
     private String curriculum;
     private String author;
 
+    private Long viewCount = 0L;
+    private Long likeCount = 0L;
+    private Long saveCount = 0L;
+
     // cascade 설정으로 Plan 저장 시 Activity도 같이 저장되게 함
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Activity> activities = new ArrayList<>();
 
     @Builder
-    public Plan(String age, String mainTheme, String curriculum, String author) {
+    public Plan(String age, String mainTheme, String curriculum, String author, Long viewCount, Long likeCount, Long saveCount) {
         this.age = age;
         this.mainTheme = mainTheme;
         this.curriculum = curriculum;
         this.author = author;
+        this.viewCount = viewCount;
+        this.likeCount = likeCount;
+        this.saveCount = saveCount;
     }
 
     public void addActivity(Activity activity) {
