@@ -39,6 +39,7 @@ public class PlanDto {
         private Long likeCount;
         private Long saveCount;
         private LocalDateTime createdAt;
+        private String activeIntro;
 
         @JsonProperty("plans")
         private List<ActivityDetail> plans;
@@ -53,7 +54,7 @@ public class PlanDto {
             this.likeCount = (plan.getLikeCount() != null) ? plan.getLikeCount() : 0L;
             this.saveCount = (plan.getSaveCount() != null) ? plan.getSaveCount() : 0L;
             this.createdAt = plan.getCreatedAt();
-
+            this.activeIntro = plan.getActiveIntro();
 
             this.plans = plan.getActivities().stream()
                     .map(activity -> ActivityDetail.builder()
