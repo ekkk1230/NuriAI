@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { usePlanStore } from "@/store/usePlanStore"; 
 import { AGE_OPTIONS } from "@/constants/activityOptions"; 
 import PlanItem from "@/components/Planner/PlanItem";
+import { useWelcomeStore } from "@/store/useWelcomeStore";
 
 const SORT_OPTIONS = [
     { value: "latest", label: "최신 순" },
@@ -13,16 +14,18 @@ const SORT_OPTIONS = [
 
 function page() {
     const router = useRouter();
-    const { planStorage, isLoaded, deleteSelectedPlans, fetchAllPlans } = usePlanStore();
+    const { userPlans, isLoaded, deleteSelectedPlans, fetchUserPlans } = usePlanStore();
+    const { user } = useWelcomeStore();
     const [searchTit, setSearchTit]  = useState<string>("");
     const [searchAge, setSearchAge] = useState<string>("");
     const [sortType, setSortType] = useState<string>("latest");
     const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
     useEffect(() => {
-        fetchAllPlans();
-    }, [fetchAllPlans]);
-
+        if (user) {
+            fetchUserPlans(user);
+        }
+    }, [user, fetchUserPlans]);
     if (!isLoaded) return <div className="p-10">로딩 중...</div>;
     
 
@@ -61,7 +64,7 @@ function page() {
     };
 
     // console.log(searchAge)
-    const displayedPlans = planStorage.filter(plan => {
+    const displayedPlans = userPlans.filter(plan => {
         const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
         const matchesAge = (!searchAge || searchAge === "전체") 
             ? true 

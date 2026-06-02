@@ -102,11 +102,11 @@ public class PlanService {
 
         // 4. API 호출 로직
         Map<String, Object> requestBody = Map.of(
-                "contents", new Object[]{
-                        Map.of("parts", new Object[]{
-                                Map.of("text", prompt)
-                        })
-                }
+            "contents", new Object[]{
+                Map.of("parts", new Object[]{
+                    Map.of("text", prompt)
+                })
+            }
         );
 
         String url = GEMINI_URL + apiKey;
@@ -140,11 +140,11 @@ public class PlanService {
         String authorNickname = userRepository.findByUserId(currentUserId).map(User::getUserNickname).orElse("알 수 없는 사용자" + currentUserId);
 
         Plan plan = Plan.builder()
-                .age(dto.getAge())
-                .mainTheme(dto.getMainTheme())
-                .curriculum(dto.getCurriculum())
-                .author(authorNickname)
-                .build();
+            .age(dto.getAge())
+            .mainTheme(dto.getMainTheme())
+            .curriculum(dto.getCurriculum())
+            .author(authorNickname)
+            .build();
 
         if (dto.getPlans() != null) {
             for (PlanDto.ActivityDetail detail : dto.getPlans()) {
@@ -171,15 +171,22 @@ public class PlanService {
             }
         }
 
-        log.info("저장 직전 활동 리스트: {}", plan.getActivities());
-        plan.getActivities().forEach(a -> {
-            log.info("활동명: {}, 계획안 연결 여부: {}", a.getActivityName(), a.getPlan() != null);
-        });
+//        log.info("저장 직전 활동 리스트: {}", plan.getActivities());
+//        plan.getActivities().forEach(a -> {
+//            log.info("활동명: {}, 계획안 연결 여부: {}", a.getActivityName(), a.getPlan() != null);
+//        });
         Plan savedPlan = planRepository.save(plan);
         return new PlanDto.GeminiResponse(savedPlan);
     }
 
     public List<Plan> getAllPlans() {
         return planRepository.findAll();
+    }
+
+    public List<PlanDto.GeminiResponse> getUserPlans(String userNickname) {
+        List<Plan> plans = planRepository.findByAuthor(userNickname);
+        return plans.stream()
+                .map(PlanDto.GeminiResponse::new)
+                .collect(Collectors.toList());
     }
 }

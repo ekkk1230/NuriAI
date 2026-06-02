@@ -157,7 +157,6 @@ function page() {
             groupType: activeForm === "large" ? "대집단" : "소집단",
             selections: selectionsLabels 
         };
-        console.log(planData)
         try {
             await addPlanStorage(planData);
 

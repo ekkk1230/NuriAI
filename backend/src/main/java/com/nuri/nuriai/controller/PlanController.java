@@ -89,4 +89,9 @@ public class PlanController {
         List<Plan> plans = planService.getAllPlans();
         return ResponseEntity.ok(plans);
     }
+
+    @GetMapping("/user/{userNickname}")
+    public ResponseEntity<List<PlanDto.GeminiResponse>> getUserPlans(@PathVariable("userNickname") String userNickname) {
+        return ResponseEntity.ok(planService.getUserPlans(userNickname));
+    }
 }

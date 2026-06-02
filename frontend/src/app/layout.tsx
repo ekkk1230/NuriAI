@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname() || "";
 
-	const isDetailPage = pathname.startsWith('/storage');
+	const isStorageSubPage = pathname.startsWith('/storage/');
 	const isWelcomePage = pathname.startsWith('/welcome');
  	const { isOpen } = useUiStore();
 	const { user, fetchUserInfo } = useWelcomeStore();
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			{isOpen && <ModalLayout />}
 
 			<div className="wrap">
-				{!isDetailPage && !isWelcomePage && <Nav />}
+				{!isStorageSubPage && !isWelcomePage && <Nav />}
 				<main>
 					{children}
 				</main>

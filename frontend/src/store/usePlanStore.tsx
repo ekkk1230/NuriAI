@@ -1,14 +1,17 @@
 import { create } from "zustand";
-import { mockPlanData } from "../mock/PlanData";
 import { API_ROUTES } from "@/constants/api";
 import { GenerateAIPlanForm, Plan } from "@/type/Plan";
 import { apiFetch } from "@/util/api";
+import { User } from "@/type/User";
 
 interface PlanStore {
     planStorage: Plan[];
     isLoaded: boolean;
+    currentCreatePlan: Plan[];
     fetchAllPlans: () => Promise<void>;
     fetchPlanById: (id: number) => Promise<void>;
+    fetchUserPlans: (user: User)  => Promise<void>;
+    userPlans: Plan[];
     addPlanStorage: (plan: GenerateAIPlanForm) => Promise<void>;
     deleteSelectedPlans: (ids: number[]) => void;
     updatePlan: (plan: Plan) => Promise<void>;
@@ -33,7 +36,7 @@ export const usePlanStore = create<PlanStore>((set) => ({
 
     fetchPlanById: async (id: number) => {
         const url = API_ROUTES.PLAN.DETAIL(id);
-        console.log("생성된 URL:", url);
+        // console.log("생성된 URL:", url);
         try {
             const response = await apiFetch(url);
             if (!response.ok) throw new Error("단일 계획안 조회 실패");
@@ -45,10 +48,29 @@ export const usePlanStore = create<PlanStore>((set) => ({
                     : [planData, ...state.planStorage]
             }));
         } catch (err) {
-            console.error(err);
+            console.error(`fetchPlanById 실패: ${err}`);
         }
     },
+    fetchUserPlans: async (user) => {
+        const url = API_ROUTES.PLAN.USER(user);
+        try {
+            const response = await apiFetch(url);
+            if (!response.ok) throw new Error("사용자 계획안 조회 실패");
+            const planData = await response.json();
 
+            // 데이터 저장과 동시에 로딩 완료 처리
+            set({ 
+                userPlans: Array.isArray(planData) ? planData : [planData],
+                isLoaded: true 
+            });
+        } catch (err) {
+            console.error(`fetchUserPlans 실패: ${err}`);
+            // 에러가 나도 로딩은 끝내야 화면이 나옵니다
+            set({ isLoaded: true }); 
+        }
+    },
+    userPlans: [],
+    currentCreatePlan: [],
     addPlanStorage: async (plan) => {
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.BASE}/generate`, {
@@ -62,7 +84,10 @@ export const usePlanStore = create<PlanStore>((set) => ({
 
             console.log("planData:", planData);
 
-            set(state => ({ planStorage: [planData, ...state.planStorage] }));
+            set(state => ({ 
+                planStorage: [planData, ...state.planStorage],
+                currentCreatePlan: [planData, ...state.planStorage],
+            }));
         } catch (err) {
             console.error(`addPlanStorage 실패: ${err}`);
         }

@@ -78,9 +78,9 @@ function page() {
                         <p className="text-textLight text-[2rem] mb-[1.2rem]">👶 {plan?.age}</p>
                         <ul className="flex gap-[1rem]">
                             {plan?.plans.map((item: any, idx: number) => {
-                                const domainStyle = DOMAIN_STYLES[item.domain.split(' ')[0]];
-                                console.log(DOMAIN_STYLES)
-                                console.log(item.domain)
+                                const domainKeys = Object.keys(DOMAIN_STYLES);
+                                const foundKey = domainKeys.find(key => item.domain.includes(key));
+                                const domainStyle = foundKey ? DOMAIN_STYLES[foundKey] : ""
 
                                 return  <li key={`${item}-${idx}`} className={`${domainStyle} p-[.8rem_1.2rem] rounded-[60rem] font-semibold text-[1.2rem]`}>{item.domain}</li>
                             })}
@@ -178,11 +178,17 @@ function page() {
                                                 
                                                 <div className="flex flex-col gap-[0.6rem]">
                                                     <span className="text-[1.4rem] font-bold text-main">전개</span>
-                                                    <p className="text-[1.6rem] text-[#333] leading-relaxed">
-                                                        {item.content.development.split("'")[0]}
-                                                    </p>
+                                                    
+                                                    <div className="flex flex-col gap-[0.8rem]">
+                                                        {item.content.development.split(/(?=\d+\. )/).filter(Boolean).map((part, i) => (
+                                                            <p key={i} className="text-[1.6rem] text-[#333] leading-relaxed">
+                                                                {part.trim()}
+                                                            </p>
+                                                        ))}
+                                                    </div>
+
                                                     {item.content.development.includes("'") && (
-                                                        <div className="bg-[#fcf8f2] p-[1.2rem_1.6rem] rounded-[0.8rem] text-[1.5rem] font-medium text-[#495057] italic before:content-['“'] after:content-['”'] before:text-main/40 before:mr-[0.4rem] after:text-main/40 after:ml-[0.4rem]">
+                                                        <div className="bg-[#fcf8f2] p-[1.2rem_1.6rem] rounded-[0.8rem] text-[1.5rem] font-medium text-[#495057] italic before:content-['“'] after:content-['”'] before:text-main/40 before:mr-[0.4rem] after:text-main/40 after:ml-[0.4rem] mt-[0.8rem]">
                                                             {item.content.development.match(/'([^']+)'/)?.[1]}
                                                         </div>
                                                     )}
