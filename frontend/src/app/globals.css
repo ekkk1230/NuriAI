@@ -70,7 +70,7 @@ main { width: calc(100%); }
 .btn-base {
   @apply cursor-pointer font-medium items-center justify-center gap-[0.8rem] mx-auto block;
 }
-.btn-base svg { @apply inline-block relative -top-[-.15rem] }
+.btn-base svg { @apply inline-block relative -top-[-.1rem] }
 
 .badge-base {
   @apply inline-block rounded-[60rem] text-[1.4rem] font-semibold text-center whitespace-nowrap;
