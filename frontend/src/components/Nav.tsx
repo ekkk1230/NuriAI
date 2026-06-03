@@ -25,7 +25,7 @@ function Nav() {
 		<nav className="w-[30rem] h-[100vh] bg-bgCard min-w-[30rem] border-r-[0.1rem] border-solid border-[#eee] px-[2rem] sticky top-0 left-0">
 			<div className="w-[calc(100%_+_4rem)] relative -left-[2rem] flex flex-col items-center py-[2rem] border-b-[0.1rem] border-solid border-[#eee]">
 				<img src="/logo.png" alt="Logo" className="w-[16rem] h-auto mb-[1.6rem] object-contain" />
-				<p className="text-[1.6rem]">교사 맞춤형 AI 조력자, NuriAI</p>
+				<p className="text-[1.6rem] font-semibold">교사 맞춤형 AI 조력자, NuriAI</p>
 			</div>
 
 			<ul className="mt-[2rem] space-y-[1rem]">

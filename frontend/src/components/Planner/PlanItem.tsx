@@ -27,8 +27,6 @@ function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
         return "bg-[#f1f3f5] text-[#495057]"; 
     };
 
-    const uitilBtnClass = "p-[1rem_0.8rem] rounded-[0.8rem] flex-1 flex items-center justify-center";
-
     return (
         <div className="rounded-[2.4rem] bg-bgCard hover:-top-[.5rem] relative cursor-pointer transition-all duration-200 border border-solid border-[#eee] shadow-sm overflow-hidden" onClick={onClick}>
             
@@ -74,21 +72,16 @@ function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
             <div className="p-[1.6rem] flex flex-col gap-[1.2rem]">
     
                 <div className="flex flex-col gap-[0.8rem] h-[12rem] overflow-hidden">
-                    {plan.plans.map((item: any, idx: number) => {
-
+                    {plan.plans.slice(0, 2).map((item: any, idx: number) => {
                         const groupStyle = item.groupType === "대집단"
                             ? "bg-[var(--color-act0)] text-[var(--color-act0-text)] border-[var(--color-act0-text)]/20"
                             : "bg-[var(--color-act1)] text-[var(--color-act1-text)] border-[var(--color-act1-text)]/20";
 
-                        // 2. 누리과정 5대 영역 스타일 (의사소통, 신체운동 등)
                         const domainStyle = DOMAIN_STYLES[item.domain] || "bg-gray-100 text-gray-600 border-gray-200";
-                        // console.log("domainStyle:", domainStyle)
-                        // 3. 세부 활동 유형 (이야기 나누기, 신체표현 등) 스타일 매핑
-                        const typeStyle = TYPE_STYLES[item.activityType] || "bg-[#f1f3f5] text-[#495057] border-[#e9ecef]";
-
+                        
                         return (
                             <div 
-                                key={idx} 
+                                key={idx}
                                 className="flex flex-wrap items-center gap-[0.8rem] text-[1.4rem] border-b border-solid border-[#eee] last:border-none pb-[0.8rem] last:pb-0"
                             >
                                 <span className={`${groupStyle} text-[1.1rem] font-bold p-[0.2rem_0.6rem] rounded-[0.4rem] shrink-0 min-w-[5.2rem] text-center border border-solid`}>
@@ -106,12 +99,6 @@ function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
                                 <p className="font-medium w-[100%] text-[1.4rem] font-semibold truncate">
                                     {item.activityName}
                                 </p>
-
-
-                                <div className="mt-[.8rem] flex gap-[.4rem] w-full">
-                                    <button type="button" className={`${uitilBtnClass} bg-blue-200 hover:bg-blue-300 text-blue-600`}><FaPen /></button>
-                                    <button type="button" className={`${uitilBtnClass} bg-red-200 hover:bg-red-300 text-red-600`}><MdDelete /></button>
-                                </div>
                             </div>
                         );
                     })}

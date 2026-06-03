@@ -7,6 +7,7 @@ import { DOMAIN_STYLES } from '@/constants/activityOptions';
 import { useEffect, useState } from 'react';
 import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
+import { FaHeart, FaSave } from "react-icons/fa";
 
 function page() {
     const { id: planId } = useParams();
@@ -45,6 +46,8 @@ function page() {
         );
     };
 
+    const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-[15rem]"
+
     
     if (!plan) return <div>Plan not found</div>
 
@@ -76,9 +79,12 @@ function page() {
                 </div>
 
                 <div className="w-[70%] mx-auto mt-[2rem] flex-1">
-                    <div className="bg-sub2-gradient p-[3rem] rounded-[1.2rem] mb-[2rem]">
+                    <div className="bg-main-gradient p-[3rem] rounded-[1.2rem] mb-[2rem]">
                         <p className="text-textLight text-[2.8rem] font-bold mb-[1.2rem]">{plan.mainTheme}</p>
-                        <p className="text-textLight text-[2rem] mb-[1.2rem]">👶 {plan.age}</p>
+                        <ul className="mb-[1.2rem] flex items-center">
+                            <li className="text-textLight text-[1.6rem]">👶 {plan.age}</li>
+                            <li className="before:content-['•'] before:mr-[.8rem] text-textLight text-[1.6rem]">{plan.plans.length}개 활동</li>
+                        </ul>
                         <ul className="flex gap-[1rem]">
                             {plan.plans.map((item: any, idx: number) => {
                                 const domainKeys = Object.keys(DOMAIN_STYLES);
@@ -88,6 +94,11 @@ function page() {
                                 return  <li key={`${item}-${idx}`} className={`${domainStyle} p-[.8rem_1.2rem] rounded-[60rem] font-semibold text-[1.2rem]`}>{item.domain}</li>
                             })}
                         </ul>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-[2rem]">
+                        <p>{plan.author} 선생님</p>
+                        <p>작성한 계획안: </p>
                     </div>
 
                     <div className="bg-bgCard rounded-[1.2rem] mb-[2rem] shadow-sm p-[3rem]">

@@ -40,7 +40,7 @@ function PlanPreview() {
 
                 <div className="relative bg-bgCard rounded-[1.2rem] p-[4rem_3.2rem] mt-[2rem] before:content-[''] before:w-[.8rem] before:h-[100%] before:bg-cate1 before:absolute before:left-0 before:top-0 before:rounded-[1.2rem_0_0_1.2rem]">
                     {plansArr.map((p, idx) => (
-                        <div key={idx}>
+                        <div className="mb-[4rem] pb-[4rem] border-b-[.1rem] border-solid border-[#eee] last:border-b-0 last:p-[4rem_0]">
                             <div className="flex gap-[1rem] items-center">
                                 <span className="bg-cate1 text-cate1-text rounded-[60rem] p-[1rem_1.2rem] text-[1.6rem] font-semibold">{p.domain}</span>
                                 <div className="flex text-textMuted text-[1.4rem]">

@@ -8,6 +8,7 @@ import { usePlanStore } from "@/store/usePlanStore";
 import NoPlan from "@/components/Planner/NoPlan";
 import { FaUserLarge, FaHeart, FaEye } from "react-icons/fa6";
 import { MdOutlineAccessTime } from "react-icons/md";
+import { useForm } from "@/hook/useForm";
 
 
 function page() {
@@ -19,9 +20,14 @@ function page() {
         fetchAllPlans()
     }, [fetchAllPlans]);
 
-    console.log(planStorage)
-
-    const [searchTit, setSearchTit]  = useState<string>("");    
+    // console.log(planStorage)
+    const { form: searchForm, handleChange } = useForm({
+        searchTxt: "",
+        searchAge: "",
+        searchArea: "",
+        sortType: "latest"
+    });
+ 
     const [sortType, setSortType] = useState<string>("rank");
 
     const getSortBtnClass = (value: string) => {
@@ -30,6 +36,30 @@ function page() {
         return `${base} ${active}`;
     };
 
+    const filteredPlans = planStorage.filter(plan => {
+        const matchedTitle = searchForm.searchTxt ? plan.mainTheme.includes(searchForm.searchTxt) : true;
+        const matchedContent = searchForm.searchTxt ? plan.activeIntro.includes(searchForm.searchTxt): true;
+        const matchedAge = searchForm.searchAge ? plan.age === `만 ${searchForm.searchAge}세` : true;
+        const matchedArea = searchForm.searchArea ? plan.plans.some((p: any) => p.domain === AREA_TYPES[Number(searchForm.searchArea)]) : true;
+
+        return (matchedTitle || matchedContent) && matchedAge && matchedArea;
+    });
+    
+    const sortedPlans = [...filteredPlans].sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        const viewA = a.viewCount;
+        const viewB = b.viewCount;
+        const likeA = a.likeCount;
+        const likeB = b.likeCount;
+
+        return sortType === "latest" ? dateB - dateA : sortType === "view" ? viewB - viewA : likeB - likeA;
+    });
+
+    const handleNavigate = (id: number) => {
+        router.push(`/storage/${id}`);
+    }
+
     return (
         <div className="bg-bgCard flex flex-col h-[100%]">
             <div className="border-b-[.1rem] border-solid border-[#eee] p-[2.6rem]">
@@ -37,16 +67,16 @@ function page() {
                 <p className="text-[1.8rem] font-semibold text-textMuted">다른 선생님들이 만든 교육 계획안을 참고하여 활용해보세요.</p>
             </div>
 
-            <div className="border-b-[.1rem] border-solid border-[#eee] p-[1.8rem_2.6rem] bg-bgPreview">
+            <div className="h-full border-b-[.1rem] border-solid border-[#eee] p-[1.8rem_2.6rem] bg-bgPreview">
                 <div className="mt-[2rem] shadow-sm p-[2rem] rounded-[.8rem] bg-bgCard">
                     <div className="flex gap-[.4rem]">
-                        <input type="text" value={searchTit} onChange={e => setSearchTit(e.target.value)} placeholder="제목이나 내용으로 계획안을 검색할 수 있습니다." />
+                        <input type="text" name="searchTxt" value={searchForm.searchTxt} onChange={handleChange} placeholder="제목이나 내용으로 계획안을 검색할 수 있습니다." />
                     </div>
 
                     <div className="flex w-full mt-[1.2rem] items-center">
                         <label className="flex items-center mr-[1.2rem]">
                             <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">연령</span>
-                            <select name="" id="" className="text-[1.4rem] !w-[15rem]">
+                            <select name="searchAge" id="searchAge" value={searchForm.searchAge} onChange={handleChange} className="text-[1.4rem] !w-[15rem]">
                                 <option value="">전체</option>
                                 {AGE_OPTIONS.map(item => (
                                     <option key={item.value} value={item.value}>{item.label}</option>
@@ -56,7 +86,7 @@ function page() {
 
                         <label className="flex items-center mx-[1.2rem]">
                             <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">영역</span>
-                            <select name="" id="" className="text-[1.4rem] !w-[15rem]">
+                            <select name="searchArea" id="searchArea" value={searchForm.searchArea} onChange={handleChange} className="text-[1.4rem] !w-[15rem]">
                                 <option value="">전체</option>
                                 {AREA_TYPES.map((item, idx) => (
                                     <option key={idx} value={idx}>{item}</option>
@@ -89,11 +119,11 @@ function page() {
                     </div>
                 </div>
 
-                {planStorage.length >= 1 
+                {sortedPlans.length >= 1 
                     ? (
-                        <div className="grid grid-cols-3 gap-[1.6rem] mt-[4rem]">
-                            {planStorage.map(plan => (
-                                <div key={plan.id} className="relative bg-bgCard rounded-[.8rem] shadow-sm before:content-[''] before:absolute before:left-0 before:top-0 before:rounded-[.8rem_.8rem_0_0] p-[1.6rem] before:bg-main-gradient before:w-full before:h-[.4rem]">
+                        <div className="grid grid-cols-4 gap-[1.6rem] mt-[4rem]">
+                            {sortedPlans.map(plan => (
+                                <div onClick={() => handleNavigate(plan.id)} key={plan.id} className="cursor-pointer relative bg-bgCard rounded-[.8rem] shadow-sm before:content-[''] before:absolute before:left-0 before:top-0 before:rounded-[.8rem_.8rem_0_0] p-[1.6rem] before:bg-main-gradient before:w-full before:h-[.4rem]">
                                     <p className="text-[2rem] font-bold mb-[1rem]">{plan.mainTheme}</p>
                                     <ul className="flex gap-[.4rem] items-center text-[1.4rem] text-textMuted mb-[1rem]">
                                         <li className="after:content-['|'] flex gap-[.4rem] items-center text-[1.4rem] text-textMuted"><FaUserLarge />{plan.author} 선생님</li>
@@ -134,19 +164,9 @@ function page() {
                                 </div>
                             ))}
                         </div>
-
-                        /**
-                         *  나비의 한살이
-                            ㄴㄹㅁㄴ 선생님
-                            만 4세 자연탐구
-                            나비의 성장 과정을 관찰하며 생명의 신비로움을 느끼는 활동입니다. 애벌레부터 나비까지의 변화 과정을 직접 관찰하고 기록합니다.
-
-                            421 3120    5월 12일
-                            좋아요 보관
-                         */
                     ) 
                     : (
-                        <NoPlan />
+                        <NoPlan txt="현재 준비되어 있는 계획안이 없습니다. 새로운 계획안을 만들어주세요." showButton={true} />
                     )
                 }
             </div>

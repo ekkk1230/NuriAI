@@ -184,7 +184,7 @@ function page() {
                         <label htmlFor="" className="font-medium text-[1.6rem] mb-[1.2rem]">
                             대상연령 <span className="text-[#ad46ff]">*</span>
                         </label>
-                        <div className="flex gap-[.4rem] flex-wrap">
+                        <div className="grid grid-cols-3 gap-[.4rem] flex-wrap">
                             {AGE_OPTIONS.map(op => (
                                 <button type="button" name="age" key={op.value} value={op.value} onClick={() => setActiveAge(op.value)} className={activeAgeBtnClass(op.value)}>{op.label}</button>
                             ))}

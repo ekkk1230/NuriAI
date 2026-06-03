@@ -68,7 +68,7 @@ main { width: calc(100%); }
 .full-width-section { width: calc(100% + 16rem); position: relative; left: -8rem; padding: 8rem 0; }
 
 .btn-base {
-  @apply cursor-pointer font-medium items-center justify-center gap-[0.8rem] mx-auto block;
+  @apply cursor-pointer font-medium items-center justify-center gap-[0.8rem] mx-auto block text-[1.8rem] font-semibold;
 }
 .btn-base svg { @apply inline-block relative -top-[-.1rem] }
 

@@ -30,14 +30,14 @@ public class Plan extends BaseTimeEntity {
     private List<Activity> activities = new ArrayList<>();
 
     @Builder
-    public Plan(String age, String mainTheme, String curriculum, String author, Long viewCount, Long likeCount, Long saveCount, String activeIntro, Long groupType, List<Activity> activities) {
+    public Plan(String age, String mainTheme, String curriculum, String author, Long viewCount, Long likeCount, Long saveCount, String activeIntro) {
         this.age = age;
         this.mainTheme = mainTheme;
         this.curriculum = curriculum;
         this.author = author;
-        this.viewCount = viewCount;
-        this.likeCount = likeCount;
-        this.saveCount = saveCount;
+        this.viewCount = (viewCount != null) ? viewCount : 0L;
+        this.likeCount = (likeCount != null) ? likeCount : 0L;
+        this.saveCount = (saveCount != null) ? saveCount : 0L;
         this.activeIntro = activeIntro;
     }
 

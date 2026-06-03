@@ -46,7 +46,7 @@ function SamplePlan() {
                             </ul>
                         </li>
                     </ul>
-                    <p className="text-[1.4rem] text-textMuted mt-[2.4rem]">
+                    <p className="text-[1.8rem] font-semibold text-textMuted mt-[2.4rem]">
                         더 많은 내용은 워크스페이스에서 확인하세요...
                     </p>
                 </div>
@@ -69,7 +69,7 @@ function SamplePlan() {
                             </ul>
                         </li>
                     </ul>
-                    <p className="text-[1.4rem] text-textMuted mt-[2.4rem]">
+                    <p className="text-[1.8rem] font-semibold text-textMuted mt-[2.4rem]">
                         더 많은 내용은 워크스페이스에서 확인하세요...
                     </p>
                 </div>
