@@ -190,8 +190,8 @@ public class PlanService {
         return planRepository.findAll();
     }
 
-    public List<PlanDto.GeminiResponse> getUserPlans(String userNickname) {
-        List<Plan> plans = planRepository.findByAuthor(userNickname);
+    public List<PlanDto.GeminiResponse> getUserPlans(String author) {
+        List<Plan> plans = planRepository.findByAuthor(author);
         return plans.stream()
                 .map(PlanDto.GeminiResponse::new)
                 .collect(Collectors.toList());

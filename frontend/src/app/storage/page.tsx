@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { usePlanStore } from "@/store/usePlanStore"; 
 import { AGE_OPTIONS } from "@/constants/activityOptions"; 
 import PlanItem from "@/components/Planner/PlanItem";
@@ -13,8 +13,11 @@ const SORT_OPTIONS = [
 ];
 
 function page() {
+    const searchParams = useSearchParams();
+    const authorFilter = searchParams.get("author") || "";
+
     const router = useRouter();
-    const { userPlans, isLoaded, deleteSelectedPlans, fetchUserPlans } = usePlanStore();
+    const { userPlans, planStorage, fetchAllPlans, isLoaded, deleteSelectedPlans, fetchUserPlans } = usePlanStore();
     const { user } = useWelcomeStore();
     
     const [searchTit, setSearchTit]  = useState<string>("");
@@ -24,9 +27,9 @@ function page() {
 
     useEffect(() => {
         if (user) {
-            fetchUserPlans(user);
+            fetchAllPlans();
         }
-    }, [user, fetchUserPlans]);
+    }, [fetchAllPlans]);
 
     if (!isLoaded) return <div className="p-10">로딩 중...</div>;
     
@@ -64,13 +67,16 @@ function page() {
         );
     };
 
-    const filteredPlans = userPlans.filter(plan => {
+    const filteredPlans = planStorage.filter(plan => {
         const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
         const matchesAge = (!searchAge || searchAge === "전체") 
             ? true 
             : plan.age === `만 ${searchAge}세`;
+        const matchesAuthor = authorFilter 
+            ? plan.author === decodeURIComponent(authorFilter)
+            : plan.author === user?.userNickname;
 
-        return matchesTitle && matchesAge;
+        return matchesTitle && matchesAge && matchesAuthor;
     })
 
     // 필터링 로직: 검색어와 선택된 연령에 따라 plans 배열 필터링
@@ -105,7 +111,9 @@ function page() {
                 <div className="flex gap-[.4rem]">
                     <input type="text" value={searchTit} onChange={e => setSearchTit(e.target.value)} placeholder="주제로 계획안을 검색할 수 있습니다." />
                     {/* 선택된 항목이 있을 때만 삭제 버튼 활성화 */}
-                    {checkedIds.length >= 1 && <button onClick={handleRemove} className="rounded-[.8rem] w-[15rem] text-center p-[1rem_1.6rem] bg-red-600 text-textLight hover:bg-red-700 whitespace-nowrap text-[1.4rem]">선택 삭제 ({checkedIds.length}개)</button>}
+                    {!authorFilter && checkedIds.length >= 1 && (
+                        <button onClick={handleRemove} className="rounded-[.8rem] w-[15rem] text-center p-[1rem_1.6rem] bg-red-600 text-textLight hover:bg-red-700 whitespace-nowrap text-[1.4rem]">선택 삭제 ({checkedIds.length}개)</button>
+                    )}
                 </div>
 
                 <div className="flex justify-between items-center mt-[1.2rem]">
@@ -134,6 +142,7 @@ function page() {
                                         key={plan.id} 
                                         checkHandle={handleCheckToggle} 
                                         onClick={() => router.push(`/storage/${plan.id}`)} 
+                                        authorFilter={authorFilter}
                                     />
                                 );
                             })}

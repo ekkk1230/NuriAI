@@ -1,18 +1,20 @@
 "use client";
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { usePlanStore } from '@/store/usePlanStore'; 
 import { IoArrowBackOutline } from "react-icons/io5";
 import { DOMAIN_STYLES } from '@/constants/activityOptions';
 import { useEffect, useState } from 'react';
 import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
-import { FaHeart, FaSave } from "react-icons/fa";
+import { FaHeart, FaSave, FaEye, FaBookmark } from "react-icons/fa";
+import { FcLike } from "react-icons/fc";
 
 function page() {
     const { id: planId } = useParams();
-    const { planStorage, fetchPlanById } = usePlanStore();
+    const { planStorage, fetchPlanById, fetchPlansByAuthor } = usePlanStore();
     const { openModal } = useUiStore();
+    const route = useRouter();
 
     useEffect(() => {
         fetchPlanById(Number(planId));
@@ -38,6 +40,10 @@ function page() {
         return <div className="p-10 text-[1.6rem]">존재하지 않거나 삭제된 계획안입니다.</div>;
     }
 
+    const currentPlanAuthor = plan.author;
+    const currentAuthorPlans = planStorage.filter(p => p.author === currentPlanAuthor);
+    // console.log(currentAuthorPlans)
+
     const handleClickEdit = () => {
         openModal(
             "계획안 수정",
@@ -48,6 +54,15 @@ function page() {
 
     const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-[15rem]"
 
+    const handleFetchPlansByAuthor = async () => {
+        try {
+            await fetchPlansByAuthor(plan);
+        } catch (err) {
+            console.error(`작성자 계획안 조회 실패: ${err}`);
+        }
+
+        route.push(`/storage?author=${encodeURIComponent(plan.author)}`);
+    };
     
     if (!plan) return <div>Plan not found</div>
 
@@ -97,8 +112,39 @@ function page() {
                     </div>
 
                     <div className="grid grid-cols-3 gap-[2rem]">
-                        <p>{plan.author} 선생님</p>
-                        <p>작성한 계획안: </p>
+                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
+                            <div className="flex gap-[.4rem] items-center">
+                                <p className="text-[1.4rem] text-textMuted font-semibold">작성자</p>
+                                <p className="text-[1.4rem] font-medium">{plan.author}</p>
+                            </div>
+                            <div className="flex gap-[.4rem] items-center">
+                                <p className="text-[1.4rem] text-textMuted font-semibold">작성한 계획안</p>
+                                <p className="text-[1.4rem] font-medium">{currentAuthorPlans.length}개</p>
+                                <button type="button" onClick={() => handleFetchPlansByAuthor()}>
+                                    {plan.author} 선생님이 작성한 계획안 보라가기
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
+                            <div>
+                                <FcLike />
+                                <p className="text-[1.6rem] font-bold">{plan.likeCount}</p>
+                            </div>
+                            <div>
+                                <FaEye />
+                                <p className="text-[1.6rem] font-bold">{plan.viewCount}</p>
+                            </div>
+                            <div>
+                                <FaBookmark />
+                                <p className="text-[1.6rem] font-bold">{plan.saveCount}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
+                            <button className={utilBtnClass}><FaHeart /> 좋아요</button>
+                            <button className={utilBtnClass}>< FaSave/> 보관하기</button>
+                        </div>
                     </div>
 
                     <div className="bg-bgCard rounded-[1.2rem] mb-[2rem] shadow-sm p-[3rem]">
@@ -108,7 +154,7 @@ function page() {
 
                     {plan.plans.map((item, idx) => {
                         const domainStyle = DOMAIN_STYLES[item.domain];
-                        console.log(domainStyle)
+                        // console.log(domainStyle)
                         return (
                             <div 
                                 key={idx}

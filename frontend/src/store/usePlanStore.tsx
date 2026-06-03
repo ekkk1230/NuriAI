@@ -11,7 +11,9 @@ interface PlanStore {
     fetchAllPlans: () => Promise<void>;
     fetchPlanById: (id: number) => Promise<void>;
     fetchUserPlans: (user: User)  => Promise<void>;
+    fetchPlansByAuthor: (plan: Plan) => Promise<void>;
     userPlans: Plan[];
+    authorPlans: Plan[];
     addPlanStorage: (plan: GenerateAIPlanForm) => Promise<void>;
     deleteSelectedPlans: (ids: number[]) => void;
     updatePlan: (plan: Plan) => Promise<void>;
@@ -67,7 +69,26 @@ export const usePlanStore = create<PlanStore>((set) => ({
             set({ isLoaded: true }); 
         }
     },
+    fetchPlansByAuthor: async (plan) => {
+        const url = API_ROUTES.PLAN.AUTHOR(plan);
+        try {
+            const response = await apiFetch(url);
+            // console.log("작성자 계획안 응답 상태:", response.status);
+            if (!response.ok) throw new Error("사용자 계획안 조회 실패");
+            const planData = await response.json();
+            // console.log("작성자 계획안 데이터:", planData);
+
+            set({ 
+                authorPlans: Array.isArray(planData) ? planData : [planData],
+                isLoaded: true 
+            });
+        } catch (err) {
+            console.error(`fetchPlansByAuthor 실패: ${err}`);
+            set({ isLoaded: true }); 
+        }
+    },
     userPlans: [],
+    authorPlans: [],
     currentCreatePlan: [],
     addPlanStorage: async (plan) => {
         try {

@@ -9,9 +9,10 @@ interface PlanItemProps {
     plan: any;
     checkHandle: (id: number) => void;
     onClick?: () => void;
+    authorFilter?: string;
 };
 
-function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
+function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
     const [isChecked, setIsChecked] = useState(false);
 
     const getActivityStyle = (type: string) => {
@@ -41,32 +42,34 @@ function PlanItem({ plan, checkHandle, onClick }: PlanItemProps) {
                     <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight">{plan.plans.length}개 활동</li>
                 </ul>
 
-                <label className="absolute top-[1.6rem] right-[1.6rem] cursor-pointer select-none" onClick={e => e.stopPropagation()}>
-                    <input 
-                        type="checkbox" 
-                        value={plan.id} 
-                        checked={isChecked}
-                        onChange={(e) => setIsChecked(e.target.checked)}
-                        onClick={() => checkHandle(plan.id)}
-                        className="peer hidden" 
-                    />
-                    <div className="w-[2.2rem] h-[2.2rem] rounded-[0.6rem] border-[0.15rem] border-solid border-white/60 bg-transparent flex items-center justify-center transition-all duration-200
-                        hover:border-white
-                        peer-checked:bg-white peer-checked:border-white"
-                    >
-                        <svg 
-                            className={`w-[1.2rem] h-[1.2rem] text-main font-bold transition-all duration-200 ${
-                                isChecked ? "scale-100 opacity-100" : "scale-50 opacity-0"
-                            }`}
-                            fill="none" 
-                            stroke="currentColor" 
-                            strokeWidth="3.5" 
-                            viewBox="0 0 24 24"
+                {!authorFilter && (
+                    <label className="absolute top-[1.6rem] right-[1.6rem] cursor-pointer select-none" onClick={e => e.stopPropagation()}>
+                        <input 
+                            type="checkbox" 
+                            value={plan.id} 
+                            checked={isChecked}
+                            onChange={(e) => setIsChecked(e.target.checked)}
+                            onClick={() => checkHandle(plan.id)}
+                            className="peer hidden" 
+                        />
+                        <div className="w-[2.2rem] h-[2.2rem] rounded-[0.6rem] border-[0.15rem] border-solid border-white/60 bg-transparent flex items-center justify-center transition-all duration-200
+                            hover:border-white
+                            peer-checked:bg-white peer-checked:border-white"
                         >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                    </div>
-                </label>
+                            <svg 
+                                className={`w-[1.2rem] h-[1.2rem] text-main font-bold transition-all duration-200 ${
+                                    isChecked ? "scale-100 opacity-100" : "scale-50 opacity-0"
+                                }`}
+                                fill="none" 
+                                stroke="currentColor" 
+                                strokeWidth="3.5" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                        </div>
+                    </label>
+                )}
             </div>
 
             <div className="p-[1.6rem] flex flex-col gap-[1.2rem]">
