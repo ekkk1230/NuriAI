@@ -11,6 +11,7 @@ export interface Plan {
     likeCount: number;
     saveCount: number;
     activeIntro: string;
+    savedUserIds: number[];
 };
 
 export interface GenerateAIPlanForm {

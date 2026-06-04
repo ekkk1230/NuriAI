@@ -10,6 +10,7 @@ interface PlanStore {
     currentCreatePlan: Plan[];
     fetchAllPlans: () => Promise<void>;
     fetchPlanById: (id: number) => Promise<void>;
+    updatePlanViewCount: (id: number) => Promise<void>;
     fetchUserPlans: (user: User)  => Promise<void>;
     fetchPlansByAuthor: (plan: Plan) => Promise<void>;
     userPlans: Plan[];
@@ -19,6 +20,7 @@ interface PlanStore {
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
     addStorage: (user: User, plan: Plan) => Promise<void>;
+    getFilteredPlans: (searchTit: string, searchAge: string, isSavedFilter: boolean, authorFilter: string, user: any) => Plan[];
 };
 
 export const usePlanStore = create<PlanStore>((set, get) => ({
@@ -53,6 +55,21 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             }));
         } catch (err) {
             console.error(`fetchPlanById 실패: ${err}`);
+        }
+    },
+    updatePlanViewCount: async (id: number) => {
+        try {
+            const response = await apiFetch(`${API_ROUTES.PLAN.VIEW(id)}`, {
+                method: "POST",
+            });
+            if (!response.ok) throw new Error("조회수 업데이트 실패");
+            const updatedPlan = await response.json();
+            console.log("업데이트된 계획안 데이터:", updatedPlan);
+            set(state => ({
+                planStorage: state.planStorage.map(p => p.id === id ? updatedPlan : p)
+            }));
+        } catch (err) {
+            console.error(`updatePlanViewCount 실패: ${err}`);
         }
     },
     fetchUserPlans: async (user) => {
@@ -158,14 +175,28 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
                 body: JSON.stringify({ userId: user.id }),
             });
             if (!response.ok) throw new Error("계획안 저장 실패");
-            const savePlan = await response.json();
+            const updatedPlanData = await response.json();
             set(state => ({ 
-                planStorage: state.planStorage.map(p => p.id === plan.id ? savePlan : p),
+                planStorage: state.planStorage.map(p => p.id === plan.id ? { ...p, ...updatedPlanData} : p),
             }));
             
-            await get().fetchUserPlans(user);
+            // await get().fetchUserPlans(user);
         } catch (err) {
             console.error(`addStorage 실패: ${err}`);
         }
+    },
+    getFilteredPlans: (searchTit, searchAge, isSavedFilter, authorFilter, user) => {
+        const { planStorage } = get();
+
+        return planStorage.filter(plan => {
+            const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
+            const matchesAge = (!searchAge || searchAge === "전체") ? true : plan.age === `만 ${searchAge}세`;
+            const safeIds = (plan.savedUserIds || []).map(Number);
+            const isSaved = safeIds.includes(Number(user.id));
+            const isMyPlan = plan.author === user?.userNickname;
+
+            if (isSavedFilter) return matchesTitle && matchesAge && (isMyPlan || isSaved);
+            return matchesTitle && matchesAge && (authorFilter ? plan.author === decodeURIComponent(authorFilter) : isMyPlan);
+        })
     }
 }));

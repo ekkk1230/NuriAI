@@ -65,7 +65,7 @@ function Nav() {
 				</li>
 
 				<li>
-				<Link href="/welcome/login" onClick={logoutUser} className={getLinkClass('/mypage')}>
+				<Link href="/welcome/login" onClick={logoutUser} className={getLinkClass('/welcome/login')}>
 					<span className="block text-[2rem] mr-[.8rem]"><IoLogOut /></span>
 					로그아웃
 				</Link>

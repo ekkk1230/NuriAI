@@ -134,14 +134,23 @@ function EditModal({ plan }: { plan: Plan }) {
                                 ].map(step => (
                                     <div key={step.key} className="last:mt-0 mt-[1.2rem]">
                                         <p className={`${step.color} text-[1.4rem] font-semibold mb-[1.2rem]`}>{step.label}</p>
-                                        <textarea className="p-[1rem]" name="content" data-step={step.key} onChange={(e) => handleActiveChange(activityIdx, e)} value={activity.content[step.key] || ""} />
+                                        {/* 수정: activity[step.key]에 바로 접근합니다. 
+                                            ContentDetail 타입이라면 .description 등을 써야 할 수도 있습니다. 
+                                        */}
+                                        <textarea 
+                                            className="p-[1rem]" 
+                                            name="content" 
+                                            data-step={step.key} 
+                                            onChange={(e) => handleActiveChange(activityIdx, e)} 
+                                            value={activity[step.key]?.description || ""} 
+                                        />
                                     </div>
                                 ))}
                             </label>
 
                             <label className="block">
                                 <p className="text-[1.6rem] mb-[1rem] font-semibold">유의점</p>
-                                <DynamicInput arr={activity.precautions} inputName="pricuation"
+                                <DynamicInput arr={activity.precautions} inputName="precaution"
                                     onAddItem={() => handleAddItem(activityIdx, "precautions")}
                                     onDeleteItem={(idx) => handleDeleteItem(activityIdx, "precautions", idx)}
                                     onUpdateItem={(idx, value) => handleUpdateItem(activityIdx, "precautions", idx, value)} />

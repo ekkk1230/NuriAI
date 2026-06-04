@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { usePlanStore } from '@/store/usePlanStore'; 
 import { IoArrowBackOutline } from "react-icons/io5";
 import { DOMAIN_STYLES } from '@/constants/activityOptions';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
 import { FaHeart, FaSave, FaEye, FaBookmark } from "react-icons/fa";
@@ -13,15 +13,30 @@ import { useWelcomeStore } from '@/store/useWelcomeStore';
 
 function page() {
     const { id: planId } = useParams();
-    const { planStorage, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage } = usePlanStore();
+    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount } = usePlanStore();
     const { openModal } = useUiStore();
     const { user } = useWelcomeStore();
     const route = useRouter();
 
-    useEffect(() => {
-        fetchPlanById(Number(planId));
-    }, []);
+    const hasIncreasedRef = useRef(false);
 
+    useEffect(() => {
+        // 1. 데이터 조회 (가장 먼저 실행)
+        fetchPlanById(Number(planId));
+
+        // 2. 조회수 증가 (단 1회만 호출 보장)
+        if (!hasIncreasedRef.current) {
+            updatePlanViewCount(Number(planId));
+            hasIncreasedRef.current = true;
+        }
+    }, [planId]);
+
+    useEffect(() => {
+        console.log("현재 planId:", planId);
+        console.log("planStorage 내용:", planStorage);
+        console.log("찾은 plan:", plan);
+    }, [planStorage, planId]);
+        
     const [ageGroup, setAgeGroup] = useState<string>("");
 
     const plan = planStorage.find(p => p.id === Number(planId));
@@ -36,8 +51,11 @@ function page() {
         }
     }, [plan]);
 
-    if (!user) return <div>존재하지 않는 회원입니다.</div>;
-    if (!plan) return <div>존재하지 않는 회원입니다.</div>;
+    if (!user) return <div>로그인이 필요한 페이지입니다.</div>;
+    if (!isLoaded && planStorage.length === 0) {
+        return <div>데이터를 불러오는 중입니다...</div>;
+    }
+    if (!plan) return <div>존재하지 않거나 삭제된 계획안입니다.</div>;
 
     const baseBtnClass = "flex items-center text-[1.4rem] font-semibold cursor-pointer rounded-[0.8rem] p-[.8rem] min-w-[12rem] justify-center";
 
@@ -54,6 +72,7 @@ function page() {
     const handleSave = async () => {
         try {
             await addStorage(user, plan);
+            await fetchPlanById(plan.id); 
         } catch (err) {
             console.error(`handleSave 실패: ${err}`)
         }

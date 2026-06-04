@@ -115,4 +115,9 @@ public class PlanController {
     public ResponseEntity<PlanDto.GeminiResponse> toggleSave(@PathVariable("planId") Long planId, @RequestBody PlanSaveDto.PlanSaveRequest request) {
         return ResponseEntity.ok(planService.toggleSave(planId, request.getUserId()));
     }
+
+    @PostMapping("/{id}/view")
+    public ResponseEntity<PlanDto.GeminiResponse> increaseViewCount(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(planService.increaseViewCount(id));
+    }
 }

@@ -48,7 +48,6 @@ public class PlanService {
 
     public PlanDto.GeminiResponse getOne(Long id) {
         Plan plan = planRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다. " + id));
-        plan.updateViewCount();
         return new PlanDto.GeminiResponse(plan);
     }
 
@@ -242,6 +241,7 @@ public class PlanService {
         Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + planId));
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
 
+
         planSaveRepository.findByUserAndPlan(user, plan).ifPresentOrElse(
                 save -> {
                     plan.removeSave(save);
@@ -254,6 +254,18 @@ public class PlanService {
                 }
         );
 
+        planRepository.flush();
+
+        Plan updatedPlan = planRepository.findByIdWithSaves(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + planId));
+
+        return new PlanDto.GeminiResponse(updatedPlan);
+    }
+
+    @Transactional
+    public PlanDto.GeminiResponse increaseViewCount(Long planId) {
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + planId));
+        plan.updateViewCount();
+        planRepository.save(plan);
         return new PlanDto.GeminiResponse(plan);
     }
 }

@@ -14,5 +14,6 @@ export const API_ROUTES = {
         AUTHOR: (plan: Plan) => `${API_BASE_URL}/api/plans/author/${plan.author}`,
         LIKE: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/like`,
         SAVE: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/save`,
+        VIEW: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/view`,
     }
 } as const;
