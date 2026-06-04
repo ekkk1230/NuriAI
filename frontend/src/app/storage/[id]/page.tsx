@@ -9,22 +9,22 @@ import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
 import { FaHeart, FaSave, FaEye, FaBookmark } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
+import { useWelcomeStore } from '@/store/useWelcomeStore';
 
 function page() {
     const { id: planId } = useParams();
-    const { planStorage, fetchPlanById, fetchPlansByAuthor } = usePlanStore();
+    const { planStorage, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage } = usePlanStore();
     const { openModal } = useUiStore();
+    const { user } = useWelcomeStore();
     const route = useRouter();
 
     useEffect(() => {
         fetchPlanById(Number(planId));
-    }, [])
-    
-    const plan = planStorage.find(p => p.id === Number(planId));
-
-    const baseBtnClass = "flex items-center text-[1.4rem] font-semibold cursor-pointer rounded-[0.8rem] p-[.8rem] min-w-[12rem] justify-center";
+    }, []);
 
     const [ageGroup, setAgeGroup] = useState<string>("");
+
+    const plan = planStorage.find(p => p.id === Number(planId));
 
     useEffect(() => {
         if (!plan?.age) return;
@@ -36,9 +36,32 @@ function page() {
         }
     }, [plan]);
 
+    if (!user) return <div>존재하지 않는 회원입니다.</div>;
+    if (!plan) return <div>존재하지 않는 회원입니다.</div>;
+
+    const baseBtnClass = "flex items-center text-[1.4rem] font-semibold cursor-pointer rounded-[0.8rem] p-[.8rem] min-w-[12rem] justify-center";
+
+    // console.log("user:", user, plan)
+
+    const handleLike = async () => { 
+        try {
+            await likePlan(user, plan); 
+        } catch (err) {
+            console.error(`handleLike 실패: ${err}`);
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            await addStorage(user, plan);
+        } catch (err) {
+            console.error(`handleSave 실패: ${err}`)
+        }
+    }
+
     if (!plan) {
         return <div className="p-10 text-[1.6rem]">존재하지 않거나 삭제된 계획안입니다.</div>;
-    }
+    };
 
     const currentPlanAuthor = plan.author;
     const currentAuthorPlans = planStorage.filter(p => p.author === currentPlanAuthor);
@@ -52,7 +75,8 @@ function page() {
         );
     };
 
-    const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-[15rem]"
+    const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-full bg-[#e6e6e6] mb-[1rem] last:mb-0 hover:bg-[#e5dbff]";
+
 
     const handleFetchPlansByAuthor = async () => {
         try {
@@ -101,17 +125,17 @@ function page() {
                             <li className="before:content-['•'] before:mr-[.8rem] text-textLight text-[1.6rem]">{plan.plans.length}개 활동</li>
                         </ul>
                         <ul className="flex gap-[1rem]">
-                            {/* {plan.plans.map((item: any, idx: number) => {
+                            {plan.plans.map((item: any, idx: number) => {
                                 const domainKeys = Object.keys(DOMAIN_STYLES);
                                 const foundKey = domainKeys.find(key => item.domain.includes(key));
-                                const domainStyle = foundKey ? DOMAIN_STYLES[foundKey ||] : ""
+                                const domainStyle = foundKey ? DOMAIN_STYLES[foundKey as keyof typeof DOMAIN_STYLES] : ""
 
                                 return  <li key={`${item}-${idx}`} className={`${domainStyle} p-[.8rem_1.2rem] rounded-[60rem] font-semibold text-[1.2rem]`}>{item.domain}</li>
-                            })} */}
+                            })}
                         </ul>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-[2rem]">
+                    <div className="grid grid-cols-3 gap-[2rem] mb-[2rem]">
                         <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
                             <div className="flex gap-[.4rem] items-center">
                                 <p className="text-[1.4rem] text-textMuted font-semibold">작성자</p>
@@ -126,24 +150,24 @@ function page() {
                             </div>
                         </div>
 
-                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
-                            <div>
-                                <FcLike />
+                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm flex">
+                            <div className="w-full flex items-center justify-center flex-col gap-[1rem]">
+                                <FcLike className="text-[3rem]" />
                                 <p className="text-[1.6rem] font-bold">{plan.likeCount}</p>
                             </div>
-                            <div>
-                                <FaEye />
+                            <div className="w-full flex items-center justify-center flex-col gap-[1rem]">
+                                <FaEye className="text-[3rem]" />
                                 <p className="text-[1.6rem] font-bold">{plan.viewCount}</p>
                             </div>
-                            <div>
-                                <FaBookmark />
+                            <div className="w-full flex items-center justify-center flex-col gap-[1rem]">
+                                <FaBookmark className="text-[3rem]" />
                                 <p className="text-[1.6rem] font-bold">{plan.saveCount}</p>
                             </div>
                         </div>
                         
                         <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
-                            <button className={utilBtnClass}><FaHeart /> 좋아요</button>
-                            <button className={utilBtnClass}>< FaSave/> 보관하기</button>
+                            <button type="button" onClick={handleLike} className={utilBtnClass}><FaHeart /> 좋아요</button>
+                            <button type="button" onClick={handleSave} className={utilBtnClass}>< FaSave/> 보관하기</button>
                         </div>
                     </div>
 
@@ -153,7 +177,7 @@ function page() {
                     </div>
 
                     {plan.plans.map((item, idx) => {
-                        console.log(item)
+                        // console.log(item)
                         // const domainStyle = DOMAIN_STYLES[item.domain];
                         // console.log(domainStyle)
                         return (

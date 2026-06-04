@@ -6,39 +6,47 @@ import './globals.css';
 import { useUiStore } from '@/store/useUiStore';
 import ModalLayout from '@/components/Modal/ModalLayout';
 import { useWelcomeStore } from '@/store/useWelcomeStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-	const pathname = usePathname() || "";
+    const pathname = usePathname() || "";
+    const isStorageSubPage = pathname.startsWith('/storage/');
+    const isWelcomePage = pathname.startsWith('/welcome');
+    
+    const { isOpen } = useUiStore();
+    const { user, fetchUserInfo } = useWelcomeStore();
+    const router = useRouter();
+    
+    const [isLoading, setIsLoading] = useState(true);
 
-	const isStorageSubPage = pathname.startsWith('/storage/');
-	const isWelcomePage = pathname.startsWith('/welcome');
- 	const { isOpen } = useUiStore();
-	const { user, fetchUserInfo } = useWelcomeStore();
-
-	const router = useRouter();
-
-	useEffect(() => {
-		if (!user) router.push("/welcome/login");
-		// if (!user) router.push("/plans");
-	}, []);
-
-	useEffect(() => {
-        fetchUserInfo();
+    useEffect(() => {
+        const init = async () => {
+            const token = localStorage.getItem("accessToken");
+            if (token) {
+                await fetchUserInfo();
+            }
+            setIsLoading(false);
+        };
+        init();
     }, [fetchUserInfo]);
 
-  return (
-    <html>
-      	<body>
-			{isOpen && <ModalLayout />}
+    useEffect(() => {
+        if (isLoading) return; 
 
-			<div className="wrap">
-				{!isStorageSubPage && !isWelcomePage && <Nav />}
-				<main>
-					{children}
-				</main>
-			</div>
-		</body>
-    </html>
-  );
+        if (!user && !isWelcomePage) {
+            router.push("/welcome/login");
+        }
+    }, [user, isWelcomePage, isLoading, router]);
+
+    return (
+        <html>
+            <body>
+                {isOpen && <ModalLayout />}
+                <div className="wrap">
+                    {!isStorageSubPage && !isWelcomePage && <Nav />}
+                    <main>{children}</main>
+                </div>
+            </body>
+        </html>
+    );
 }

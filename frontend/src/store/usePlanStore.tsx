@@ -14,9 +14,11 @@ interface PlanStore {
     fetchPlansByAuthor: (plan: Plan) => Promise<void>;
     userPlans: Plan[];
     authorPlans: Plan[];
-    addPlanStorage: (plan: GenerateAIPlanForm) => Promise<void>;
+    addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
     deleteSelectedPlans: (ids: number[]) => void;
     updatePlan: (plan: Plan) => Promise<void>;
+    likePlan: (user: User, plan: Plan) => Promise<void>;
+    addStorage: (user: User, plan: Plan) => Promise<void>;
 };
 
 export const usePlanStore = create<PlanStore>((set) => ({
@@ -90,7 +92,7 @@ export const usePlanStore = create<PlanStore>((set) => ({
     userPlans: [],
     authorPlans: [],
     currentCreatePlan: [],
-    addPlanStorage: async (plan) => {
+    addPlan: async (plan) => {
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.BASE}/generate`, {
                 method: "POST",
@@ -108,7 +110,7 @@ export const usePlanStore = create<PlanStore>((set) => ({
                 currentCreatePlan: [planData, ...state.planStorage],
             }));
         } catch (err) {
-            console.error(`addPlanStorage 실패: ${err}`);
+            console.error(`addPlan 실패: ${err}`);
         }
     },
     deleteSelectedPlans: (ids) => set(state => ({
@@ -132,4 +134,34 @@ export const usePlanStore = create<PlanStore>((set) => ({
             console.error(`updatePlan 실패: ${err}`);
         }
     },
+    likePlan: async(user, plan) => {
+        // console.log(`${API_ROUTES.PLAN.LIKE(plan.id)}`)
+        try {
+            const response = await apiFetch(`${API_ROUTES.PLAN.LIKE(plan.id)}`, {
+                method: "POST",
+                body: JSON.stringify({ userId: user.id }),
+            });
+            console.log(response)
+
+            if (!response.ok) throw new Error("계획안 좋아요 실패");
+            const likePlan = await response.json();
+
+            set(state => ({ planStorage: state.planStorage.map(p => p.id === plan.id ? likePlan : p) }))
+        } catch (err) {
+            console.error(`likePlan 실패: ${err}`);
+        }
+    },
+    addStorage: async(user, plan) => {
+        try {
+            const response = await apiFetch(`${API_ROUTES.PLAN.SAVE(plan.id)}`, {
+                method: "POST",
+                body: JSON.stringify({ userId: user.id }),
+            });
+            if (!response.ok) throw new Error("계획안 저장 실패");
+            const savePlan = await response.json();
+            set(state => ({ planStorage: state.planStorage.map(p => p.id === plan.id ? savePlan : p) }))
+        } catch (err) {
+            console.error(`addStorage 실패: ${err}`);
+        }
+    }
 }));

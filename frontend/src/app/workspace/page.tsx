@@ -18,7 +18,7 @@ const initailPlanDataForm: GenerateAIPlanForm = {
 
 function page() {
     const { user } = useWelcomeStore();
-    const { addPlanStorage } = usePlanStore();
+    const { addPlan } = usePlanStore();
     const { form: planForm, handleChange, resetForm } = useForm<GenerateAIPlanForm>(initailPlanDataForm);
 
     const [plan, setPlan] = useState<boolean>(false);
@@ -166,7 +166,7 @@ function page() {
             selections: selectionsLabels 
         };
         try {
-            await addPlanStorage(planData);
+            await addPlan(planData);
 
             setPlan(true);
         } catch (err) {

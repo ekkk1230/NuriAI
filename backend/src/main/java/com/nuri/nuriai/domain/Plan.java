@@ -41,8 +41,50 @@ public class Plan extends BaseTimeEntity {
         this.activeIntro = activeIntro;
     }
 
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanLike> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanSave> saves = new ArrayList<>();
+
+    public void addLike(PlanLike planLike) {
+        this.likes.add(planLike);
+        this.likeCount++;
+    };
+
+    public void removeLike(PlanLike planLike) {
+        this.likes.remove(planLike);
+        this.likeCount--;
+    };
+
+    public void addSave(PlanSave planSave) {
+        this.saves.add(planSave);
+        this.saveCount++;
+    };
+
+    public void removeSave(PlanSave planSave) {
+        this.saves.remove(planSave);
+        this.saveCount--;
+    }
+
+
     public void addActivity(Activity activity) {
         this.activities.add(activity);
         activity.assignPlan(this);
+    }
+
+    public void updateViewCount() {
+        this.viewCount++;
+    }
+
+    public void update(String age, String mainTheme, String curriculum, String author, Long viewCount, Long likeCount, Long saveCount, String activeIntro) {
+        this.age = age;
+        this.mainTheme = mainTheme;
+        this.curriculum = curriculum;
+        this.author = author;
+        this.viewCount = viewCount;
+        this.likeCount = likeCount;
+        this.saveCount = saveCount;
+        this.activeIntro = activeIntro;
     }
 }

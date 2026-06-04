@@ -37,13 +37,13 @@ function page() {
     };
 
     const filteredPlans = planStorage.filter(plan => {
-        const matchedTitle = searchForm.searchTxt ? plan.mainTheme.includes(searchForm.searchTxt) : true;
-        const matchedContent = searchForm.searchTxt ? plan.activeIntro.includes(searchForm.searchTxt): true;
-        const matchedAge = searchForm.searchAge ? plan.age === `만 ${searchForm.searchAge}세` : true;
-        // const matchedArea = searchForm.searchArea ? plan.plans.some((p: any) => p.domain === AREA_TYPES[Number(searchForm.searchArea)]) : true;
-        const matchedArea = true;
+        if (!searchForm.searchTxt) return true;
+        const keyword = searchForm.searchTxt.toLowerCase();
 
-        return (matchedTitle || matchedContent) && matchedAge && matchedArea;
+        return (
+            plan.mainTheme.toLowerCase().includes(keyword) ||
+            plan.activeIntro.toLowerCase().includes(keyword)
+        )
     });
     
     const sortedPlans = [...filteredPlans].sort((a, b) => {

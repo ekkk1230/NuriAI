@@ -26,10 +26,10 @@ function page() {
     const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
     useEffect(() => {
-        if (user) {
+        if (user && !isLoaded) {
             fetchAllPlans();
         }
-    }, [fetchAllPlans]);
+    }, [user, isLoaded, fetchAllPlans]);
 
     if (!isLoaded) return <div className="p-10">로딩 중...</div>;
     

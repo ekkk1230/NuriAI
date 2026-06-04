@@ -2,12 +2,11 @@ package com.nuri.nuriai.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nuri.nuriai.domain.Activity;
-import com.nuri.nuriai.domain.ActivityContent;
-import com.nuri.nuriai.domain.Plan;
-import com.nuri.nuriai.domain.User;
+import com.nuri.nuriai.domain.*;
 import com.nuri.nuriai.dto.PlanDto;
+import com.nuri.nuriai.repository.PlanLikeRepository;
 import com.nuri.nuriai.repository.PlanRepository;
+import com.nuri.nuriai.repository.PlanSaveRepository;
 import com.nuri.nuriai.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j; // log 사용을 위해 추가
@@ -29,6 +28,8 @@ public class PlanService {
 
     private final PlanRepository planRepository;
     private final UserRepository userRepository;
+    private final PlanLikeRepository planLikeRepository;
+    private final PlanSaveRepository planSaveRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -46,7 +47,9 @@ public class PlanService {
     }
 
     public PlanDto.GeminiResponse getOne(Long id) {
-        return planRepository.findById(id).map(PlanDto.GeminiResponse::new).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다. " + id));
+        Plan plan = planRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다. " + id));
+        plan.updateViewCount();
+        return new PlanDto.GeminiResponse(plan);
     }
 
     public String askGemini(String theme, int age, List<String> selections, String groupType) {
@@ -212,5 +215,45 @@ public class PlanService {
         return plans.stream()
                 .map(PlanDto.GeminiResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PlanDto.GeminiResponse toggleLike(Long planId, Long userId) {
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안입니다." + planId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다." + userId));
+
+        planLikeRepository.findByUserAndPlan(user, plan).ifPresentOrElse(
+                like -> {
+                    plan.removeLike(like);
+                    planLikeRepository.delete(like);
+                },
+                () -> {
+                    PlanLike newLike = PlanLike.builder().user(user).plan(plan).build();
+                    plan.addLike(newLike);
+                    planLikeRepository.save(newLike);
+                }
+        );
+
+        return new PlanDto.GeminiResponse(plan);
+    }
+
+    @Transactional
+    public PlanDto.GeminiResponse toggleSave(Long planId, Long userId) {
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + planId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
+
+        planSaveRepository.findByUserAndPlan(user, plan).ifPresentOrElse(
+                save -> {
+                    plan.removeSave(save);
+                    planSaveRepository.delete(save);
+                },
+                () -> {
+                    PlanSave newSave = PlanSave.builder().user(user).plan(plan).build();
+                    plan.addSave(newSave);
+                    planSaveRepository.save(newSave);
+                }
+        );
+
+        return new PlanDto.GeminiResponse(plan);
     }
 }

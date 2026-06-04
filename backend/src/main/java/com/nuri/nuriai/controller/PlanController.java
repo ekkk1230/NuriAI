@@ -2,11 +2,15 @@ package com.nuri.nuriai.controller;
 
 import com.nuri.nuriai.domain.Plan;
 import com.nuri.nuriai.dto.PlanDto;
+import com.nuri.nuriai.dto.PlanLikeDto;
+import com.nuri.nuriai.dto.PlanSaveDto;
 import com.nuri.nuriai.service.PlanService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -98,5 +102,17 @@ public class PlanController {
     @GetMapping("/author/{author}")
     public ResponseEntity<List<PlanDto.GeminiResponse>> getPlansByAuthor(@PathVariable("author") String author) {
         return ResponseEntity.ok(planService.getUserPlans(author));
+    }
+
+    @PostMapping("/{planId}/like")
+    public ResponseEntity<PlanDto.GeminiResponse> toggleLike(@PathVariable("planId") Long planId, @RequestBody PlanLikeDto.PlanLikeRequest request) {
+//        System.out.println("컨트롤러에 도착한 planId: " + planId);
+//        System.out.println("컨트롤러에 도착한 userId: " + request.getUserId());
+        return ResponseEntity.ok(planService.toggleLike(planId, request.getUserId()));
+    }
+
+    @PostMapping("/{planId}/save")
+    public ResponseEntity<PlanDto.GeminiResponse> toggleSave(@PathVariable("planId") Long planId, @RequestBody PlanSaveDto.PlanSaveRequest request) {
+        return ResponseEntity.ok(planService.toggleSave(planId, request.getUserId()));
     }
 }
