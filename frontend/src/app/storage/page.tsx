@@ -28,6 +28,7 @@ function page() {
     useEffect(() => {
         if (user && !isLoaded) {
             fetchAllPlans();
+            // fetchUserPlans(user);
         }
     }, [user, isLoaded, fetchAllPlans]);
 
@@ -77,7 +78,9 @@ function page() {
             : plan.author === user?.userNickname;
 
         return matchesTitle && matchesAge && matchesAuthor;
-    })
+    });
+
+    // console.log(userPlans)
 
     // 필터링 로직: 검색어와 선택된 연령에 따라 plans 배열 필터링
     const displayedPlans = [...filteredPlans].sort((a, b) => {

@@ -21,7 +21,7 @@ interface PlanStore {
     addStorage: (user: User, plan: Plan) => Promise<void>;
 };
 
-export const usePlanStore = create<PlanStore>((set) => ({
+export const usePlanStore = create<PlanStore>((set, get) => ({
     planStorage: [],
     isLoaded: false,
     fetchAllPlans: async () => {
@@ -159,7 +159,11 @@ export const usePlanStore = create<PlanStore>((set) => ({
             });
             if (!response.ok) throw new Error("계획안 저장 실패");
             const savePlan = await response.json();
-            set(state => ({ planStorage: state.planStorage.map(p => p.id === plan.id ? savePlan : p) }))
+            set(state => ({ 
+                planStorage: state.planStorage.map(p => p.id === plan.id ? savePlan : p),
+            }));
+            
+            await get().fetchUserPlans(user);
         } catch (err) {
             console.error(`addStorage 실패: ${err}`);
         }

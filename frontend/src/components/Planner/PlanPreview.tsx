@@ -92,7 +92,7 @@ function PlanPreview() {
                                     <p className="text-[2rem] font-bold mb-[1.2rem] flex gap-[.4rem] items-center"><MdReportProblem /> 유의점</p>
                                     <ul className="space-y-[1rem] pl-[2rem]">
                                         {Object.entries(p.precautions).map((item, idx) => {
-                                            console.log(item)
+                                            // console.log(item)
                                             return (
                                                 <li key={idx} className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">{item[1]}</li>
                                             )

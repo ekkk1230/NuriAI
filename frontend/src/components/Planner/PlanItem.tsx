@@ -69,7 +69,7 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
     
                 <div className="flex flex-col gap-[0.8rem] h-[12rem] overflow-hidden">
                     {plan.plans.slice(0, 2).map((item: any, idx: number) => {
-                        console.log(item)
+                        // console.log(item)
                         const groupStyle = item.groupType === "대집단"
                             ? "bg-[var(--color-act0)] text-[var(--color-act0-text)] border-[var(--color-act0-text)]/20"
                             : "bg-[var(--color-act1)] text-[var(--color-act1-text)] border-[var(--color-act1-text)]/20";
