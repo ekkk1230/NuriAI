@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +69,7 @@ public class PlanDto {
         private Long saveCount;
         private LocalDateTime createdAt;
         private String activeIntro;
+        private List<Long> savedUserIds;
 
         @JsonProperty("plans")
         private List<ActivityDetail> plans;
@@ -83,6 +85,10 @@ public class PlanDto {
             this.saveCount = (plan.getSaveCount() != null) ? plan.getSaveCount() : 0L;
             this.createdAt = plan.getCreatedAt();
             this.activeIntro = plan.getActiveIntro();
+            this.savedUserIds = (plan.getSaves() != null)
+                    ? plan.getSaves().stream().map(save -> save.getUser().getId())
+                    .collect(Collectors.toList())
+                    : new ArrayList<>();
 
             // PlanDto.java 내 GeminiResponse 생성자 수정 부분
             this.plans = plan.getActivities().stream()
