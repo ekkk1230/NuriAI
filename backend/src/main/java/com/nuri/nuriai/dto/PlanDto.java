@@ -8,14 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlanDto {
     // --- 1. 요청용 DTO ---
-    @Getter
-    @Builder
+    @Getter @Builder
     @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
     @AllArgsConstructor
     public static class Request {
@@ -26,7 +24,37 @@ public class PlanDto {
         private String author;
     }
 
-    // --- 2. Gemini 응답용 DTO  ---
+    // --- 2. 상세 정보용 DTO (통합) ---
+    @Getter @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+    public static class ContentDetail {
+        private String description;
+        private String teacherTalk;
+    }
+
+    @Getter @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+    public static class ActivityDetail {
+        private Long id;
+        private String domain;
+        private String groupType;
+        private String activityType;
+        private String activityName;
+        private List<String> objectives;
+        private List<String> relatedCurriculum;
+        private List<String> materials;
+        private List<String> precautions;
+        private String extensionActivity;
+
+        // 도입, 전개, 마무리 3단계로 분리
+        private ContentDetail introduction;
+        private ContentDetail development;
+        private ContentDetail conclusion;
+    }
+
+    // --- 3. Gemini 응답 및 결과 반환용 DTO ---
     @Getter
     @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
     public static class GeminiResponse {
@@ -56,48 +84,27 @@ public class PlanDto {
             this.createdAt = plan.getCreatedAt();
             this.activeIntro = plan.getActiveIntro();
 
+            // PlanDto.java 내 GeminiResponse 생성자 수정 부분
             this.plans = plan.getActivities().stream()
-                    .map(activity -> ActivityDetail.builder()
-                            .id(activity.getId())
-                            .domain(activity.getDomain())
-                            .groupType(activity.getGroupType())
-                            .activityType(activity.getActivityType())
-                            .activityName(activity.getActivityName())
-                            .objectives(activity.getObjectives())
-                            .relatedCurriculum(activity.getRelatedCurriculum())
-                            .materials(activity.getMaterials())
-                            .content(new ContentDetail(activity.getIntroduction(), activity.getDevelopment(), activity.getConclusion()))
-                            .precautions(activity.getPrecautions())
-                            .extensionActivity(activity.getExtensionActivity())
-                            .build())
-                    .collect(Collectors.toList());
+                .map(activity -> ActivityDetail.builder()
+                        .id(activity.getId())
+                        .domain(activity.getDomain())
+                        .groupType(activity.getGroupType())
+                        .activityType(activity.getActivityType())
+                        .activityName(activity.getActivityName())
+                        .objectives(activity.getObjectives())
+                        .relatedCurriculum(activity.getRelatedCurriculum())
+                        .materials(activity.getMaterials())
+                        .precautions(activity.getPrecautions())
+                        .extensionActivity(activity.getExtensionActivity())
+                        .introduction(activity.getIntroduction() != null ?
+                                new ContentDetail(activity.getIntroduction().getDescription(), activity.getIntroduction().getTeacherTalk()) : null)
+                        .development(activity.getDevelopment() != null ?
+                                new ContentDetail(activity.getDevelopment().getDescription(), activity.getDevelopment().getTeacherTalk()) : null)
+                        .conclusion(activity.getConclusion() != null ?
+                                new ContentDetail(activity.getConclusion().getDescription(), activity.getConclusion().getTeacherTalk()) : null)
+                        .build())
+                .collect(Collectors.toList());
         }
-    }
-
-    // --- 3. 공통으로 사용하는 상세 DTO ---
-    @Getter @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-    public static class ActivityDetail {
-        private Long id;
-        private String domain;
-        private String groupType;
-        private String activityType;
-        private String activityName;
-        private List<String> objectives;
-        private List<String> relatedCurriculum;
-        private List<String> materials;
-        private ContentDetail content;
-        private List<String> precautions;
-        private String extensionActivity;
-    }
-
-    @Getter
-    @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-    @AllArgsConstructor
-    public static class ContentDetail {
-        private String introduction;
-        private String development;
-        private String conclusion;
     }
 }

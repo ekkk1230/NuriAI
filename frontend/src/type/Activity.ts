@@ -1,7 +1,6 @@
-interface ActivityContent {
-    introduction: string; // 도입
-    development: string;  // 전개
-    conclusion: string;   // 마무리
+interface ContentDetail {
+    description: string;
+    teacherTalk: string;
 }
 
 interface Activity {
@@ -12,7 +11,11 @@ interface Activity {
     objectives: string[];
     relatedCurriculum: string[];
     materials: string[];
-    content: ActivityContent;
+    
+    introduction: ContentDetail;
+    development: ContentDetail;
+    conclusion: ContentDetail;
+    
     precautions: string[];
     extensionActivity: string;
 }

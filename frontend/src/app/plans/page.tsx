@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import { AGE_OPTIONS, AREA_TYPES, DOMAIN_COLORS, DOMAIN_STYLES } from "@/constants/activityOptions"; 
+import { AGE_OPTIONS, DOMAIN_STYLES, DOMAIN_TYPES } from "@/constants/activityOptions"; 
 import { useWelcomeStore } from "@/store/useWelcomeStore";
 import { usePlanStore } from "@/store/usePlanStore";
 import NoPlan from "@/components/Planner/NoPlan";
@@ -40,7 +40,8 @@ function page() {
         const matchedTitle = searchForm.searchTxt ? plan.mainTheme.includes(searchForm.searchTxt) : true;
         const matchedContent = searchForm.searchTxt ? plan.activeIntro.includes(searchForm.searchTxt): true;
         const matchedAge = searchForm.searchAge ? plan.age === `만 ${searchForm.searchAge}세` : true;
-        const matchedArea = searchForm.searchArea ? plan.plans.some((p: any) => p.domain === AREA_TYPES[Number(searchForm.searchArea)]) : true;
+        // const matchedArea = searchForm.searchArea ? plan.plans.some((p: any) => p.domain === AREA_TYPES[Number(searchForm.searchArea)]) : true;
+        const matchedArea = true;
 
         return (matchedTitle || matchedContent) && matchedAge && matchedArea;
     });
@@ -88,7 +89,7 @@ function page() {
                             <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">영역</span>
                             <select name="searchArea" id="searchArea" value={searchForm.searchArea} onChange={handleChange} className="text-[1.4rem] !w-[15rem]">
                                 <option value="">전체</option>
-                                {AREA_TYPES.map((item, idx) => (
+                                {DOMAIN_TYPES.map((item, idx) => (
                                     <option key={idx} value={idx}>{item}</option>
                                 ))}
                             </select>
@@ -137,7 +138,7 @@ function page() {
                                             <ul className="flex gap-[.4rem]">
                                                 {plan.plans.map((item, idx) => {
                                                     const domain = item.domain.split(" ")[0];
-                                                    const domainStyle = DOMAIN_STYLES[domain];
+                                                    const domainStyle = DOMAIN_STYLES[domain as keyof typeof DOMAIN_STYLES];
                                                     // console.log(DOMAIN_STYLES[domain])
 
                                                     return (

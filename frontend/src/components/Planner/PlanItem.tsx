@@ -1,7 +1,7 @@
 'use client';
 
+import { DOMAIN_STYLES, TYPE_STYLES } from "@/constants/activityOptions";
 import { useState } from "react";
-import { DOMAIN_STYLES, TYPE_STYLES, KEYWORD_STYLES } from "@/constants/activityOptions"
 import { FaRegCalendarAlt, FaPen } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
@@ -16,16 +16,9 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
     const [isChecked, setIsChecked] = useState(false);
 
     const getActivityStyle = (type: string) => {
-        if (!type) return "bg-[#f1f3f5] text-[#495057]";
-
-        if (type.includes("이야기") || type.includes("언어")) return KEYWORD_STYLES.보라;
-        if (type.includes("동화") || type.includes("동시") || type.includes("동극") || type.includes("역할") || type.includes("쌓기")) return KEYWORD_STYLES.주황;
-        if (type.includes("노래") || type.includes("음률") || type.includes("음악")) return KEYWORD_STYLES.민트;
-        if (type.includes("신체") || type.includes("게임") || type.includes("대근육") || type.includes("수") || type.includes("조작")) return KEYWORD_STYLES.파랑;
-        if (type.includes("과학") || type.includes("요리") || type.includes("탐색") || type.includes("소근육")) return KEYWORD_STYLES.갈색;
-        if (type.includes("미술")) return KEYWORD_STYLES.핑크;
-
-        return "bg-[#f1f3f5] text-[#495057]"; 
+        const matchedKey = Object.keys(TYPE_STYLES).find(key => type.includes(key));
+    
+    return matchedKey ? TYPE_STYLES[matchedKey as keyof typeof TYPE_STYLES] : "bg-[#f1f3f5] text-[#495057]";
     };
 
     return (
@@ -76,11 +69,12 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
     
                 <div className="flex flex-col gap-[0.8rem] h-[12rem] overflow-hidden">
                     {plan.plans.slice(0, 2).map((item: any, idx: number) => {
+                        console.log(item)
                         const groupStyle = item.groupType === "대집단"
                             ? "bg-[var(--color-act0)] text-[var(--color-act0-text)] border-[var(--color-act0-text)]/20"
                             : "bg-[var(--color-act1)] text-[var(--color-act1-text)] border-[var(--color-act1-text)]/20";
 
-                        const domainStyle = DOMAIN_STYLES[item.domain] || "bg-gray-100 text-gray-600 border-gray-200";
+                        // const domainStyle = DOMAIN_STYLES[item.domain] || "bg-gray-100 text-gray-600 border-gray-200";
                         
                         return (
                             <div 
@@ -91,7 +85,7 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
                                     {item.groupType}
                                 </span>
 
-                                <span className={`${domainStyle} text-[1.1rem] font-bold p-[0.2rem_0.6rem] rounded-[0.4rem] shrink-0 min-w-[5.2rem] text-center border border-solid`}>
+                                <span className={`${DOMAIN_STYLES[item.domain as keyof typeof DOMAIN_STYLES]} text-[1.1rem] font-bold p-[0.2rem_0.6rem] rounded-[0.4rem] shrink-0 min-w-[5.2rem] text-center border border-solid`}>
                                     {item.domain}
                                 </span>
 

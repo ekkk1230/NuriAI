@@ -40,7 +40,7 @@ function PlanPreview() {
 
                 <div className="relative bg-bgCard rounded-[1.2rem] p-[4rem_3.2rem] mt-[2rem] before:content-[''] before:w-[.8rem] before:h-[100%] before:bg-cate1 before:absolute before:left-0 before:top-0 before:rounded-[1.2rem_0_0_1.2rem]">
                     {plansArr.map((p, idx) => (
-                        <div className="mb-[4rem] pb-[4rem] border-b-[.1rem] border-solid border-[#eee] last:border-b-0 last:p-[4rem_0]">
+                        <div key={idx} className="mb-[4rem] pb-[4rem] border-b-[.1rem] border-solid border-[#eee] last:border-b-0 last:p-[4rem_0]">
                             <div className="flex gap-[1rem] items-center">
                                 <span className="bg-cate1 text-cate1-text rounded-[60rem] p-[1rem_1.2rem] text-[1.6rem] font-semibold">{p.domain}</span>
                                 <div className="flex text-textMuted text-[1.4rem]">
@@ -64,34 +64,25 @@ function PlanPreview() {
                                 <li>
                                     <p className="text-[2rem] font-bold mb-[1.2rem] flex gap-[.4rem] items-center"><MdMenuBook /> 활동 방법</p>
                                     <ul className="space-y-[1rem] pl-[2rem]">
-                                        {Object.keys(p.content).reduce((acc: React.ReactNode[], key) => {
-                                            const value = (p.content as any)[key];
-                                            const labelMap: { [key: string]: string } = {
-                                                introduction: "도입",
-                                                development: "전개",
-                                                conclusion: "마무리"
-                                            };
-
-                                            if (!labelMap[key]) return acc;
-                                            const sentences = value.split(/(?=\d+\. )/).filter(Boolean);
-
-                                            acc.push(
-                                                <li key={key} className="flex gap-[.4rem] text-[1.6rem] mb-[1rem]">
-                                                    <div className="font-bold text-main shrink-0">
-                                                        {labelMap[key]} :
-                                                    </div>
-                                                    <div className="flex flex-col gap-[0.8rem]">
-                                                        {sentences.map((s: string, i: number) => (
-                                                            <p key={i} className="text-[#333] leading-relaxed">
-                                                                {s.trim()}
-                                                            </p>
-                                                        ))}
-                                                    </div>
-                                                </li>
-                                            );
-
-                                            return acc;
-                                        }, [])}
+                                        {[
+                                            { key: 'introduction', label: '도입', data: p.introduction },
+                                            { key: 'development', label: '전개', data: p.development },
+                                            { key: 'conclusion', label: '마무리', data: p.conclusion }
+                                        ].map((stage) => (
+                                            <li key={stage.key} className="flex gap-[.4rem] text-[1.6rem] mb-[1rem]">
+                                                <div className="font-bold text-main shrink-0">
+                                                    {stage.label} :
+                                                </div>
+                                                <div className="flex flex-col gap-[0.8rem]">
+                                                    <p className="text-[#333] leading-relaxed">
+                                                        <span className="font-semibold">[활동 내용]</span> {stage.data.description}
+                                                    </p>
+                                                    <p className="text-[#555] leading-relaxed italic bg-gray-50 p-2 rounded">
+                                                        <span className="font-semibold">[교사 발문]</span> "{stage.data.teacherTalk}"
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        ))}
                                         {/* <li className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">도입: asf 주제를 소개하고 유아들의 흥미를 유발합니다</li>
                                         <li className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">전개: 신체운동 영역의 핵심 활동을 진행하며 유아들이 적극적으로 참여하도록 합니다</li>
                                         <li className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">마무리: 활동을 정리하고 경험을 나누며 마무리합니다</li> */}
@@ -100,9 +91,12 @@ function PlanPreview() {
                                 <li>
                                     <p className="text-[2rem] font-bold mb-[1.2rem] flex gap-[.4rem] items-center"><MdReportProblem /> 유의점</p>
                                     <ul className="space-y-[1rem] pl-[2rem]">
-                                        {Object.entries(p.precautions).map((item, idx) => (
-                                            <li key={idx} className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">{item}</li>
-                                        ))}
+                                        {Object.entries(p.precautions).map((item, idx) => {
+                                            console.log(item)
+                                            return (
+                                                <li key={idx} className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">{item[1]}</li>
+                                            )
+                                        })}
                                     </ul>
                                 </li>
                             </ul>      

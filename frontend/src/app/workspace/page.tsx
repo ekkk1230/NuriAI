@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ACTIVITY_TYPES, AGE_OPTIONS, AREA_TYPES } from "@/constants/activityOptions";
+import { ACTIVITY_OPTIONS, AGE_OPTIONS } from "@/constants/activityOptions";
 import PlanPreview from "@/components/Planner/PlanPreview";
 import NoPlan from "@/components/Planner/NoPlan";
 import { useWelcomeStore } from "@/store/useWelcomeStore";
@@ -141,12 +141,20 @@ function page() {
         );
     };
 
+    const getSelectionList = () => {
+        if (activeAge !== null && activeAge < 3) return ACTIVITY_OPTIONS.INFANT;
+        if (activeForm === "large") return ACTIVITY_OPTIONS.CHILD_LARGE;
+        return ACTIVITY_OPTIONS.CHILD_SMALL;
+    }
+
 
     const handleMakeAIPlan = async() => {
         const getLabel = (val: string) => {
             const [mode, indexStr] = val.split('-');
             const index = parseInt(indexStr);
-            return mode === 'type' ? ACTIVITY_TYPES[index] : AREA_TYPES[index];
+           
+            const currentList = getSelectionList();
+            return currentList[index]
         };
     
         const selectionsLabels = (activeForm === "large" ? activeType : areaType).map(getLabel);
@@ -186,7 +194,17 @@ function page() {
                         </label>
                         <div className="grid grid-cols-3 gap-[.4rem] flex-wrap">
                             {AGE_OPTIONS.map(op => (
-                                <button type="button" name="age" key={op.value} value={op.value} onClick={() => setActiveAge(op.value)} className={activeAgeBtnClass(op.value)}>{op.label}</button>
+                                <button 
+                                    type="button" 
+                                    key={op.value}
+                                    onClick={() => {
+                                        setActiveAge(op.value);
+                                        if (op.value < 3) setActiveForm("small"); 
+                                    }} 
+                                    className={activeAgeBtnClass(op.value)}
+                                    >
+                                    {op.label}
+                                </button>
                             ))}
                         </div>
                     </div>
@@ -206,14 +224,13 @@ function page() {
 
                     <div className="flex flex-col">
                         <label htmlFor="activity-type" className="font-medium text-[1.6rem] mb-[1.2rem]">
-                            활동 유형 (중복 선택 가능)<span className="text-[#ad46ff]">*</span>
+                            {activeAge !== null && activeAge < 3 
+                                ? "영아 놀이 영역" 
+                                : (activeForm === "large" ? "활동 유형" : "교실 영역")}
+                            <span className="text-[#ad46ff]">*</span>
                         </label>
                         
-                        {activeForm === "large" ? (
-                            writeTypeBtn(ACTIVITY_TYPES, 'type')
-                        ) : (
-                            writeTypeBtn(AREA_TYPES, 'area')
-                        )}
+                        {writeTypeBtn(getSelectionList(), activeAge !== null && activeAge < 3 ? 'area' : (activeForm === 'large' ? 'type' : 'area'))}
                     </div>
                 
                     <button type="button" className="p-[1rem] w-[100%] flex justify-center bg-sub-gradient rounded-[.8rem] text-textLight text-2xl font-bold mb-[2rem]"

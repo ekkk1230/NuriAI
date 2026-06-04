@@ -3,6 +3,7 @@ package com.nuri.nuriai.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nuri.nuriai.domain.Activity;
+import com.nuri.nuriai.domain.ActivityContent;
 import com.nuri.nuriai.domain.Plan;
 import com.nuri.nuriai.domain.User;
 import com.nuri.nuriai.dto.PlanDto;
@@ -52,22 +53,34 @@ public class PlanService {
         // 1. 연령 및 과정 설정
         String curriculumName = (age <= 2) ? "제4차 표준보육과정(영아)" : "2019 개정 누리과정(유아)";
         String expertRole = (age <= 2) ? "영아 발달 및 표준보육과정 전문가" : "유아 교육 및 누리과정 전문가";
-        String activeIntro = "유아들의 발달 단계에 맞춘 즐거운 활동입니다.";
 
         // 2. 집단 유형에 따른 라벨링
-        String selectionLabel = groupType.equals("대집단") ? "활동 유형" : "누리과정 영역";
+        String selectionLabel = groupType.equals("대집단") ? "활동 유형" : "놀이 영역";
         String selectedItems = String.join(", ", selections);
 
         // 3. 프롬프트 생성
         String prompt = """
             당신은 대한민국 %s이며, %s에 정통한 20년 경력의 보육/교육 전문가입니다.
         
-            ### [필수 지침]
+            ### [활동 생성 필수 지침]
             1. 반드시 주제 '%s'와 관련된 활동을 생성하십시오.
             2. 선택된 [%s] 목록의 각 항목을 독립된 'plans' 객체로 작성하십시오.
-            3. 활동은 '도입-전개-마무리'로 구성하고, 교사의 구체적인 발문을 포함하십시오.
-            4. 활동 목표는 유아의 지식, 기술, 태도가 드러나도록 2개 이상 작성하십시오.
-            5. 'activeIntro'에는 해당 활동 전반을 아우르는 따뜻하고 전문적인 소개글을 작성하십시오.
+            3. 영역 분류 기준:
+               - 신체운동·건강: 신체 활동, 대/소근육 놀이, 건강한 생활 습관, 기본생활(식사, 배변, 낮잠, 청결 등 일상 루틴 포함)
+               - 의사소통: 듣기, 말하기, 읽기, 쓰기 경험
+               - 사회관계: 나를 알고 존중하기, 더불어 사는 법, 친구와 소통하기
+               - 예술경험: 창의적으로 표현하기(미술, 음악, 신체 표현)
+               - 자연탐구: 탐구하는 태도, 수학적·과학적 탐구
+            4. 연령 및 형태에 따른 영역/유형 선택(반드시 아래 목록 중 선택):
+                 - 만 0-2세(영아):\s
+                   * 형태: 소집단만 가능
+                   * 영역: ["신체", "감각·탐색", "언어", "음률·미술", "역할·쌓기"]
+                 - 만 3-5세(유아):
+                   * 대집단 시 활동 유형: ["이야기 나누기", "동화·동시 감상/동극", "새 노래", "게임·신체표현", "과학·요리", "미술"]
+                   * 소집단 시 교실 영역: ["역할·쌓기", "언어", "수·조작", "음률", "미술", "과학"]
+            5. 대상 연령이 0-2세(영아)일 경우, '기본생활' 활동은 '신체운동·건강' 영역으로 분류하고 놀이 중심의 일상 경험으로 작성하십시오.
+            6. [구조 및 발문 지침]: 각 단계(도입, 전개, 마무리)마다 활동 내용(description)과 실제 교사가 사용할 발문(teacherTalk)을 명확히 구분하여 작성하십시오.
+            7. 목표, 준비물, 유의점은 교육적 효과를 위해 2~5개 항목의 배열로 작성하십시오.
         
             ### 입력 정보
             - 주제: '%s'
@@ -76,32 +89,33 @@ public class PlanService {
             - 선택 항목: [%s]
         
             ### [매우 중요: 출력 형식]
-            - 반드시 순수한 JSON 형식으로만 응답하십시오.
+            - 마크다운 블록(```json) 없이, 오직 순수한 JSON 형식으로만 응답하십시오.
             
             {
               "age": "만 %d세",
               "mainTheme": "%s",
               "curriculum": "%s",
-              "activeIntro": "%s",
+              "activeIntro": "활동 전반을 아우르는 따뜻하고 전문적인 교육적 소개글",
               "plans": [
                 {
-                  "domain": "영역명",
+                  "domain": "교육과정 5개 영역 중 선택(신체운동, 의사소통, 사회관계, 예술경험, 자연탐구)",
                   "groupType": "%s",
-                  "activityType": "상세 유형",
+                  "activityType": "위 지침에서 선택한 영역 또는 활동 유형명",
                   "activityName": "활동명",
                   "objectives": ["목표1", "목표2"],
-                  "relatedCurriculum": ["누리과정 내용"],
-                  "materials": ["준비물1"],
-                  "content": { "introduction": "...", "development": "...", "conclusion": "..." },
-                  "precautions": ["유의점"],
+                  "introduction": { "description": "도입 활동 내용", "teacherTalk": "교사의 도입 발문 예시" },
+                                    "development": { "description": "전개 활동 내용", "teacherTalk": "교사의 전개 발문 예시" },
+                                    "conclusion": { "description": "마무리 활동 내용", "teacherTalk": "교사의 마무리 발문 예시" },
+                  "precautions": ["유의점1", "유의점2"],
+                  "materials": ["준비물1", "준비물2"],
                   "extensionActivity": "연관 활동"
                 }
               ]
             }
         """.formatted(
-            expertRole, curriculumName, theme, selectionLabel, // 여기서 추가!
-            theme, age, groupType, selectedItems,
-            age, theme, curriculumName, activeIntro, groupType
+                expertRole, curriculumName, theme, selectionLabel,
+                theme, age, groupType, selectedItems,
+                age, theme, curriculumName, groupType
         );
 
         // 4. API 호출 로직
@@ -155,9 +169,12 @@ public class PlanService {
 
         if (dto.getPlans() != null) {
             for (PlanDto.ActivityDetail detail : dto.getPlans()) {
-                String intro = (detail.getContent() != null) ? detail.getContent().getIntroduction() : null;
-                String dev = (detail.getContent() != null) ? detail.getContent().getDevelopment() : null;
-                String conc = (detail.getContent() != null) ? detail.getContent().getConclusion() : null;
+                ActivityContent intro = (detail.getIntroduction() != null)
+                    ? new ActivityContent(detail.getIntroduction().getDescription(), detail.getIntroduction().getTeacherTalk()) : null;
+                ActivityContent dev = (detail.getDevelopment() != null)
+                    ? new ActivityContent(detail.getDevelopment().getDescription(), detail.getDevelopment().getTeacherTalk()) : null;
+                ActivityContent conc = (detail.getConclusion() != null)
+                    ? new ActivityContent(detail.getConclusion().getDescription(), detail.getConclusion().getTeacherTalk()) : null;
 
                 Activity activity = Activity.builder()
                         .domain(detail.getDomain())
@@ -168,9 +185,9 @@ public class PlanService {
                         .relatedCurriculum(detail.getRelatedCurriculum())
                         .materials(detail.getMaterials())
                         .precautions(detail.getPrecautions())
-                        .introduction(intro)
-                        .development(dev)
-                        .conclusion(conc)
+                        .introduction(intro != null ? intro : new ActivityContent("준비중", "준비중"))
+                        .development(dev != null ? dev : new ActivityContent("준비중", "준비중"))
+                        .conclusion(conc != null ? conc : new ActivityContent("준비중", "준비중"))
                         .extensionActivity(detail.getExtensionActivity())
                         .build();
 

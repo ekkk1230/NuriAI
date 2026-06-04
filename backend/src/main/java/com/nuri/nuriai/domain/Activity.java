@@ -38,14 +38,26 @@ public class Activity extends BaseTimeEntity {
     @CollectionTable(name = "activity_precautions", joinColumns = @JoinColumn(name = "activity_id"))
     private List<String> precautions = new ArrayList<>();
 
-    @Column(columnDefinition = "TEXT")
-    private String introduction;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "description", column = @Column(name = "intro_desc")),
+        @AttributeOverride(name = "teacherTalk", column = @Column(name = "intro_talk"))
+    })
+    private ActivityContent introduction;
 
-    @Column(columnDefinition = "TEXT")
-    private String development;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "description", column = @Column(name = "dev_desc")),
+        @AttributeOverride(name = "teacherTalk", column = @Column(name = "dev_talk"))
+    })
+    private ActivityContent development;
 
-    @Column(columnDefinition = "TEXT")
-    private String conclusion;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "description", column = @Column(name = "con_desc")),
+        @AttributeOverride(name = "teacherTalk", column = @Column(name = "con_talk"))
+    })
+    private ActivityContent conclusion;
 
     private String extensionActivity;
 
@@ -56,7 +68,7 @@ public class Activity extends BaseTimeEntity {
     @Builder
     public Activity(String domain, String groupType, String activityType, String activityName,
                     List<String> objectives, List<String> relatedCurriculum, List<String> materials,
-                    String introduction, String development, String conclusion,
+                    ActivityContent introduction, ActivityContent development, ActivityContent conclusion,
                     List<String> precautions, String extensionActivity) {
         this.domain = domain;
         this.groupType = groupType;
