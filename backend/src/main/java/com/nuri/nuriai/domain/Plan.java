@@ -77,14 +77,16 @@ public class Plan extends BaseTimeEntity {
         this.viewCount++;
     }
 
-    public void update(String age, String mainTheme, String curriculum, String author, Long viewCount, Long likeCount, Long saveCount, String activeIntro) {
+    public void update(String age, String mainTheme, String curriculum, String activeIntro, List<Activity> newActivities) {
         this.age = age;
         this.mainTheme = mainTheme;
         this.curriculum = curriculum;
-        this.author = author;
-        this.viewCount = viewCount;
-        this.likeCount = likeCount;
-        this.saveCount = saveCount;
         this.activeIntro = activeIntro;
+        this.activities.clear();
+        if (newActivities != null) {
+            for (Activity activity : newActivities) {
+                this.addActivity(activity);
+            }
+        }
     }
 }

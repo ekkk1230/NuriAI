@@ -1,11 +1,10 @@
 package com.nuri.nuriai.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nuri.nuriai.domain.ActivityContent;
 import com.nuri.nuriai.domain.Plan;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.nuri.nuriai.domain.PlanLike;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class PlanDto {
     @Getter @Builder
     @AllArgsConstructor
     @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-    public static class ContentDetail {
+    public static class ContentDetail extends ActivityContent {
         private String description;
         private String teacherTalk;
     }
@@ -117,5 +116,27 @@ public class PlanDto {
                         .build())
                 .collect(Collectors.toList());
         }
+    }
+
+    @Getter @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    public static class UpdatePlanRequest {
+        private Long id;
+        private String age;
+        private String mainTheme;
+        private String curriculum;
+        private String activeIntro;
+        private String materials;
+        private String precautions;
+        private String extensionActivity;
+        private List<ActivityDetail> plans;
+    }
+
+    @Getter @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    public static class PlanId {
+        private Long id;
     }
 }

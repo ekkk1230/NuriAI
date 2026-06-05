@@ -18,7 +18,7 @@ interface PlanStore {
     userCollectPlans: Plan[];
     authorPlans: Plan[];
     addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
-    deleteSelectedPlans: (userId: number, planIds: number[]) => void;
+    deleteSelectedPlans: (userId: number, planIds: number[]) => Promise<void>;
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
     addStorage: (user: User, plan: Plan) => Promise<void>;
@@ -158,7 +158,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     },
     updatePlan: async (plan) => {
         try {
-            const response = await apiFetch(`${API_ROUTES.PLAN.DETAIL(plan.id)}`, {
+            const response = await apiFetch(`${API_ROUTES.PLAN.UPDATE}`, {
                 method: "POST",
                 body: JSON.stringify(plan),
             })

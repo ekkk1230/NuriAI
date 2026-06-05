@@ -88,7 +88,8 @@ function page() {
     const handleCheckToggle = (id: number) => {
         setCheckedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id] );
     };
-
+    
+    console.log(checkedIds)
     // 선택된 계획안들을 삭제하는 함수
     const handleRemove = () => {
         deleteSelectedPlans(Number(user?.id), checkedIds);

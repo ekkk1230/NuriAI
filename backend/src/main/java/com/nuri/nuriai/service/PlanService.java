@@ -79,8 +79,9 @@ public class PlanService {
                    * 대집단 시 활동 유형: ["이야기 나누기", "동화·동시 감상/동극", "새 노래", "게임·신체표현", "과학·요리", "미술"]
                    * 소집단 시 교실 영역: ["역할·쌓기", "언어", "수·조작", "음률", "미술", "과학"]
             5. 대상 연령이 0-2세(영아)일 경우, '기본생활' 활동은 '신체운동·건강' 영역으로 분류하고 놀이 중심의 일상 경험으로 작성하십시오.
-            6. [구조 및 발문 지침]: 각 단계(도입, 전개, 마무리)마다 활동 내용(description)과 실제 교사가 사용할 발문(teacherTalk)을 명확히 구분하여 작성하십시오.
-            7. 목표, 준비물, 유의점은 교육적 효과를 위해 2~5개 항목의 배열로 작성하십시오.
+            6. 누리과정 관련 요소를 작성할 때, [영역] [내용범주] [내용] 형태로 한 줄의 문자열로 나열하십시오. 예: '신체운동·건강 > 건강하게 생활하기 > 건강한 일상생활 하기'
+            7. [구조 및 발문 지침]: 각 단계(도입, 전개, 마무리)마다 활동 내용(description)과 실제 교사가 사용할 발문(teacherTalk)을 명확히 구분하여 작성하십시오.
+            8. 교육과정, 목표, 준비물, 유의점은 교육적 효과를 위해 2~5개 항목의 배열로 작성하십시오.
         
             ### 입력 정보
             - 주제: '%s'
@@ -103,6 +104,7 @@ public class PlanService {
                   "activityType": "위 지침에서 선택한 영역 또는 활동 유형명",
                   "activityName": "활동명",
                   "objectives": ["목표1", "목표2"],
+                  "relatedCurriculum": ["누리과정 관련 요소1", "누리과정 관련 요소2"],
                   "introduction": { "description": "도입 활동 내용", "teacherTalk": "교사의 도입 발문 예시" },
                                     "development": { "description": "전개 활동 내용", "teacherTalk": "교사의 전개 발문 예시" },
                                     "conclusion": { "description": "마무리 활동 내용", "teacherTalk": "교사의 마무리 발문 예시" },
@@ -274,10 +276,37 @@ public class PlanService {
     }
 
     @Transactional
-    public void deleteCollectList(Long userId, Long planId) {
+    public void deleteCollectList(Long userId, List<PlanDto.PlanId> requestList) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
-        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException(("존재하지 않는 계획안 입니다.") + planId));
-        PlanSave item = planSaveRepository.findByUserAndPlan(user, plan).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원, 계획안 정보 입니다."));
-        planSaveRepository.delete(item);
+        for (PlanDto.PlanId request: requestList) {
+            Plan plan = planRepository.findById(request.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다: " + request.getId()));
+            PlanSave item = planSaveRepository.findByUserAndPlan(user, plan).orElseThrow(() -> new IllegalArgumentException("저장된 항목을 찾을 수 없습니다."));
+
+            planSaveRepository.delete(item);
+            plan.removeSave(item);
+        }
+    }
+
+    @Transactional
+    public PlanDto.GeminiResponse updateplan(PlanDto.UpdatePlanRequest request) {
+        Plan plan = planRepository.findById(request.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + request.getId()));
+        List<Activity> newActivities = request.getPlans().stream().map(detail -> {
+            return Activity.builder()
+                    .domain(detail.getDomain())
+                    .groupType(detail.getGroupType())
+                    .activityType(detail.getActivityType())
+                    .activityName(detail.getActivityName())
+                    .objectives(detail.getObjectives())
+                    .relatedCurriculum(detail.getRelatedCurriculum())
+                    .materials(detail.getMaterials())
+                    .precautions(detail.getPrecautions())
+                    .introduction(detail.getIntroduction())
+                    .development(detail.getDevelopment())
+                    .conclusion(detail.getConclusion())
+                    .extensionActivity(detail.getExtensionActivity())
+                    .build();
+        }).collect(Collectors.toList());
+        plan.update(request.getAge(), request.getMainTheme(), request.getCurriculum(), request.getActiveIntro(), newActivities);
+        return new PlanDto.GeminiResponse(plan);
     }
 }
