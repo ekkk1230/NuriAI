@@ -40,9 +40,7 @@ public class PlanService {
 
     public List<PlanDto.GeminiResponse> getAll() {
         return planRepository.findAll().stream()
-                .map(plan -> {
-                    return new PlanDto.GeminiResponse(plan);
-                })
+                .map(PlanDto.GeminiResponse::new)
                 .collect(Collectors.toList());
     }
 
@@ -267,5 +265,11 @@ public class PlanService {
         plan.updateViewCount();
         planRepository.save(plan);
         return new PlanDto.GeminiResponse(plan);
+    }
+
+    public List<PlanDto.GeminiResponse> getCollectList(Long userId) {
+        List<PlanSave> saves = planSaveRepository.findByUserId(userId);
+        return saves.stream().map(save -> new PlanDto.GeminiResponse(save.getPlan()))
+                .collect(Collectors.toList());
     }
 }

@@ -8,6 +8,7 @@ import com.nuri.nuriai.service.PlanService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
@@ -119,5 +120,10 @@ public class PlanController {
     @PostMapping("/{id}/view")
     public ResponseEntity<PlanDto.GeminiResponse> increaseViewCount(@PathVariable("id") Long id) {
         return ResponseEntity.ok(planService.increaseViewCount(id));
+    }
+
+    @GetMapping("/user/{userId}/collected")
+    public ResponseEntity<List<PlanDto.GeminiResponse>> getCollectList(@PathVariable("userId") Long userId) {
+        return ResponseEntity.ok(planService.getCollectList(userId));
     }
 }

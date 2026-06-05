@@ -85,7 +85,7 @@ function page() {
     // 선택된 계획안들을 삭제하는 함수
     const handleRemove = () => {
         deleteSelectedPlans(checkedIds);
-        setCheckedIds([]); // 삭제 후 선택 상태 초기화
+        setCheckedIds([]); 
     };
 
     return (
@@ -135,7 +135,7 @@ function page() {
                         <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
                         <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
                             {displayedPlans.map((plan) => {
-                                if (!plan || !plan.id) return null; // 데이터 유효성 검사
+                                if (!plan || !plan.id) return null;
 
                                 return (
                                     <PlanItem 

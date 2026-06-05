@@ -69,6 +69,7 @@ public class PlanDto {
         private Long saveCount;
         private LocalDateTime createdAt;
         private String activeIntro;
+        private List<Long> likeUserIds;
         private List<Long> savedUserIds;
 
         @JsonProperty("plans")
@@ -85,6 +86,10 @@ public class PlanDto {
             this.saveCount = (plan.getSaveCount() != null) ? plan.getSaveCount() : 0L;
             this.createdAt = plan.getCreatedAt();
             this.activeIntro = plan.getActiveIntro();
+            this.likeUserIds = (plan.getLikes() != null)
+                    ? plan.getLikes().stream().map(like -> like.getUser().getId())
+                    .collect(Collectors.toList())
+                    : new ArrayList<>();
             this.savedUserIds = (plan.getSaves() != null)
                     ? plan.getSaves().stream().map(save -> save.getUser().getId())
                     .collect(Collectors.toList())

@@ -64,7 +64,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             });
             if (!response.ok) throw new Error("조회수 업데이트 실패");
             const updatedPlan = await response.json();
-            console.log("업데이트된 계획안 데이터:", updatedPlan);
+            // console.log("업데이트된 계획안 데이터:", updatedPlan);
             set(state => ({
                 planStorage: state.planStorage.map(p => p.id === id ? updatedPlan : p)
             }));

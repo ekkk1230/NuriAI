@@ -7,9 +7,10 @@ import { DOMAIN_STYLES } from '@/constants/activityOptions';
 import { useEffect, useRef, useState } from 'react';
 import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
-import { FaHeart, FaSave, FaEye, FaBookmark } from "react-icons/fa";
-import { FcLike } from "react-icons/fc";
+import { FaSave, FaRegSave, FaEye, FaBookmark } from "react-icons/fa";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { useWelcomeStore } from '@/store/useWelcomeStore';
+import { FcLike } from 'react-icons/fc';
 
 function page() {
     const { id: planId } = useParams();
@@ -21,21 +22,19 @@ function page() {
     const hasIncreasedRef = useRef(false);
 
     useEffect(() => {
-        // 1. 데이터 조회 (가장 먼저 실행)
         fetchPlanById(Number(planId));
 
-        // 2. 조회수 증가 (단 1회만 호출 보장)
         if (!hasIncreasedRef.current) {
             updatePlanViewCount(Number(planId));
             hasIncreasedRef.current = true;
         }
     }, [planId]);
 
-    useEffect(() => {
-        console.log("현재 planId:", planId);
-        console.log("planStorage 내용:", planStorage);
-        console.log("찾은 plan:", plan);
-    }, [planStorage, planId]);
+    // useEffect(() => {
+    //     console.log("현재 planId:", planId);
+    //     console.log("planStorage 내용:", planStorage);
+    //     console.log("찾은 plan:", plan);
+    // }, [planStorage, planId]);
         
     const [ageGroup, setAgeGroup] = useState<string>("");
 
@@ -184,9 +183,18 @@ function page() {
                             </div>
                         </div>
                         
-                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
-                            <button type="button" onClick={handleLike} className={utilBtnClass}><FaHeart /> 좋아요</button>
-                            <button type="button" onClick={handleSave} className={utilBtnClass}>< FaSave/> 보관하기</button>
+                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm flex flex-col items-center justify-center">
+                            <button type="button" onClick={handleLike} className={utilBtnClass}>
+                                {plan.likeUserIds.includes(user.id!) ? <AiFillLike /> : <AiOutlineLike />} 
+                                좋아요
+                            </button>
+
+                            {plan.author !== user.userNickname && (
+                            <button type="button" onClick={handleSave} className={utilBtnClass}>
+                                {plan.savedUserIds.includes(user.id!) ? <FaSave /> : <FaRegSave />}
+                                보관하기
+                            </button>
+                            )}
                         </div>
                     </div>
 
