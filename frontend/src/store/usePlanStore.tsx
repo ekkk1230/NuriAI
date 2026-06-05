@@ -13,7 +13,9 @@ interface PlanStore {
     updatePlanViewCount: (id: number) => Promise<void>;
     fetchUserPlans: (user: User)  => Promise<void>;
     fetchPlansByAuthor: (plan: Plan) => Promise<void>;
+    fetchUserCollectItem: (userId: number) => Promise<void>;
     userPlans: Plan[];
+    userCollectPlans: Plan[];
     authorPlans: Plan[];
     addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
     deleteSelectedPlans: (ids: number[]) => void;
@@ -106,7 +108,19 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             set({ isLoaded: true }); 
         }
     },
+    fetchUserCollectItem: async (userId) => {
+        try {
+            const response = await apiFetch(API_ROUTES.PLAN.COLLECTED(userId));
+
+            if (!response.ok) throw new Error("사용자 보관함 목록 조회 실패");
+            const collectItem = await response.json();
+            set({ userCollectPlans: Array.isArray(collectItem) ? collectItem : [collectItem] })
+        } catch (err) {
+            console.error(`fetchUserCollectItem 실패 ${err}`);
+        }
+    },
     userPlans: [],
+    userCollectPlans: [],
     authorPlans: [],
     currentCreatePlan: [],
     addPlan: async (plan) => {
@@ -180,15 +194,16 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
                 planStorage: state.planStorage.map(p => p.id === plan.id ? { ...p, ...updatedPlanData} : p),
             }));
             
-            // await get().fetchUserPlans(user);
+            get().fetchUserCollectItem(user?.id!);
         } catch (err) {
             console.error(`addStorage 실패: ${err}`);
         }
     },
     getFilteredPlans: (searchTit, searchAge, isSavedFilter, authorFilter, user) => {
-        const { planStorage } = get();
+        const { userPlans, userCollectPlans } = get();
+        const userStoragePlans = [...userPlans, ...userCollectPlans];
 
-        return planStorage.filter(plan => {
+        return userStoragePlans.filter(plan => {
             const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
             const matchesAge = (!searchAge || searchAge === "전체") ? true : plan.age === `만 ${searchAge}세`;
             const safeIds = (plan.savedUserIds || []).map(Number);

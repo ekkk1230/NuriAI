@@ -17,7 +17,8 @@ function page() {
     const authorFilter = searchParams.get("author") || "";
 
     const router = useRouter();
-    const { fetchAllPlans, isLoaded, deleteSelectedPlans, getFilteredPlans } = usePlanStore();
+    const { fetchAllPlans, isLoaded, deleteSelectedPlans, getFilteredPlans,
+        fetchUserPlans, fetchUserCollectItem, userPlans, userCollectPlans } = usePlanStore();
     const { user } = useWelcomeStore();
     
     const [searchTit, setSearchTit]  = useState<string>("");
@@ -30,6 +31,12 @@ function page() {
     useEffect(() => {
         fetchAllPlans();
     }, [fetchAllPlans]);
+
+    useEffect(() => {
+        if (!user) return;
+        fetchUserPlans(user);
+        fetchUserCollectItem(Number(user.id));
+    }, [user]);
 
     if (!isLoaded) return <div className="p-10">로딩 중...</div>;
     
