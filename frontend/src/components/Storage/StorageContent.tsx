@@ -91,7 +91,7 @@ function page() {
 
     // 선택된 계획안들을 삭제하는 함수
     const handleRemove = () => {
-        deleteSelectedPlans(checkedIds);
+        deleteSelectedPlans(Number(user?.id), checkedIds);
         setCheckedIds([]); 
     };
 

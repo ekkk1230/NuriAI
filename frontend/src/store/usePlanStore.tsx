@@ -18,7 +18,7 @@ interface PlanStore {
     userCollectPlans: Plan[];
     authorPlans: Plan[];
     addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
-    deleteSelectedPlans: (ids: number[]) => void;
+    deleteSelectedPlans: (userId: number, planIds: number[]) => void;
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
     addStorage: (user: User, plan: Plan) => Promise<void>;
@@ -144,9 +144,18 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             console.error(`addPlan 실패: ${err}`);
         }
     },
-    deleteSelectedPlans: (ids) => set(state => ({
-        planStorage: state.planStorage.filter(p => !ids.includes(p.id))
-    })),
+    deleteSelectedPlans: async (userId, planIds) => {
+        try {
+            await apiFetch(`${API_ROUTES.PLAN.DELETE(userId)}`, {
+                method: "DELETE",
+                body: JSON.stringify(planIds),
+            })
+
+            set(state => ({ userCollectPlans: state.userCollectPlans.filter(p => !planIds.includes(p.id)) }));
+        } catch (err) {
+            console.error(`deleteSelectedPlans 실패: ${err}`);
+        }
+    },
     updatePlan: async (plan) => {
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.DETAIL(plan.id)}`, {

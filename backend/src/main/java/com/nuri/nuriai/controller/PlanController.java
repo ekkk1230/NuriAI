@@ -126,4 +126,10 @@ public class PlanController {
     public ResponseEntity<List<PlanDto.GeminiResponse>> getCollectList(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok(planService.getCollectList(userId));
     }
+
+    @DeleteMapping("/user/{userId}/collected/{planId}")
+    public ResponseEntity<Void> deleteCollectList(@PathVariable("userId") Long userId, @PathVariable("planId") Long planId) {
+        planService.deleteCollectList(userId, planId);
+        return ResponseEntity.ok().build();
+    }
 }

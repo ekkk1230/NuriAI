@@ -272,4 +272,12 @@ public class PlanService {
         return saves.stream().map(save -> new PlanDto.GeminiResponse(save.getPlan()))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteCollectList(Long userId, Long planId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException(("존재하지 않는 계획안 입니다.") + planId));
+        PlanSave item = planSaveRepository.findByUserAndPlan(user, plan).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원, 계획안 정보 입니다."));
+        planSaveRepository.delete(item);
+    }
 }

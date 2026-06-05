@@ -16,5 +16,6 @@ export const API_ROUTES = {
         SAVE: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/save`,
         VIEW: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/view`,
         COLLECTED: (userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
+        DELETE:(userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
     }
 } as const;
