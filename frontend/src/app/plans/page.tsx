@@ -37,13 +37,18 @@ function page() {
     };
 
     const filteredPlans = planStorage.filter(plan => {
-        if (!searchForm.searchTxt) return true;
         const keyword = searchForm.searchTxt.toLowerCase();
+        const matchesKeyword = !keyword || 
+                           plan.mainTheme.toLowerCase().includes(keyword) || 
+                           plan.activeIntro.toLowerCase().includes(keyword);
+        const matchesAge = (!searchForm.searchAge || searchForm.searchAge === "전체") 
+                       ? true 
+                       : plan.age === `만 ${searchForm.searchAge}세`;
+        const matchesDomain = (!searchForm.searchArea || searchForm.searchArea === "전체") 
+                        ? true
+                        : plan.plans.some(p => p.domain === searchForm.searchArea);
 
-        return (
-            plan.mainTheme.toLowerCase().includes(keyword) ||
-            plan.activeIntro.toLowerCase().includes(keyword)
-        )
+        return matchesKeyword && matchesAge && matchesDomain;
     });
     
     const sortedPlans = [...filteredPlans].sort((a, b) => {
@@ -54,7 +59,7 @@ function page() {
         const likeA = a.likeCount;
         const likeB = b.likeCount;
 
-        return sortType === "latest" ? dateB - dateA : sortType === "view" ? viewB - viewA : likeB - likeA;
+        return sortType === "date" ? dateB - dateA : sortType === "view" ? viewB - viewA : likeB - likeA;
     });
 
     const handleNavigate = (id: number) => {
@@ -78,7 +83,7 @@ function page() {
                         <label className="flex items-center mr-[1.2rem]">
                             <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">연령</span>
                             <select name="searchAge" id="searchAge" value={searchForm.searchAge} onChange={handleChange} className="text-[1.4rem] !w-[15rem]">
-                                <option value="">전체</option>
+                                <option value="전체">전체</option>
                                 {AGE_OPTIONS.map(item => (
                                     <option key={item.value} value={item.value}>{item.label}</option>
                                 ))}
@@ -88,9 +93,9 @@ function page() {
                         <label className="flex items-center mx-[1.2rem]">
                             <span className="text-[1.6rem] whitespace-nowrap font-semibold mr-[.8rem]">영역</span>
                             <select name="searchArea" id="searchArea" value={searchForm.searchArea} onChange={handleChange} className="text-[1.4rem] !w-[15rem]">
-                                <option value="">전체</option>
+                                <option value="전체">전체</option>
                                 {DOMAIN_TYPES.map((item, idx) => (
-                                    <option key={idx} value={idx}>{item}</option>
+                                    <option key={idx} value={item}>{item}</option>
                                 ))}
                             </select>
                         </label>
@@ -122,49 +127,52 @@ function page() {
 
                 {sortedPlans.length >= 1 
                     ? (
-                        <div className="grid grid-cols-4 gap-[1.6rem] mt-[4rem]">
-                            {sortedPlans.map(plan => (
-                                <div onClick={() => handleNavigate(plan.id)} key={plan.id} className="cursor-pointer relative bg-bgCard rounded-[.8rem] shadow-sm before:content-[''] before:absolute before:left-0 before:top-0 before:rounded-[.8rem_.8rem_0_0] p-[1.6rem] before:bg-main-gradient before:w-full before:h-[.4rem]">
-                                    <p className="text-[2rem] font-bold mb-[1rem]">{plan.mainTheme}</p>
-                                    <ul className="flex gap-[.4rem] items-center text-[1.4rem] text-textMuted mb-[1rem]">
-                                        <li className="after:content-['|'] flex gap-[.4rem] items-center text-[1.4rem] text-textMuted"><FaUserLarge />{plan.author} 선생님</li>
-                                        <li className="text-[1.4rem] ">{plan.age}</li>
-                                    </ul>
+                        <>
+                            <p className="text-textMuted text-[1.4rem] font-semibold my-[3rem_1rem]">총 <span className="text-main font-bold">{sortedPlans.length}개</span>의 계획안</p>
+                            <div className="grid grid-cols-4 gap-[1.6rem]">
+                                {sortedPlans.map((plan, idx) => (
+                                    <div onClick={() => handleNavigate(plan.id)} key={`${plan.id}-${idx}`} className="cursor-pointer relative bg-bgCard rounded-[.8rem] shadow-sm before:content-[''] before:absolute before:left-0 before:top-0 before:rounded-[.8rem_.8rem_0_0] p-[1.6rem] before:bg-main-gradient before:w-full before:h-[.4rem]">
+                                        <p className="text-[2rem] font-bold mb-[1rem]">{plan.mainTheme}</p>
+                                        <ul className="flex gap-[.4rem] items-center text-[1.4rem] text-textMuted mb-[1rem]">
+                                            <li className="after:content-['|'] flex gap-[.4rem] items-center text-[1.4rem] text-textMuted"><FaUserLarge />{plan.author} 선생님</li>
+                                            <li className="text-[1.4rem] ">{plan.age}</li>
+                                        </ul>
 
-                                    <div>
-                                        <div className="flex gap-[.4rem] mb-[.8rem] items-center">
-                                            <p className="text-[1.4rem]">{plan.plans.length}개 활동 - </p>
-                                            {/* 활동 영역 */}
-                                            <ul className="flex gap-[.4rem]">
-                                                {plan.plans.map((item, idx) => {
-                                                    const domain = item.domain.split(" ")[0];
-                                                    const domainStyle = DOMAIN_STYLES[domain as keyof typeof DOMAIN_STYLES];
-                                                    // console.log(DOMAIN_STYLES[domain])
+                                        <div>
+                                            <div className="flex gap-[.4rem] mb-[.8rem] items-center">
+                                                <p className="text-[1.4rem]">{plan.plans.length}개 활동 - </p>
+                                                {/* 활동 영역 */}
+                                                <ul className="flex gap-[.4rem]">
+                                                    {plan.plans.map((item, idx) => {
+                                                        const domain = item.domain.split(" ")[0];
+                                                        const domainStyle = DOMAIN_STYLES[domain as keyof typeof DOMAIN_STYLES];
+                                                        // console.log(DOMAIN_STYLES[domain])
 
-                                                    return (
-                                                        <li 
-                                                            key={idx} 
-                                                            className={`text-[1.2rem] px-[.8rem] py-[.4rem] rounded-[60rem] ${domainStyle}`}
-                                                        >
-                                                            {item.domain}
-                                                        </li>
-                                                    )
-                                                })}
-                                            </ul>
-                                        </div>
+                                                        return (
+                                                            <li 
+                                                                key={idx} 
+                                                                className={`text-[1.2rem] px-[.8rem] py-[.4rem] rounded-[60rem] ${domainStyle}`}
+                                                            >
+                                                                {item.domain}
+                                                            </li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                            </div>
 
-                                        {/* 활동 목표 */}
-                                        <div className="text-[1.4rem] mt-[1rem] line-clamp-2">{plan.activeIntro}</div>
+                                            {/* 활동 목표 */}
+                                            <div className="text-[1.4rem] mt-[1rem] line-clamp-2">{plan.activeIntro}</div>
 
-                                        <div className="flex gap-[1.2rem] mt-[.8rem]">
-                                            <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaHeart className="text-red-500" />{plan.likeCount}</p>
-                                            <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaEye />{plan.viewCount}</p>
-                                            <p className="text-[1.4rem] text-textMuted flex gap-[.4rem] text-textMuted items-center ml-auto"><MdOutlineAccessTime />{plan.createdAt.split('T')[0]}</p>
+                                            <div className="flex gap-[1.2rem] mt-[.8rem]">
+                                                <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaHeart className="text-red-500" />{plan.likeCount}</p>
+                                                <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaEye />{plan.viewCount}</p>
+                                                <p className="text-[1.4rem] text-textMuted flex gap-[.4rem] text-textMuted items-center ml-auto"><MdOutlineAccessTime />{plan.createdAt.split('T')[0]}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        </>
                     ) 
                     : (
                         <NoPlan txt="현재 준비되어 있는 계획안이 없습니다. 새로운 계획안을 만들어주세요." showButton={true} />
