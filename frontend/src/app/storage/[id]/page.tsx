@@ -14,7 +14,7 @@ import { FcLike } from 'react-icons/fc';
 
 function page() {
     const { id: planId } = useParams();
-    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount } = usePlanStore();
+    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount, deletePlan } = usePlanStore();
     const { openModal } = useUiStore();
     const { user } = useWelcomeStore();
     const route = useRouter();
@@ -85,12 +85,16 @@ function page() {
     const currentAuthorPlans = planStorage.filter(p => p.author === currentPlanAuthor);
     // console.log(currentAuthorPlans)
 
-    const handleClickEdit = () => {
+    const handleEdit = () => {
         openModal(
             "계획안 수정",
             "CONFIRM",
             <EditModal plan={plan} />
         );
+    };
+
+    const handleDelete = async () => {
+        await deletePlan(Number(planId));
     };
 
     const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-full bg-[#e6e6e6] mb-[1rem] last:mb-0 hover:bg-[#e5dbff]";
@@ -125,10 +129,10 @@ function page() {
                             <button className={`${baseBtnClass} bg-blueActive hover:bg-[#1f69ca] text-textLight`}>
                                 내보내기
                             </button>
-                            <button onClick={handleClickEdit} className={`${baseBtnClass} bg-main hover:bg-hoverMain text-textLight`}>
+                            <button onClick={handleEdit} className={`${baseBtnClass} bg-main hover:bg-hoverMain text-textLight`}>
                                 활동 수정
                             </button>
-                            <button className={`${baseBtnClass} bg-red-600 hover:bg-red-700 text-textLight`}>
+                            <button className={`${baseBtnClass} bg-red-600 hover:bg-red-700 text-textLight`} onClick={handleDelete}>
                                 삭제
                             </button>
                         </div>

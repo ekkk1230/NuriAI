@@ -142,13 +142,13 @@ function page() {
                     <>
                         <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
                         <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
-                            {displayedPlans.map((plan) => {
+                            {displayedPlans.map((plan, idx) => {
                                 if (!plan || !plan.id) return null;
 
                                 return (
                                     <PlanItem 
                                         plan={plan} 
-                                        key={plan.id} 
+                                        key={`${plan.id}-${idx}`} 
                                         checkHandle={handleCheckToggle} 
                                         onClick={() => router.push(`/storage/${plan.id}`)} 
                                         authorFilter={authorFilter}

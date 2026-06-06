@@ -279,9 +279,13 @@ public class PlanService {
     public void deleteCollectList(Long userId, List<PlanDto.PlanId> requestList) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
         for (PlanDto.PlanId request: requestList) {
+            System.out.println("삭제 시도: userId=" + userId + ", planId=" + request.getId());
             Plan plan = planRepository.findById(request.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다: " + request.getId()));
-            PlanSave item = planSaveRepository.findByUserAndPlan(user, plan).orElseThrow(() -> new IllegalArgumentException("저장된 항목을 찾을 수 없습니다."));
-
+            PlanSave item = planSaveRepository.findByUserAndPlan(user, plan)
+                    .orElseThrow(() -> {
+                        System.out.println("찾지 못한 데이터: user=" + user.getId() + ", plan=" + plan.getId());
+                        return new IllegalArgumentException("저장된 항목을 찾을 수 없습니다.");
+                    });
             planSaveRepository.delete(item);
             plan.removeSave(item);
         }
@@ -308,5 +312,19 @@ public class PlanService {
         }).collect(Collectors.toList());
         plan.update(request.getAge(), request.getMainTheme(), request.getCurriculum(), request.getActiveIntro(), newActivities);
         return new PlanDto.GeminiResponse(plan);
+    }
+
+    @Transactional
+    public void deletePlan(Long planId, Long userId) {
+        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + planId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
+
+        System.out.println("userNickname" + user.getUserNickname());
+        System.out.println("palnAuthor" + plan.getAuthor());
+        if (!plan.getAuthor().equals(user.getUserNickname())) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+
+        planRepository.delete(plan);
     }
 }

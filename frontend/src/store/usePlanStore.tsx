@@ -19,6 +19,7 @@ interface PlanStore {
     authorPlans: Plan[];
     addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
     deleteSelectedPlans: (userId: number, planIds: number[]) => Promise<void>;
+    deletePlan: (planId: number) => Promise<void>;
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
     addStorage: (user: User, plan: Plan) => Promise<void>;
@@ -145,15 +146,26 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         }
     },
     deleteSelectedPlans: async (userId, planIds) => {
+        console.log(`userId ${userId}`)
+        console.log(`planIds ${planIds}`)
         try {
             await apiFetch(`${API_ROUTES.PLAN.DELETE(userId)}`, {
-                method: "DELETE",
+                method: "POST",
                 body: JSON.stringify(planIds),
             })
 
             set(state => ({ userCollectPlans: state.userCollectPlans.filter(p => !planIds.includes(p.id)) }));
         } catch (err) {
             console.error(`deleteSelectedPlans 실패: ${err}`);
+        }
+    },
+    deletePlan: async (planId) => {
+        try {
+            await apiFetch(`${API_ROUTES.PLAN.DELETEITEM(planId)}`, {
+                method: "DELETE",
+            });
+        } catch (err) {
+            console.error(`deletePlan 실패: ${err}`);
         }
     },
     updatePlan: async (plan) => {
@@ -222,5 +234,5 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             if (isSavedFilter) return matchesTitle && matchesAge && (isMyPlan || isSaved);
             return matchesTitle && matchesAge && (authorFilter ? plan.author === decodeURIComponent(authorFilter) : isMyPlan);
         })
-    }
+    },
 }));

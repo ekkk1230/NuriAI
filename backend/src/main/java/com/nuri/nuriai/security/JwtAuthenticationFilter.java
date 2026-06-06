@@ -31,17 +31,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith("Bearer ")) {
             String jwt = token.substring(7);
             try {
-                // 검증
-                String userId = Jwts.parserBuilder()
+                String subject = Jwts.parserBuilder()
                         .setSigningKey(secretKey)
                         .build()
                         .parseClaimsJws(jwt)
                         .getBody()
                         .getSubject();
 
-                // 인증 정보 세팅
+                Long userId = Long.parseLong(subject);
+
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        userId, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+                        userId,
+                        null,
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {

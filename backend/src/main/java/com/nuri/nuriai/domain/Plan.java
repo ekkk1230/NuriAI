@@ -77,6 +77,9 @@ public class Plan extends BaseTimeEntity {
         this.viewCount++;
     }
 
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanSave> savedPlans = new ArrayList<>();
+
     public void update(String age, String mainTheme, String curriculum, String activeIntro, List<Activity> newActivities) {
         this.age = age;
         this.mainTheme = mainTheme;

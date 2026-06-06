@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
@@ -127,7 +128,7 @@ public class PlanController {
         return ResponseEntity.ok(planService.getCollectList(userId));
     }
 
-    @DeleteMapping("/user/{userId}/collected")
+    @PostMapping("/user/{userId}/collected")
     public ResponseEntity<Void> deleteCollectList(@PathVariable("userId") Long userId, @RequestBody List<PlanDto.PlanId> request) {
         planService.deleteCollectList(userId, request);
         return ResponseEntity.ok().build();
@@ -136,5 +137,12 @@ public class PlanController {
     @PostMapping("/update")
     public ResponseEntity<PlanDto.GeminiResponse> updatePlan(@RequestBody PlanDto.UpdatePlanRequest request) {
         return ResponseEntity.ok(planService.updateplan(request));
+    }
+
+    @DeleteMapping("/{planId}/delete")
+    public ResponseEntity<Void> deletePlan(@PathVariable("planId") Long planId, @AuthenticationPrincipal Long userId) {
+        System.out.println("삭제하려는 planId: " + planId);
+        planService.deletePlan(planId, userId);
+        return ResponseEntity.noContent().build();
     }
 }
