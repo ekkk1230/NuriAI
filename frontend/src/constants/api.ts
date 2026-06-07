@@ -18,6 +18,6 @@ export const API_ROUTES = {
         COLLECTED: (userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
         DELETE:(userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
         UPDATE: `${API_BASE_URL}/api/plans/update`,
-        DELETEITEM: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/delete`,
+        DELETEMYITEMS: `${API_BASE_URL}/api/plans/delete-batch`,
     }
 } as const;

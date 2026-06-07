@@ -18,7 +18,7 @@ function page() {
 
     const router = useRouter();
     const { fetchAllPlans, isLoaded, deleteSelectedPlans, getFilteredPlans,
-        fetchUserPlans, fetchUserCollectItem, userPlans, userCollectPlans } = usePlanStore();
+        fetchUserPlans, fetchUserCollectItem, userPlans, userCollectPlans, deletePlans } = usePlanStore();
     const { user } = useWelcomeStore();
     
     const [searchTit, setSearchTit]  = useState<string>("");
@@ -88,13 +88,39 @@ function page() {
     const handleCheckToggle = (id: number) => {
         setCheckedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id] );
     };
-    
-    console.log(checkedIds)
+
     // 선택된 계획안들을 삭제하는 함수
-    const handleRemove = () => {
-        deleteSelectedPlans(Number(user?.id), checkedIds);
-        setCheckedIds([]); 
-    };
+    const handleRemove = async () => {
+    // 1. 내가 쓴 글 ID 리스트와 남이 쓴 글 ID 리스트로 분류
+    const myPlanIds = checkedIds.filter(id => {
+        const plan = userPlans.find(p => p.id === id);
+        return plan?.author === user?.userNickname; 
+    });
+
+    const collectedPlanIds = checkedIds.filter(id => {
+        const plan = userPlans.find(p => p.id === id);
+        return plan?.author !== user?.userNickname; 
+    });
+
+    // 2. 각각 다른 API 호출
+    try {
+        // for (const id of myPlanIds) {
+        //     await deletePlan(Number(id)); 
+        // }
+
+        // // 남의 글들: 보관함에서 제거
+        // if (collectedPlanIds.length > 0) {
+        //     const requestData = collectedPlanIds.map(id => ({ id }));
+        //     await deleteSelectedPlans(Number(user?.id), requestData);
+        // }
+
+        // alert("삭제되었습니다.");
+        // setCheckedIds([]);
+        // 목록 다시 불러오기 (fetchData 호출 등)
+    } catch (error) {
+        console.error("삭제 실패:", error);
+    }
+};
 
     return (
         <div className="bg-bgCard flex flex-col h-[100%]">

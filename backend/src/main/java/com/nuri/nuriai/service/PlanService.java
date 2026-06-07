@@ -315,16 +315,17 @@ public class PlanService {
     }
 
     @Transactional
-    public void deletePlan(Long planId, Long userId) {
-        Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + planId));
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
+    public void deletePlans(List<Long> planIds, Long userId) {
+        for (Long planId : planIds) {
+            Plan plan = planRepository.findById(planId)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다: " + planId));
 
-        System.out.println("userNickname" + user.getUserNickname());
-        System.out.println("palnAuthor" + plan.getAuthor());
-        if (!plan.getAuthor().equals(user.getUserNickname())) {
-            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+            // 작성자 본인인지 확인
+            if (!plan.getAuthor().getId().equals(userId)) {
+                throw new IllegalArgumentException("삭제 권한이 없습니다: " + planId);
+            }
+
+            planRepository.delete(plan);
         }
-
-        planRepository.delete(plan);
     }
 }

@@ -19,7 +19,7 @@ interface PlanStore {
     authorPlans: Plan[];
     addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
     deleteSelectedPlans: (userId: number, planIds: number[]) => Promise<void>;
-    deletePlan: (planId: number) => Promise<void>;
+    deletePlans: (planIds: number[]) => Promise<void>;
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
     addStorage: (user: User, plan: Plan) => Promise<void>;
@@ -159,13 +159,14 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             console.error(`deleteSelectedPlans 실패: ${err}`);
         }
     },
-    deletePlan: async (planId) => {
+    deletePlans: async (planIds: number[]) => { 
         try {
-            await apiFetch(`${API_ROUTES.PLAN.DELETEITEM(planId)}`, {
+            await apiFetch(API_ROUTES.PLAN.DELETEMYITEMS, { 
                 method: "DELETE",
+                body: JSON.stringify(planIds), 
             });
         } catch (err) {
-            console.error(`deletePlan 실패: ${err}`);
+            console.error(`deletePlans 실패: ${err}`);
         }
     },
     updatePlan: async (plan) => {
