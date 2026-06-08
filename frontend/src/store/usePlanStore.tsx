@@ -18,7 +18,6 @@ interface PlanStore {
     userCollectPlans: Plan[];
     authorPlans: Plan[];
     addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
-    deleteSelectedPlans: (planIds: number[]) => Promise<void>;
     deletePlans: (planIds: number[]) => Promise<void>;
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
@@ -145,25 +144,21 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             console.error(`addPlan 실패: ${err}`);
         }
     },
-    deleteSelectedPlans: async (planIds) => {
-        console.log(`planIds ${planIds}`)
-        try {
-            await apiFetch(`${API_ROUTES.PLAN.DELETEMYITEMS}`, {
-                method: "POST",
-                body: JSON.stringify(planIds),
-            })
-
-            set(state => ({ userCollectPlans: state.userCollectPlans.filter(p => !planIds.includes(p.id)) }));
-        } catch (err) {
-            console.error(`deleteSelectedPlans 실패: ${err}`);
-        }
-    },
     deletePlans: async (planIds: number[]) => { 
+        console.log(`deletePlans: ${planIds}`)
         try {
-            await apiFetch(API_ROUTES.PLAN.DELETEMYITEMS, { 
-                method: "DELETE",
+            const response = await apiFetch(API_ROUTES.PLAN.DELETEMYITEMS, { 
+                method: "POST",
                 body: JSON.stringify(planIds), 
             });
+            if (!response.ok) throw new Error("삭제 요청 실패");
+
+            set(state => ({
+                planStorage: state.planStorage.filter(p => !planIds.includes(Number(p.id))),
+                userPlans: state.userPlans.filter(p => !planIds.includes(Number(p.id))),
+                userCollectPlans: state.userCollectPlans.filter(p => !planIds.includes(Number(p.id)))
+            }))
+            
         } catch (err) {
             console.error(`deletePlans 실패: ${err}`);
         }

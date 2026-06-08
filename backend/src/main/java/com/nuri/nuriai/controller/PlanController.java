@@ -133,10 +133,11 @@ public class PlanController {
         return ResponseEntity.ok(planService.updateplan(request));
     }
 
-    @DeleteMapping("/plans/delete-batch")
+    @PostMapping("/delete-batch")
     public ResponseEntity<Void> deletePlans(
             @RequestBody List<Long> planIds, // 배열로 받기
             @AuthenticationPrincipal Long userId) {
+        System.out.println("컨트롤러 진입 성공!");
         System.out.println("userId: " + userId + ", planIds: " + planIds);
         planService.deletePlans(planIds, userId);
         return ResponseEntity.noContent().build();

@@ -316,13 +316,19 @@ public class PlanService {
 
     @Transactional
     public void deletePlans(List<Long> planIds, Long userId) {
+        User currentUser = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("로그인된 유저 정보를 찾을 수 없습니다."));
+        String myNickname = currentUser.getUserNickname();
+
         for (Long planId : planIds) {
             Plan plan = planRepository.findById(planId)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다: " + planId));
 
-            if (plan.getId().equals(userId)) {
+            if (plan.getAuthor() != null && plan.getAuthor().equals(myNickname)) {
+                // [CASE A] 내 글인 경우: 삭제
                 planRepository.delete(plan);
             } else {
+                // [CASE B] 남의 글인 경우: 보관함 삭제
                 planSaveRepository.deleteByUserIdAndPlanId(userId, planId);
             }
         }

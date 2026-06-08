@@ -4,6 +4,7 @@ import com.nuri.nuriai.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,11 +51,9 @@ public class SecurityConfig {
                 // [추가] CORS 설정 적용
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/users/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/plans/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/plans/author/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/plans/user/**")).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/plans/delete-batch").permitAll()
+                        .requestMatchers("/h2-console/**", "/api/users/**", "/api/plans/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(secretKey), UsernamePasswordAuthenticationFilter.class);

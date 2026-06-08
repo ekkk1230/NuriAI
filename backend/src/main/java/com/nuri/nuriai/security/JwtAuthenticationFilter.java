@@ -41,14 +41,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Long userId = Long.parseLong(subject);
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        userId,
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                        userId, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
                 );
-
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(auth); // <--- 이게 필수!
+                System.out.println("인증 성공! userId: " + userId);
             } catch (Exception e) {
-                // 토큰이 유효하지 않으면 인증 없이 진행
+                // 로그를 반드시 찍으세요! 에러 원인을 알아야 해결됩니다.
+                System.err.println("JWT 파싱 에러 발생: " + e.getMessage());
+                // 필요하다면 e.printStackTrace(); 도 추가
             }
         }
         filterChain.doFilter(request, response);

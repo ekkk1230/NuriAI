@@ -23,11 +23,12 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody java.util.Map<String, String> map) {
-        String userId = map.get("userId");
+        String inputId = map.get("userId");
         String userPwd = map.get("userPwd");
 
-        UserDto.UserResponse userDto = userService.loginUser(userId, userPwd);
-        String token = jwtTokenProvider.createToken(userId);
+        UserDto.UserResponse userDto = userService.loginUser(inputId, userPwd);
+
+        String token = jwtTokenProvider.createToken(String.valueOf(userDto.getId()));
 
         java.util.Map<String, Object> response = new java.util.HashMap<>();
         response.put("user", userDto);
