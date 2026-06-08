@@ -18,7 +18,7 @@ interface PlanStore {
     userCollectPlans: Plan[];
     authorPlans: Plan[];
     addPlan: (plan: GenerateAIPlanForm) => Promise<void>;
-    deleteSelectedPlans: (userId: number, planIds: number[]) => Promise<void>;
+    deleteSelectedPlans: (planIds: number[]) => Promise<void>;
     deletePlans: (planIds: number[]) => Promise<void>;
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
@@ -145,11 +145,10 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             console.error(`addPlan 실패: ${err}`);
         }
     },
-    deleteSelectedPlans: async (userId, planIds) => {
-        console.log(`userId ${userId}`)
+    deleteSelectedPlans: async (planIds) => {
         console.log(`planIds ${planIds}`)
         try {
-            await apiFetch(`${API_ROUTES.PLAN.DELETE(userId)}`, {
+            await apiFetch(`${API_ROUTES.PLAN.DELETEMYITEMS}`, {
                 method: "POST",
                 body: JSON.stringify(planIds),
             })

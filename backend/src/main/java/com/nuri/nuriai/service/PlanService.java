@@ -320,12 +320,11 @@ public class PlanService {
             Plan plan = planRepository.findById(planId)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다: " + planId));
 
-            // 작성자 본인인지 확인
-            if (!plan.getAuthor().getId().equals(userId)) {
-                throw new IllegalArgumentException("삭제 권한이 없습니다: " + planId);
+            if (plan.getId().equals(userId)) {
+                planRepository.delete(plan);
+            } else {
+                planSaveRepository.deleteByUserIdAndPlanId(userId, planId);
             }
-
-            planRepository.delete(plan);
         }
     }
 }

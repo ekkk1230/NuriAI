@@ -128,12 +128,6 @@ public class PlanController {
         return ResponseEntity.ok(planService.getCollectList(userId));
     }
 
-    @PostMapping("/user/{userId}/collected")
-    public ResponseEntity<Void> deleteCollectList(@PathVariable("userId") Long userId, @RequestBody List<PlanDto.PlanId> request) {
-        planService.deleteCollectList(userId, request);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/update")
     public ResponseEntity<PlanDto.GeminiResponse> updatePlan(@RequestBody PlanDto.UpdatePlanRequest request) {
         return ResponseEntity.ok(planService.updateplan(request));
@@ -143,7 +137,7 @@ public class PlanController {
     public ResponseEntity<Void> deletePlans(
             @RequestBody List<Long> planIds, // 배열로 받기
             @AuthenticationPrincipal Long userId) {
-
+        System.out.println("userId: " + userId + ", planIds: " + planIds);
         planService.deletePlans(planIds, userId);
         return ResponseEntity.noContent().build();
     }

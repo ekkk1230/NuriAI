@@ -17,5 +17,5 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
             "LEFT JOIN FETCH p.saves s " +
             "LEFT JOIN FETCH s.user " +
             "WHERE p.id = :id")
-    Optional<Plan> findByIdWithSaves(@Param("id") Long id);;
+    Optional<Plan> findByIdWithSaves(@Param("id") Long id);
 }

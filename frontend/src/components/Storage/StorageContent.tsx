@@ -104,18 +104,15 @@ function page() {
 
     // 2. 각각 다른 API 호출
     try {
-        // for (const id of myPlanIds) {
-        //     await deletePlan(Number(id)); 
-        // }
+        await deleteSelectedPlans(myPlanIds); 
 
-        // // 남의 글들: 보관함에서 제거
-        // if (collectedPlanIds.length > 0) {
-        //     const requestData = collectedPlanIds.map(id => ({ id }));
-        //     await deleteSelectedPlans(Number(user?.id), requestData);
-        // }
+        // 남의 글들: 보관함에서 제거
+        if (collectedPlanIds.length > 0) {
+            await deleteSelectedPlans(collectedPlanIds);
+        }
 
-        // alert("삭제되었습니다.");
-        // setCheckedIds([]);
+        alert("삭제되었습니다.");
+        setCheckedIds([]);
         // 목록 다시 불러오기 (fetchData 호출 등)
     } catch (error) {
         console.error("삭제 실패:", error);

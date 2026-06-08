@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface PlanSaveRepository extends JpaRepository<PlanSave, Long> {
     Optional<PlanSave> findByUserAndPlan(User user, Plan plan);
     List<PlanSave> findByUserId(Long userId);
+    void deleteByUserIdAndPlanId(Long userId, Long planId);
 }

@@ -9,14 +9,13 @@ export const API_ROUTES = {
     },
     PLAN: {
         BASE: `${API_BASE_URL}/api/plans`,
-        DETAIL: (planId: number | string) => `${API_BASE_URL}/api/plans/${planId}`,
         USER: (user: User) => `${API_BASE_URL}/api/plans/user/${user.userNickname}`,
+        DETAIL: (planId: number | string) => `${API_BASE_URL}/api/plans/${planId}`,
         AUTHOR: (plan: Plan) => `${API_BASE_URL}/api/plans/author/${plan.author}`,
         LIKE: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/like`,
         SAVE: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/save`,
         VIEW: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/view`,
         COLLECTED: (userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
-        DELETE:(userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
         UPDATE: `${API_BASE_URL}/api/plans/update`,
         DELETEMYITEMS: `${API_BASE_URL}/api/plans/delete-batch`,
     }
