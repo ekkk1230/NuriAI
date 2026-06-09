@@ -187,8 +187,8 @@ function page() {
                             <p className="text-[1.8rem] font-bold text-[#212529]">보관된 계획안이 없습니다</p>
                             <p className="text-[1.4rem] font-medium text-[#868e96]">AI계획안을 생성해 보세요!</p>
                         </div>
-                        <button type="button" className="..." onClick={() => router.push('/workspace')}>
-                            첫 계획안 만들러 가기
+                        <button className="btn-base mt-[4rem] block rounded-[60rem] bg-main-gradient text-textLight px-16 py-8 text-[1.6rem]" onClick={() => router.push('/workspace')}>
+                            계획안 생성하기
                         </button>
                     </>
                 )}
