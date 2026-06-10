@@ -22,19 +22,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody java.util.Map<String, String> map) {
-        String inputId = map.get("userId");
-        String userPwd = map.get("userPwd");
+    public ResponseEntity<UserDto.LoginResponse> loginUser(@RequestBody UserDto.LoginRequest request) {
 
-        UserDto.UserResponse userDto = userService.loginUser(inputId, userPwd);
-
+        UserDto.UserResponse userDto = userService.loginUser(request);
         String token = jwtTokenProvider.createToken(String.valueOf(userDto.getId()));
 
-        java.util.Map<String, Object> response = new java.util.HashMap<>();
-        response.put("user", userDto);
-        response.put("accessToken", token);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new UserDto.LoginResponse(userDto, token));
     }
 
     @GetMapping("/{type}/{value}")

@@ -32,15 +32,17 @@ export const useWelcomeStore = create<WelcomeStore>()(
                 }
             },
             loginUser: async(user: LoginUserForm) => {
+                console.log(user)
                 try {
                     const response = await fetch(`${API_ROUTES.USER.BASE}/login`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(user),
                     });
-        
+                    
                     if (!response.ok) throw new Error("로그인에 실패했습니다");
                     const data = await response.json();
+                    // console.log(data)
         
                     if (data.accessToken) {
                         localStorage.setItem("accessToken", data.accessToken);

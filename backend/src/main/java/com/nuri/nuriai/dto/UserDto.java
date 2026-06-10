@@ -20,6 +20,26 @@ public class UserDto {
     }
 
     @Getter
+    @NoArgsConstructor
+    public static class LoginRequest {
+        @JsonProperty("userId")
+        private String userId;
+        @JsonProperty("userPwd")
+        private String userPwd;
+    }
+
+    @Getter
+    public static class LoginResponse {
+        private UserResponse user;
+        private String accessToken;
+
+        public LoginResponse(UserResponse user, String accessToken) {
+            this.user = user;
+            this.accessToken = accessToken;
+        }
+    }
+
+    @Getter
     public static class UserResponse {
         private Long id;
         private String userId;

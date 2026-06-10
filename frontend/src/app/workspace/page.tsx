@@ -149,6 +149,7 @@ function page() {
 
 
     const handleMakeAIPlan = async() => {
+        
         const getLabel = (val: string) => {
             const [mode, indexStr] = val.split('-');
             const index = parseInt(indexStr);
@@ -158,13 +159,20 @@ function page() {
         };
     
         const selectionsLabels = (activeForm === "large" ? activeType : areaType).map(getLabel);
+
+        console.log("현재 user 상태:", user);
     
         const planData = {
             mainTheme: planForm.mainTheme,
             age: activeAge,
             groupType: activeForm === "large" ? "대집단" : "소집단",
-            selections: selectionsLabels 
+            selections: selectionsLabels,
+            author: user?.userNickname
         };
+
+        console.log('ddd')
+        console.log(planData.author)
+
         try {
             await addPlan(planData);
 

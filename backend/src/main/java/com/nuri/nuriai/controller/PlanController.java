@@ -27,6 +27,7 @@ public class PlanController {
     public static class PlanRequest {
         private String mainTheme;
         private int age;
+        private String author;
         private String groupType;      // 대집단 / 소집단
         private List<String> selections; // 활동 유형들 또는 영역들
     }
@@ -85,7 +86,7 @@ public class PlanController {
 
         // 2. 파싱 및 저장
         PlanDto.GeminiResponse responseDto = planService.parseGeminiResponse(rawResponse);
-        PlanDto.GeminiResponse savedDto = planService.savePlan(responseDto);
+        PlanDto.GeminiResponse savedDto = planService.savePlan(responseDto, request.getAuthor());
 
         return ResponseEntity.ok(savedDto);
     }

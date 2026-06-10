@@ -47,16 +47,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                // [추가] CORS 설정 적용
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/plans/delete-batch").permitAll()
-                        .requestMatchers("/h2-console/**", "/api/users/**", "/api/plans/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(new JwtAuthenticationFilter(secretKey), UsernamePasswordAuthenticationFilter.class);
+            .csrf(csrf -> csrf.disable())
+            // [추가] CORS 설정 적용
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/plans/delete-batch").permitAll()
+                    .requestMatchers("/h2-console/**", "/api/users/**", "/api/plans/**").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .addFilterBefore(new JwtAuthenticationFilter(secretKey), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

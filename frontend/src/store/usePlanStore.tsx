@@ -133,6 +133,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             if (!response.ok) throw new Error("계획안 업데이트 실패");
 
             const planData = await response.json();
+            console.log(planData)
 
             // console.log("planData:", planData);
 

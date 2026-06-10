@@ -155,9 +155,9 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanDto.GeminiResponse savePlan(PlanDto.GeminiResponse dto) {
+    public PlanDto.GeminiResponse savePlan(PlanDto.GeminiResponse dto, String authorFromFrompt) {
         String currentUserId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String authorNickname = userRepository.findByUserId(currentUserId).map(User::getUserNickname).orElse("알 수 없는 사용자" + currentUserId);
+        String authorNickname = userRepository.findByUserId(currentUserId).map(User::getUserNickname).orElse(authorFromFrompt);
 
         Plan plan = Plan.builder()
             .age(dto.getAge())

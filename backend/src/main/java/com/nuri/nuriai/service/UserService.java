@@ -32,10 +32,12 @@ public class UserService {
         return new UserDto.UserResponse(newUser);
     }
 
-    public UserDto.UserResponse loginUser(String userId, String password) {
-        User loginUser = userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 ID입니다. " + userId));
+    public UserDto.UserResponse loginUser(UserDto.LoginRequest request) {
+        User loginUser = userRepository.findByUserId(request.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 ID입니다. " + request.getUserId()));
 
-        if (!passwordEncoder.matches(password, loginUser.getUserPwd())) {
+        System.out.println("조회된 닉네임: " + loginUser.getUserNickname());
+
+        if (!passwordEncoder.matches(request.getUserPwd(), loginUser.getUserPwd())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
