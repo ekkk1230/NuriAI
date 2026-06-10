@@ -5,7 +5,7 @@ import { useForm } from "./useForm";
 import { useWelcomeStore } from "@/store/useWelcomeStore";
 
 export const useMypage = () => {
-    const { userPlans, fetchUserPlans } = usePlanStore();
+    const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem } = usePlanStore();
     const { user } = useWelcomeStore();
     const { inquries, addInquriy, deleteInquiry, updateInquiry } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
@@ -13,6 +13,7 @@ export const useMypage = () => {
     useEffect(() => {
         if (user) {
             fetchUserPlans(user);
+            fetchUserCollectItem(Number(user.id))
         }
     }, [user, fetchUserPlans]);
 
@@ -75,6 +76,7 @@ export const useMypage = () => {
         answerOpen, toggleAnswer,
         writeInQuiry, handleWrite,
         handleChange, onSubmitInquiry, handleDelete,
-        editingId, setEditingId, onClickEdit, handleUpdate
+        editingId, setEditingId, onClickEdit, handleUpdate,
+        userCollectPlans
     };
 }

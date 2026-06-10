@@ -329,7 +329,10 @@ public class PlanService {
                 planRepository.delete(plan);
             } else {
                 // [CASE B] 남의 글인 경우: 보관함 삭제
-                planSaveRepository.deleteByUserIdAndPlanId(userId, planId);
+                PlanSave save = planSaveRepository.findByUserAndPlan(currentUser, plan)
+                        .orElseThrow(() -> new IllegalArgumentException("보관함에 없는 계획안입니다."));
+                plan.removeSave(save);
+                planSaveRepository.delete(save);
             }
         }
     }
