@@ -1,16 +1,31 @@
 import { usePlanStore } from "@/store/usePlanStore";
-import React from "react";
+import html2pdf from "html2pdf.js";
+import { useRef } from "react";
 import { MdEdit, MdSave, MdSaveAlt, MdMenuBook, MdReportProblem } from "react-icons/md"
 import { TbTargetArrow } from "react-icons/tb";
 
 function PlanPreview() {
     const { currentCreatePlan } = usePlanStore();
-    console.log(currentCreatePlan)
+    // console.log(currentCreatePlan)
+    const pdfRef = useRef<HTMLDivElement>(null);
 
     const mainTheme = currentCreatePlan[0].mainTheme;
     const age = currentCreatePlan[0].age;
     const planCount = currentCreatePlan[0].plans.length;
     const plansArr = currentCreatePlan[0].plans;
+
+    const handleDownloadPdf = () => {
+        if (!pdfRef.current) return;
+        const element = pdfRef.current;
+        const opt = {
+            margin: 10, 
+            filename: `${currentCreatePlan[0].mainTheme}_계획안.pdf`,
+            image: { type: 'jpeg' as const, quality: 0.98 },
+            html2canvas: { scale: 2 }, 
+            jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
 
     return (
         <>
@@ -25,11 +40,11 @@ function PlanPreview() {
                 </div>
                 <div className="flex gap-[.4rem]">
                     <button className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-[#8744f3]"><MdSave className="text-[2rem]" /> 보관함에 저장</button>
-                    <button className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-blueActive"><MdSaveAlt className="text-[2rem]" /> PDF 내보내기</button>
+                    <button onClick={handleDownloadPdf} className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-blueActive"><MdSaveAlt className="text-[2rem]" /> PDF 내보내기</button>
                 </div>
             </div>
 
-            <div className="w-[95%] mx-auto">
+            <div className="w-[95%] mx-auto" ref={pdfRef}>
                 <div className="bg-sub2-gradient mt-[2rem] rounded-2xl p-[2rem] text-textLight">
                     <p className="text-[2rem] font-bold  mb-[2rem]">활동 요약</p>
                     <div className="text-[1.6rem]">
