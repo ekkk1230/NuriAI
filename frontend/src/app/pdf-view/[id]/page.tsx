@@ -1,11 +1,24 @@
 'use client';
 import { useEffect } from 'react';
 import './pdf-only.css';
+import { useParams } from 'next/navigation';
+import { usePlanStore } from '@/store/usePlanStore';
 
-export default function PdfPage({ params }: { params: { id: string } }) {
+export default function PdfPage() {
+    const params = useParams();
+    const id = params.id;
+
+    const { planStorage, fetchPlanById } = usePlanStore();
+    
     useEffect(() => {
-        const triggerPdf = async () => {
+        if (!id) return;
+
+        const processPdf = async () => {
+            await fetchPlanById(Number(id));
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
             const html2pdf = (await import("html2pdf.js")).default;
+
             const element = document.getElementById('pdf-content');
             if (!element) return;
 
@@ -22,8 +35,14 @@ export default function PdfPage({ params }: { params: { id: string } }) {
             window.close();
         };
 
-        triggerPdf();
-    }, []);
+        processPdf();
+    }, [[id, fetchPlanById]]);
 
-    return <div id="pdf-content" className="pdf-container">...계획안 내용...</div>;
+    const plan = planStorage.find(p => p.id === Number(id));
+
+    return (
+        <div id="pdf-content" className="pdf-container">
+            {plan?.mainTheme}
+        </div>
+    );
 }
