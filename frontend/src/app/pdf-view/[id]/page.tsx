@@ -36,13 +36,51 @@ export default function PdfPage() {
         };
 
         processPdf();
-    }, [[id, fetchPlanById]]);
+    }, [id, fetchPlanById]);
 
     const plan = planStorage.find(p => p.id === Number(id));
 
+    if (!plan) return <div>로딩 중...</div>
+
     return (
         <div id="pdf-content" className="pdf-container">
-            {plan?.mainTheme}
+            {plan.plans.map((p, index) => (
+                <div key={index}>
+                    <div>
+                        <span className="domain">{p.domain}</span>
+                        <span className="paln-count">활동 {index + 1} / {plan.plans.length}</span>
+                    </div>
+                    <p>{p.activityName}</p>
+
+                    <div>
+                        <p>기대 효과</p>
+                        <ul>
+                            {p.objectives.map((obj, idx) => (
+                                <li key={idx}>{obj}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p>연계 교육과정</p>
+                        <div>
+                            {p.relatedCurriculum.map((curriculum,idx) => {
+                                const steps = curriculum.split(/\s*>\s*/);
+
+                                return (
+                                    <div key={idx}>
+                                        {steps.map((step, stepIdx) => (
+                                            <span>
+                                                {step}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                </div>
+            ))}
         </div>
-    );
+    )
 }
