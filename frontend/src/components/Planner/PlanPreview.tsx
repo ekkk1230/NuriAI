@@ -1,5 +1,6 @@
+import { DOMAIN_STYLES } from "@/constants/activityOptions";
 import { usePlanStore } from "@/store/usePlanStore";
-import html2pdf from "html2pdf.js";
+// import html2pdf from "html2pdf.js";
 import { useRef } from "react";
 import { MdEdit, MdSave, MdSaveAlt, MdMenuBook, MdReportProblem } from "react-icons/md"
 import { TbTargetArrow } from "react-icons/tb";
@@ -38,10 +39,10 @@ function PlanPreview() {
                         <li className="flex ">{currentCreatePlan[0].plans.length}개 영역</li>
                     </ul>
                 </div>
-                <div className="flex gap-[.4rem]">
+                {/* <div className="flex gap-[.4rem]">
                     <button className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-[#8744f3]"><MdSave className="text-[2rem]" /> 보관함에 저장</button>
                     <button onClick={handleDownloadPdf} className="flex gap-[.4rem] rounded-[1.2rem] text-textLight cursor-pointer font-semibold p-[1rem_2rem] items-center text-[1.4rem] bg-blueActive"><MdSaveAlt className="text-[2rem]" /> PDF 내보내기</button>
-                </div>
+                </div> */}
             </div>
 
             <div className="w-[95%] mx-auto" ref={pdfRef}>
@@ -53,11 +54,11 @@ function PlanPreview() {
                     </div>
                 </div>
 
-                <div className="relative bg-bgCard rounded-[1.2rem] p-[4rem_3.2rem] mt-[2rem] before:content-[''] before:w-[.8rem] before:h-[100%] before:bg-cate1 before:absolute before:left-0 before:top-0 before:rounded-[1.2rem_0_0_1.2rem]">
+                <div className={`relative bg-bgCard rounded-[1.2rem] p-[4rem_3.2rem] mt-[2rem] before:content-[''] before:w-[.8rem] before:h-[100%] before:bg-cate1 before:absolute before:left-0 before:top-0 before:rounded-[1.2rem_0_0_1.2rem]`}>
                     {plansArr.map((p, idx) => (
                         <div key={idx} className="mb-[4rem] pb-[4rem] border-b-[.1rem] border-solid border-[#eee] last:border-b-0 last:p-[4rem_0]">
                             <div className="flex gap-[1rem] items-center">
-                                <span className="bg-cate1 text-cate1-text rounded-[60rem] p-[1rem_1.2rem] text-[1.6rem] font-semibold">{p.domain}</span>
+                                <span className={`${DOMAIN_STYLES[p.domain as keyof typeof DOMAIN_STYLES]} rounded-[60rem] p-[1rem_1.2rem] text-[1.6rem] font-semibold`}>{p.domain}</span>
                                 <div className="flex text-textMuted text-[1.4rem]">
                                     <span className="font-semibold text-[#000]">{idx + 1}</span> / {planCount}
                                 </div>

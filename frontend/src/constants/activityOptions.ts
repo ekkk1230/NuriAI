@@ -37,3 +37,12 @@ export const TYPE_STYLES = {
     "수·조작": "bg-[var(--color-act5)] text-[var(--color-act5-text)] border-[var(--color-act5-text)]/20",
     "과학": "bg-[var(--color-act5)] text-[var(--color-act5-text)] border-[var(--color-act5-text)]/20",
 };
+
+export const DOMAIN_MAP: Record<string, string> = {
+    "기본생활": "domainType1",
+    "신체운동": "domainType2",
+    "의사소통": "domainType3",
+    "사회관계": "domainType4",
+    "예술경험": "domainType5",
+    "자연탐구": "domainType6",
+}

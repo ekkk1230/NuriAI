@@ -112,70 +112,6 @@ function page() {
     };
 
     const handleDownloadPdf = async () => {
-        // if (!pdfRef.current) return;
-        
-        // const html2pdf = (await import("html2pdf.js")).default;
-
-        // // 1. PDF 생성 전, 색상 스타일을 인라인으로 강제 고정
-        // const elementsToFix = pdfRef.current.querySelectorAll('.bg-main, .bg-blueActive, .bg-sub2-gradient');
-        
-        // elementsToFix.forEach((el) => {
-        //     const htmlEl = el as HTMLElement;
-        //     // Tailwind 클래스 대신 직접적인 HEX 색상 코드를 적용 (oklab 회피)
-        //     if (htmlEl.classList.contains('bg-main')) htmlEl.style.backgroundColor = '#8744f3'; // 실제 bg-main의 HEX값
-        //     if (htmlEl.classList.contains('bg-blueActive')) htmlEl.style.backgroundColor = '#007bff'; // 실제 bg-blueActive의 HEX값
-        //     if (htmlEl.classList.contains('bg-sub2-gradient')) htmlEl.style.background = '#8744f3'; // Gradient도 단색으로 보정 추천
-        // });
-    
-        // const opt = {
-        //     margin: 2,
-        //     filename: `${plan.mainTheme}_계획안.pdf`,
-        //     image: { type: 'jpeg' as const, quality: 0.98 },
-        //     html2canvas: { 
-        //         scale: 2,
-        //         useCORS: true,
-        //         // 2. 렌더링 후에는 다시 원래대로 복구 (선택 사항)
-        //         onclone: (clonedDoc: Document) => {
-        //             const styleSheet = clonedDoc.createElement('style');
-        //             styleSheet.innerText = `
-        //                 * { 
-        //                     color: #000000 !important; 
-        //                     background-color: transparent !important; 
-        //                     font-size: 12 px !important; 
-        //                 }
-        //             `;
-        //             clonedDoc.head.appendChild(styleSheet);
-
-        //             const allElements = clonedDoc.querySelectorAll('*');
-        //             allElements.forEach((el) => {
-        //                 const htmlEl = el as HTMLElement;
-        //                 const style = window.getComputedStyle(htmlEl);
-                        
-        //                 // computed style에서 oklab/oklch가 발견되면 hex로 강제 치환
-        //                 if (style.backgroundColor.includes('okl') || style.color.includes('okl')) {
-        //                     htmlEl.style.backgroundColor = '#ffffff'; // 배경을 흰색으로
-        //                     htmlEl.style.color = '#000000';           // 글자를 검정으로
-        //                 }
-        //                 if (style.borderColor.includes('okl')) {
-        //                     htmlEl.style.borderColor = '#cccccc';
-        //                 }
-        //             });
-        //         }
-        //     },
-        //     jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
-        // };
-    
-        // html2pdf()
-        //     .set(opt)
-        //     .from(pdfRef.current)
-        //     .save()
-        //     .then(() => {
-        //         // 3. 인라인 스타일 제거하여 화면 원상복구
-        //         elementsToFix.forEach((el) => {
-        //             (el as HTMLElement).style.backgroundColor = '';
-        //             (el as HTMLElement).style.background = '';
-        //         });
-        //     });
         window.open(`/pdf-view/${plan.id}`, '_blank');
     };
     
@@ -195,9 +131,9 @@ function page() {
                             <button className={`${baseBtnClass} bg-[#eee] hover:bg-[#dbdbdb]`}>
                                 인쇄
                             </button>
-                            <button onClick={handleDownloadPdf} className={`${baseBtnClass} bg-blueActive hover:bg-[#1f69ca] text-textLight`}>
+                            {/* <button onClick={handleDownloadPdf} className={`${baseBtnClass} bg-blueActive hover:bg-[#1f69ca] text-textLight`}>
                                 pdf 내보내기
-                            </button>
+                            </button> */}
                             <button onClick={handleEdit} className={`${baseBtnClass} bg-main hover:bg-hoverMain text-textLight`}>
                                 활동 수정
                             </button>

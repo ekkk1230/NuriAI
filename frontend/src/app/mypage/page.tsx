@@ -41,10 +41,10 @@ function page() {
                             <p className="text-[3rem] mb-[2rem] font-bold text-[#375ea8]">{userCollectPlans.length}</p>
                             <p className="text-[1.6rem] font-semibold text-textMuted">보관함 저장</p>
                         </li>
-                        <li className={`${useItemBoxClass} bg-[#eeffe6]`}>
+                        {/* <li className={`${useItemBoxClass} bg-[#eeffe6]`}>
                             <p className="text-[3rem] mb-[2rem] font-bold text-[#309e8c]">{userPlans.length}</p>
                             <p className="text-[1.6rem] font-semibold text-textMuted">PDF 다운로드</p>
-                        </li>
+                        </li> */}
                     </ul>
                 </div>
 

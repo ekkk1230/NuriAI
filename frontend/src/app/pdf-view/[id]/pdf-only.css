@@ -1,1 +1,11 @@
-.pdf-container { background: red; }
+* { margin: 0; padding: 0; box-sizing: border-box; line-height: 1.6 !important; }
+html, body { font-size: 10px; }
+
+.pdf-container { width: 208mm; height: 100%; min-height: 294mm; background: green; margin: 1mm; }
+.domain { padding: 4px 12px; border-radius: 80rem; height: 20px; line-height: 0px; }
+.domainType1 { color: #343a40; background: #e9ecef; }
+.domainType2 { color: #1971c2; background: #d0ebff; }
+.domainType3 { color: #5c940d; background: #e2f9b8; }
+.domainType4 { color: #c2255c; background: #ffdeeb; }
+.domainType5 { color: #2b8a3e; background: #d3f9d8; }
+.domainType6 { color: #e67700; background: #fff3bf; }

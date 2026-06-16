@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import './pdf-only.css';
 import { useParams } from 'next/navigation';
 import { usePlanStore } from '@/store/usePlanStore';
+import { DOMAIN_MAP } from '@/constants/activityOptions';
 
 export default function PdfPage() {
     const params = useParams();
@@ -23,7 +24,6 @@ export default function PdfPage() {
             if (!element) return;
 
             const opt = {
-                margin: 2,
                 filename: '계획안.pdf',
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
@@ -32,7 +32,7 @@ export default function PdfPage() {
             await html2pdf().set(opt).from(element).save();
             
             // PDF 저장이 끝나면 창을 닫음
-            window.close();
+            //window.close();
         };
 
         processPdf();
@@ -44,43 +44,51 @@ export default function PdfPage() {
 
     return (
         <div id="pdf-content" className="pdf-container">
-            {plan.plans.map((p, index) => (
-                <div key={index}>
-                    <div>
-                        <span className="domain">{p.domain}</span>
-                        <span className="paln-count">활동 {index + 1} / {plan.plans.length}</span>
-                    </div>
-                    <p>{p.activityName}</p>
-
-                    <div>
-                        <p>기대 효과</p>
-                        <ul>
-                            {p.objectives.map((obj, idx) => (
-                                <li key={idx}>{obj}</li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p>연계 교육과정</p>
+            {plan.plans.map((p, index) => {
+                return (
+                    <div key={index}>
                         <div>
-                            {p.relatedCurriculum.map((curriculum,idx) => {
-                                const steps = curriculum.split(/\s*>\s*/);
+                            <span className={`domain ${
+                                Object.keys(DOMAIN_MAP).find(key => p.domain.includes(key)) 
+                                    ? DOMAIN_MAP[Object.keys(DOMAIN_MAP).find(key => p.domain.includes(key))!] 
+                                    : 'domainDefault'
+                            }`}>
+                                {p.domain}
+                            </span>
+                            <span className="paln-count">활동 {index + 1} / {plan.plans.length}</span>
+                        </div>
+                        <p>{p.activityName}</p>
 
-                                return (
-                                    <div key={idx}>
-                                        {steps.map((step, stepIdx) => (
-                                            <span>
-                                                {step}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )
-                            })}
+                        <div>
+                            <p>기대 효과</p>
+                            <ul>
+                                {p.objectives.map((obj, idx) => (
+                                    <li key={idx}>{obj}</li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div>
+                            <p>연계 교육과정</p>
+                            <div>
+                                {p.relatedCurriculum.map((curriculum,idx) => {
+                                    const steps = curriculum.split(/\s*>\s*/);
+
+                                    return (
+                                        <div key={idx}>
+                                            {steps.map((step, stepIdx) => (
+                                                <span>
+                                                    {step}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )
+                                })}
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                )
+            })}
         </div>
     )
 }
