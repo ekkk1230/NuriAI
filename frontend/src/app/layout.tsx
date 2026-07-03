@@ -39,8 +39,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }, [user, isWelcomePage, isLoading, router]);
 
     return (
-        <html>
-            <body>
+        <html className="min-h-screen" lang="ko">
+            <body className="min-h-screen">
                 {isOpen && <ModalLayout />}
                 <div className="wrap">
                     {!isStorageSubPage && !isWelcomePage && <Nav />}

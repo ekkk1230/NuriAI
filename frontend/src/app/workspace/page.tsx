@@ -9,7 +9,7 @@ function page() {
     const {
         activeAreaTypeBtnClass, handleSelectType, handleChange,
         setActiveAge, setActiveForm, activeAgeBtnClass, activeAge,
-        handleSelectFormat, activeFormBtnClass, activeForm, getSelectionList, handleMakeAIPlan, plan
+        handleSelectFormat, activeFormBtnClass, activeForm, getSelectionList, handleMakeAIPlan, isLoading, plan
     } = useWorkspace();
 
 
@@ -101,8 +101,13 @@ function page() {
                 </div>
             </div>
             
-            <div className="w-[100%] bg-bgPreview">
-                {plan ? (
+            <div className="w-[100%] bg-bgPreview relative">
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center h-full">
+                        <div className="w-[5rem] h-[5rem] border-[.6rem] border-[#eee] border-t-[#ad46ff] rounded-full animate-spin"></div>
+                        <p className="text-[1.8rem] font-semibold mt-[2rem] text-[#666]">AI가 열심히 계획안을 생성하고 있습니다...</p>
+                    </div>
+                ) : plan ? (
                     <PlanPreview />
                 ) : (
                     <NoPlan />

@@ -7,17 +7,15 @@ import { DOMAIN_STYLES } from '@/constants/activityOptions';
 import { useEffect, useRef, useState } from 'react';
 import { useUiStore } from '@/store/useUiStore';
 import EditModal from '@/components/Modal/modalContents/EditModal';
-import { FaSave, FaRegSave, FaEye, FaBookmark } from "react-icons/fa";
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { useWelcomeStore } from '@/store/useWelcomeStore';
-import { FcLike } from 'react-icons/fc';
+import { AnotherPlanInfo } from '@/components/Storage/AnotherPlanInfo';
+import { MyPlanInfo } from '@/components/Storage/MyPlanInfo';
 
 function page() {
     const { id: planId } = useParams();
-    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount, deletePlans } = usePlanStore();
+    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount } = usePlanStore();
     const { openModal } = useUiStore();
     const { user } = useWelcomeStore();
-    const route = useRouter();
 
     const hasIncreasedRef = useRef(false);
     const pdfRef = useRef<HTMLDivElement>(null);
@@ -61,23 +59,6 @@ function page() {
 
     // console.log("user:", user, plan)
 
-    const handleLike = async () => { 
-        try {
-            await likePlan(user, plan); 
-        } catch (err) {
-            console.error(`handleLike 실패: ${err}`);
-        }
-    };
-
-    const handleSave = async () => {
-        try {
-            await addStorage(user, plan);
-            await fetchPlanById(plan.id); 
-        } catch (err) {
-            console.error(`handleSave 실패: ${err}`)
-        }
-    }
-
     if (!plan) {
         return <div className="p-10 text-[1.6rem]">존재하지 않거나 삭제된 계획안입니다.</div>;
     };
@@ -98,24 +79,13 @@ function page() {
         
     };
 
-    const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-full bg-[#e6e6e6] mb-[1rem] last:mb-0 hover:bg-[#e5dbff]";
-
-
-    const handleFetchPlansByAuthor = async () => {
-        try {
-            await fetchPlansByAuthor(plan);
-        } catch (err) {
-            console.error(`작성자 계획안 조회 실패: ${err}`);
-        }
-
-        route.push(`/storage?author=${encodeURIComponent(plan.author)}`);
-    };
-
     const handleDownloadPdf = async () => {
         window.open(`/pdf-view/${plan.id}`, '_blank');
     };
     
     if (!plan) return <div>Plan not found</div>
+
+    const isAuthor = plan.author === user.userNickname;
 
     return (
         <>
@@ -162,50 +132,11 @@ function page() {
                         </ul>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-[2rem] mb-[2rem]">
-                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm">
-                            <div className="flex gap-[.4rem] items-center">
-                                <p className="text-[1.4rem] text-textMuted font-semibold">작성자</p>
-                                <p className="text-[1.4rem] font-medium">{plan.author}</p>
-                            </div>
-                            <div className="flex gap-[.4rem] items-center">
-                                <p className="text-[1.4rem] text-textMuted font-semibold">작성한 계획안</p>
-                                <p className="text-[1.4rem] font-medium">{currentAuthorPlans.length}개</p>
-                                <button type="button" onClick={() => handleFetchPlansByAuthor()}>
-                                    {plan.author} 선생님이 작성한 계획안 보라가기
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm flex">
-                            <div className="w-full flex items-center justify-center flex-col gap-[1rem]">
-                                <FcLike className="text-[3rem]" />
-                                <p className="text-[1.6rem] font-bold">{plan.likeCount}</p>
-                            </div>
-                            <div className="w-full flex items-center justify-center flex-col gap-[1rem]">
-                                <FaEye className="text-[3rem]" />
-                                <p className="text-[1.6rem] font-bold">{plan.viewCount}</p>
-                            </div>
-                            <div className="w-full flex items-center justify-center flex-col gap-[1rem]">
-                                <FaBookmark className="text-[3rem]" />
-                                <p className="text-[1.6rem] font-bold">{plan.saveCount}</p>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm flex flex-col items-center justify-center">
-                            <button type="button" onClick={handleLike} className={utilBtnClass}>
-                                {plan.likeUserIds.includes(user.id!) ? <AiFillLike /> : <AiOutlineLike />} 
-                                좋아요
-                            </button>
-
-                            {plan.author !== user.userNickname && (
-                            <button type="button" onClick={handleSave} className={utilBtnClass}>
-                                {plan.savedUserIds.includes(user.id!) ? <FaSave /> : <FaRegSave />}
-                                보관하기
-                            </button>
-                            )}
-                        </div>
-                    </div>
+                    {isAuthor ? (
+                        <MyPlanInfo currentAuthorPlans={currentAuthorPlans} />
+                    ) : (
+                        <AnotherPlanInfo plan={plan} currentAuthorPlans={currentAuthorPlans} />
+                    )}
 
                     <div ref={pdfRef}>
                         <div className="bg-bgCard rounded-[1.2rem] mb-[2rem] shadow-sm p-[3rem]">
@@ -221,7 +152,7 @@ function page() {
                                 <div 
                                     key={idx}
                                     style={{ '--domain-line-color': `var(--color-cate${item.domain === "기본생활" || item.domain === "기본생활·신체" ? 0 : item.domain === "신체운동" || item.domain === "신체운동·건강" ? 1 : item.domain === "의사소통" ? 2 : item.domain === "사회관계" ? 3 : item.domain === "예술경험" ? 4 : 5})` } as React.CSSProperties}
-                                    className="relative bg-bgCard rounded-[1.2rem] mb-[2rem] shadow-sm p-[3rem_3rem_3rem_4.5rem] before:content-[''] before:absolute before:top-0 before:left-0 before:w-[.8rem] before:h-[100%] before:rounded-[1.2rem_0_0_1.2rem] before:rounded-l-[1.2rem] before:bg-[var(--domain-line-color)]"
+                                    className="relative bg-bgCard rounded-[1.2rem] mb-[10rem] shadow-sm p-[3rem_3rem_3rem_4.5rem] before:content-[''] before:absolute before:top-0 before:left-0 before:w-[.8rem] before:h-[100%] before:rounded-[1.2rem_0_0_1.2rem] before:rounded-l-[1.2rem] before:bg-[var(--domain-line-color)]"
                                 >
                                     <div className="flex gap-[1rem] items-center mb-[1rem]">
                                         <p className={`text-[1.2rem] inline-block p-[.8rem_1.2rem] font-semibold rounded-[60rem] ${DOMAIN_STYLES[item.domain as keyof typeof DOMAIN_STYLES]}`}>

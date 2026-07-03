@@ -25,7 +25,6 @@ function PlanPreview() {
             html2canvas: { scale: 2 }, 
             jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
         };
-        html2pdf().set(opt).from(element).save();
     }
 
     return (
@@ -45,7 +44,7 @@ function PlanPreview() {
                 </div> */}
             </div>
 
-            <div className="w-[95%] mx-auto" ref={pdfRef}>
+            <div className="w-[95%] mx-auto pb-[10rem]" ref={pdfRef}>
                 <div className="bg-sub2-gradient mt-[2rem] rounded-2xl p-[2rem] text-textLight">
                     <p className="text-[2rem] font-bold  mb-[2rem]">활동 요약</p>
                     <div className="text-[1.6rem]">

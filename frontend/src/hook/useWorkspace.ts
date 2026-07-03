@@ -13,6 +13,7 @@ const initialPlanDataForm: GenerateAIPlanForm = {
 };
 
 export const useWorkspace = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const { user } = useWelcomeStore();
     const { addPlan } = usePlanStore();
     const { form: planForm, handleChange } = useForm<GenerateAIPlanForm>(initialPlanDataForm);
@@ -153,6 +154,8 @@ export const useWorkspace = () => {
         // console.log('ddd')
         // console.log(planData.author)
 
+        setIsLoading(true);
+
         try {
             await addPlan(planData);
 
@@ -160,13 +163,15 @@ export const useWorkspace = () => {
         } catch (err) {
             console.error(`handleMakeAIPlan 실패: ${err}`);
             setPlan(false);
+        } finally { 
+            setIsLoading(false);
         }
     }
 
     return {
         activeAreaTypeBtnClass, handleSelectType, handleChange,
         setActiveAge, setActiveForm, activeAgeBtnClass, activeAge,
-        handleSelectFormat, activeFormBtnClass, activeForm, getSelectionList, handleMakeAIPlan, plan
+        handleSelectFormat, activeFormBtnClass, activeForm, getSelectionList, handleMakeAIPlan, isLoading, plan
     }
     
 }
