@@ -1,3 +1,6 @@
+import { API_ROUTES } from "@/constants/api";
+import { User } from "@/type/User";
+import { apiFetch } from "@/util/api";
 import { create } from "zustand";
 
 const MOCK_INQUIRIES: any[] = [
@@ -27,15 +30,46 @@ const MOCK_INQUIRIES: any[] = [
 interface MypageStore {
     inquries: Inquiry[];
 
-    addInquriy: (inquiry: Inquiry) => void;
+    fetchtInquries: () => Promise<void>;
+    addInquriy: (inquiry: InquiryForm) => Promise<void>;
     deleteInquiry: (id: number) => void;
     updateInquiry: (inquiry: Inquiry) => void;
 };
 
 export const useMypageStore = create<MypageStore>((set) => ({
-    inquries: MOCK_INQUIRIES,
+    inquries: [],
 
-    addInquriy: inquiry => set(state => ({ inquries: [inquiry, ...state.inquries] })),
+    fetchtInquries: async () => {
+        const url = API_ROUTES.INQUIRY.BASE;
+
+        try {
+            const response = await apiFetch(url);
+            if (!response.ok) throw new Error("사용자 문의글 조회 실패");
+            const inquiriesData = await response.json();
+
+            set({ inquries: Array.isArray(inquiriesData) ? inquiriesData : [] });
+        } catch (err) {
+            console.error(`fetchInquires 실패: ${err}`);
+        }
+    },
+    addInquriy: async(inquiry) => {
+
+        try {
+            const response = await apiFetch(`${API_ROUTES.INQUIRY.BASE}`, {
+                method: "POST",
+                body: JSON.stringify(inquiry)
+            });
+
+            if (!response.ok) throw new Error("문의글 작성 실패");
+            const insertInquiry = await response.json();
+
+            set(state => ({
+                inquries: [insertInquiry, ...state.inquries],
+            }))
+        } catch (err) {
+            console.error(`addInquiry 실패: ${err}`);
+        }
+    },
     deleteInquiry: id => set(state => ({ inquries: state.inquries.filter(q => q.id !== id) })),
     updateInquiry: inquiry => set(state => ({
         inquries: state.inquries.map(item => item.id === inquiry.id ? { ...inquiry, updatedAt: new Date().toISOString() } : item)

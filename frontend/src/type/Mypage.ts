@@ -12,3 +12,8 @@ interface Inquiry {
     updatedAt: string,
     answer?: Answer
 };
+
+interface InquiryForm {
+    title: string;
+    inquiryContent: string;
+}

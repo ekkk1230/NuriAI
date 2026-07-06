@@ -7,13 +7,14 @@ import { useWelcomeStore } from "@/store/useWelcomeStore";
 export const useMypage = () => {
     const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem } = usePlanStore();
     const { user } = useWelcomeStore();
-    const { inquries, addInquriy, deleteInquiry, updateInquiry } = useMypageStore();
+    const { inquries, fetchtInquries, addInquriy, deleteInquiry, updateInquiry } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
 
     useEffect(() => {
         if (user) {
             fetchUserPlans(user);
             fetchUserCollectItem(Number(user.id))
+            fetchtInquries();
         }
     }, [user, fetchUserPlans]);
 
@@ -26,12 +27,12 @@ export const useMypage = () => {
     const onSubmitInquiry = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const newInquiry = { 
-            id: Date.now(),
+            // id: Date.now(),
             title: inquiryForm.title, 
             inquiryContent: inquiryForm.inquiryContent,
-            status: "PENDING" as const,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            // status: "PENDING" as const,
+            // createdAt: new Date().toISOString(),
+            // updatedAt: new Date().toISOString(),
         };
         addInquriy(newInquiry);
         setWriteInquiry(false);
