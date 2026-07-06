@@ -27,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authorizationHeader = request.getHeader("Authorization");
+
         System.out.println("요청 URL: " + request.getRequestURI());
         System.out.println("받은 헤더 Authorization: " + authorizationHeader);
 
@@ -47,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         userId, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
                 );
-                SecurityContextHolder.getContext().setAuthentication(auth); // <--- 이게 필수!
+                SecurityContextHolder.getContext().setAuthentication(auth);
                 System.out.println("인증 성공! userId: " + userId);
             } catch (Exception e) {
                 System.err.println("JWT 파싱 에러 발생: " + e.getMessage());

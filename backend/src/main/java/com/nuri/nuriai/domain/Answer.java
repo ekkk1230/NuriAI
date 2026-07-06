@@ -1,13 +1,13 @@
 package com.nuri.nuriai.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Getter
-public class Answer {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class Answer extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -16,5 +16,14 @@ public class Answer {
     private Inquiry inquiry;
 
     private String answerContent;
-    private LocalDateTime answeredAt;
+
+    @Builder
+    public Answer(Inquiry inquiry, String answerContent) {
+        this.inquiry = inquiry;
+        this.answerContent = answerContent;
+    }
+
+    public void update(String answerContent) {
+        this.answerContent = answerContent;
+    }
 }

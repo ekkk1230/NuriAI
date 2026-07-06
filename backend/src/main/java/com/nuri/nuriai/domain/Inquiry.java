@@ -39,4 +39,8 @@ public class Inquiry extends BaseTimeEntity {
         this.title = title;
         this.inquiryContent = inquiryContent;
     }
+
+    public void updateStatus(InquiryStatus status) {
+        this.status = status;
+    }
 }

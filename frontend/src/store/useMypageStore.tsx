@@ -35,7 +35,9 @@ interface MypageStore {
     deleteInquiry: (inquiryId: number) => Promise<void>;
     updateInquiry: (updateInquiry: Inquiry) => Promise<void>;
 
-    insertAnswer: (answer: AnswerForm) => Promise<void>;
+    insertAnswer: (id: number,answer: AnswerForm) => Promise<void>;
+    updateAnswer: (id: number, updatedAnswer: AnswerForm) => Promise<void>;
+    deleteAnswer: (inquiryId: number) => Promise<void>;
 };
 
 export const useMypageStore = create<MypageStore>((set) => ({
@@ -105,7 +107,76 @@ export const useMypageStore = create<MypageStore>((set) => ({
             console.error(`updateInquiry 실패; ${err}`);
         };
     },
-    insertAnswer: async(answer) => {
-        console.log(answer)
+    insertAnswer: async(id, answer) => {
+        // console.log(answer)
+        try {
+            const response = await apiFetch(`${API_ROUTES.INQUIRY.INSERT_ANSWER(id)}`, {
+                method: "POST",
+                body: JSON.stringify(answer)
+            });
+
+            if (!response.ok) throw new Error("문의글 답변 등록 실패");
+            const insertAnswerData = await response.json();
+
+            set(state => ({
+                inquries: state.inquries.map(i => 
+                    i.id === id
+                    ? {
+                        ...i,
+                        status: "ANSWERED",
+                        answer: insertAnswerData
+                    }
+                    : i
+                )
+            }))
+        } catch (err) {
+            console.error(`insertAnswer 실패: ${err}`);
+        }
     },
+    updateAnswer: async(id, updatedAnswer) => {
+        try {
+            const response = await apiFetch(`${API_ROUTES.INQUIRY.UPDATE_ANSWER(id)}`, {
+                method: "PUT",
+                body: JSON.stringify(updatedAnswer)
+            });
+
+            if (!response.ok) throw new Error("문의글 답변 등록 실패");
+            const updateAnswerData = await response.json();
+
+            set(state => ({
+                inquries: state.inquries.map(i => 
+                    i.id === id
+                    ? {
+                        ...i,
+                        status: "ANSWERED",
+                        answer: updateAnswerData
+                    }
+                    : i
+                )
+            }))
+        } catch (err) {
+            console.error(`updateAnswer 실패: ${err}`);
+        }
+    },
+    deleteAnswer: async(inquiryId) => {
+        try {
+            const response = await apiFetch(`${API_ROUTES.INQUIRY.DELETE_ANSWER(inquiryId)}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) throw new Error("문의글 답변 삭제 실패");
+
+            set(state => ({ inquries: state.inquries.map(i => 
+                i.id === inquiryId
+                ? {
+                    ...i,
+                    status: "PENDING",
+                    answer: undefined
+                }
+                : i
+            )}));
+        } catch (err) {
+            console.error(`deleteAnswer 실패: ${err}`);
+        }
+    }
 }));

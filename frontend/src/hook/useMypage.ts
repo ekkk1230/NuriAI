@@ -7,7 +7,7 @@ import { useWelcomeStore } from "@/store/useWelcomeStore";
 export const useMypage = () => {
     const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem } = usePlanStore();
     const { user } = useWelcomeStore();
-    const { inquries, fetchtInquries, addInquriy, deleteInquiry, updateInquiry, insertAnswer } = useMypageStore();
+    const { inquries, fetchtInquries, addInquriy, deleteInquiry, updateInquiry, insertAnswer, updateAnswer, deleteAnswer } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
     const { form: answerForm, setForm: setAnswerForm, handleChange: handleAnswerChange, resetForm: resetAnswerForm } = useForm({ answerContent: "" });
 
@@ -22,6 +22,7 @@ export const useMypage = () => {
     const [editingId, setEditingId] = useState<number | null>(null);
     const [answerOpen, setAnswerOpen] = useState<Record<number, boolean>>({});
     const [writeInQuiry, setWriteInquiry] = useState<boolean>(false);
+    const [editingAnswerId, setEditingAnswerId] = useState<number | null>(null);
 
     const handleWrite = () => setWriteInquiry(!writeInQuiry);
 
@@ -36,6 +37,7 @@ export const useMypage = () => {
             // updatedAt: new Date().toISOString(),
         };
         addInquriy(newInquiry);
+        setForm({ title: "", inquiryContent: "" });
         setWriteInquiry(false);
     };
 
@@ -69,14 +71,42 @@ export const useMypage = () => {
         resetForm();
     };
 
-    const onSubmitAnswer = (e: FormEvent<HTMLFormElement>) => {
+    const onSubmitAnswer = (e: FormEvent<HTMLFormElement>, id: number) => {
+        // console.log(id)
         e.preventDefault();
         const newAnswer = {
             answerContent: answerForm.answerContent
         };
 
-        insertAnswer(newAnswer);
+        insertAnswer(id, newAnswer);
     };
+
+    const handleUpdateAnswer = (e: FormEvent<HTMLFormElement>, id: number) => {
+        e.preventDefault();
+        // console.log("저장 시도:", answerForm.answerContent);
+
+        if (editingAnswerId === null) return;
+
+        const originalInquiry = inquries.find(q => q.id! === editingAnswerId);
+        if (!originalInquiry || originalInquiry.status === "PENDING") return;
+
+        const updatedAnswer = {
+            answerContent: answerForm.answerContent
+        };
+
+        setEditingAnswerId(null);
+        resetAnswerForm();
+
+        updateAnswer(editingAnswerId, updatedAnswer);
+    };
+
+    const handledeleteAnswer = (inquiryId: number) => {
+        const originalInquiry = inquries.find(q => q.id! === inquiryId);
+        if (!originalInquiry || originalInquiry.status === "PENDING") return;
+
+        deleteAnswer(inquiryId);
+    };
+
 
     return { 
         userPlans, 
@@ -85,7 +115,8 @@ export const useMypage = () => {
         writeInQuiry, handleWrite,
         handleChange, onSubmitInquiry, handleDelete,
         editingId, setEditingId, onClickEdit, handleUpdate, 
-        onSubmitAnswer,
+        onSubmitAnswer, answerForm, setAnswerForm, handleAnswerChange, resetAnswerForm,
+        editingAnswerId, setEditingAnswerId, handleUpdateAnswer, handledeleteAnswer,
         userCollectPlans
     };
 }

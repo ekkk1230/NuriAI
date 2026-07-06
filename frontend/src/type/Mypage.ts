@@ -1,6 +1,6 @@
 interface Answer {
     answerContent: string,
-    answeredAt: string,
+    createdAt: string,
 };
 
 interface Inquiry {

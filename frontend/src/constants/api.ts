@@ -20,8 +20,11 @@ export const API_ROUTES = {
         DELETEMYITEMS: `${API_BASE_URL}/api/plans/delete-batch`,
     },
     INQUIRY: {
-        BASE: `${API_BASE_URL}/api/inquiry`,
-        UPDATE: (inquiryId: number) => `${API_BASE_URL}/api/inquiry/${inquiryId}`,
-        DELETE: (inquiryId: number) => `${API_BASE_URL}/api/inquiry/${inquiryId}`,
+        BASE: `${API_BASE_URL}/api/inquiries`,
+        UPDATE: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}`,
+        DELETE: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}`,
+        INSERT_ANSWER: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}/answer`,
+        UPDATE_ANSWER: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}/answer`,
+        DELETE_ANSWER: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}/answer`,
     }
 } as const;

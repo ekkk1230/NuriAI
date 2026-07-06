@@ -1,6 +1,7 @@
 package com.nuri.nuriai.dto;
 
 
+import com.nuri.nuriai.domain.Answer;
 import com.nuri.nuriai.domain.Inquiry;
 import lombok.*;
 
@@ -37,16 +38,35 @@ public class InquiryDto {
             if (inquiry.getAnswer() != null) {
                 this.answer = new AnswerResponse(
                     inquiry.getAnswer().getAnswerContent(),
-                    inquiry.getAnswer().getAnsweredAt()
+                    inquiry.getAnswer().getCreatedAt(),
+                    inquiry.getAnswer().getUpdatedAt()
                 );
             }
         }
     }
 
     @Getter @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    public static class AnswerRequest {
+        private String answerContent;
+    }
+
+    @Getter @Builder
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     public static class AnswerResponse {
         private String answerContent;
-        private LocalDateTime answeredAt;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+        public AnswerResponse(Inquiry inquiry) {
+            Answer answer = inquiry.getAnswer(); // 변수에 먼저 담고
+            if (answer != null) {
+                this.answerContent = answer.getAnswerContent();
+                this.createdAt = answer.getCreatedAt();
+                this.updatedAt = answer.getUpdatedAt();
+            }
+        }
     }
 }
