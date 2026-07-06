@@ -200,6 +200,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         }
     },
     addStorage: async(user, plan) => {
+        console.log(user, plan)
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.SAVE(plan.id)}`, {
                 method: "POST",
@@ -224,7 +225,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
             const matchesAge = (!searchAge || searchAge === "전체") ? true : plan.age === `만 ${searchAge}세`;
             const safeIds = (plan.savedUserIds || []).map(Number);
-            const isSaved = safeIds.includes(Number(user.id));
+            const isSaved = safeIds.includes(Number(user?.id ?? 0));
             const isMyPlan = plan.author === user?.userNickname;
 
             if (isSavedFilter) return matchesTitle && matchesAge && (isMyPlan || isSaved);

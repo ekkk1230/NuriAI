@@ -76,6 +76,8 @@ function page() {
 
     const filteredPlans = getFilteredPlans(searchTit, searchAge, isSavedFilter, authorFilter, user);
 
+    console.log(filteredPlans)
+
     // 필터링 로직: 검색어와 선택된 연령에 따라 plans 배열 필터링
     const displayedPlans = [...filteredPlans].sort((a, b) => {
         const dateA = new Date(a.createdAt).getTime();
@@ -101,6 +103,9 @@ function page() {
             const plan = userPlans.find(p => p.id === id);
             return plan?.author !== user?.userNickname; 
         });
+
+        console.log(myPlanIds)
+        console.log(collectedPlanIds)
 
         // 2. 각각 다른 API 호출
         try {
@@ -143,10 +148,10 @@ function page() {
 
                         <button 
                             onClick={() => setIsSavedFilter(!isSavedFilter)}
-                            className={`ml-[1rem] p-[0.6rem_1.2rem] rounded-[0.8rem] text-[1.4rem] font-bold border transition ${
+                            className={`ml-[1rem] text-white p-[0.6rem_1.2rem] rounded-[0.8rem] text-[1.4rem] font-bold border transition ${
                                 isSavedFilter 
-                                ? "bg-main text-white border-main" 
-                                : "bg-white text-textMuted border-[#eee]"
+                                ? "bg-main" 
+                                : "bg-mainLight"
                             }`}
                         >
                             {isSavedFilter ? "전체 보기" : "내가 작성한 계획안만 보기"}

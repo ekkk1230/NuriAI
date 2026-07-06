@@ -1,11 +1,12 @@
 import { ConfirmResult, LoginUserForm, User } from "@/type/User";
 import { API_ROUTES } from "@/constants/api";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { apiFetch } from "@/util/api";
 
 interface WelcomeStore {
     user: User | null,
+    accessToken: string | null;
     fetchUserInfo: () => Promise<void>;
     loginUser: (user: LoginUserForm) => Promise<void>;
     logoutUser: () => void;
@@ -16,10 +17,13 @@ interface WelcomeStore {
 
 export const useWelcomeStore = create<WelcomeStore>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             user: null,
+            accessToken: null,
             fetchUserInfo: async () => {
-                const token = localStorage.getItem("accessToken");
+                // const { accessToken } = get();
+                // if (!accessToken) return;
+                const token = useWelcomeStore.getState().accessToken;
                 if (!token) return;
         
                 const response = await apiFetch(`${API_ROUTES.USER.BASE}/me`);
@@ -28,11 +32,13 @@ export const useWelcomeStore = create<WelcomeStore>()(
                     const userData = await response.json();
                     set({ user: userData });
                 } else {
-                    localStorage.removeItem("accessToken");
+                    // set({ user: null, accessToken: null });
+                    // localStorage.removeItem("accessToken");
+                    console.warn("사용자 정보 로드 실패 (토큰 만료 가능성)");
                 }
             },
             loginUser: async(user: LoginUserForm) => {
-                console.log(user)
+                // console.log(user)
                 try {
                     const response = await fetch(`${API_ROUTES.USER.BASE}/login`, {
                         method: "POST",
@@ -45,8 +51,7 @@ export const useWelcomeStore = create<WelcomeStore>()(
                     // console.log(data)
         
                     if (data.accessToken) {
-                        localStorage.setItem("accessToken", data.accessToken);
-                        set({ user: data.user }); 
+                        set({ accessToken: data.accessToken, user: data.user });
                     } else {
                         throw new Error("서버에서 토큰을 받지 못했습니다.");
                     }
@@ -55,7 +60,10 @@ export const useWelcomeStore = create<WelcomeStore>()(
                     throw err;
                 };
             },
-            logoutUser: () => set({ user: null }),
+            logoutUser: () => {
+                localStorage.removeItem("accessToken");
+                set({ user: null, accessToken: null });
+            },
         
             joinUser: async (userFormData: User) => {
                 try {
@@ -86,7 +94,8 @@ export const useWelcomeStore = create<WelcomeStore>()(
         }),
         {
             name: 'user-storage',
-            partialize: (state) => ({ user: state.user }),
+            storage: createJSONStorage(() => localStorage),
+            partialize: (state) => ({ user: state.user, accessToken: state.accessToken }),
         }
     )
 );

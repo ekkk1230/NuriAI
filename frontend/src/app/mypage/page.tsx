@@ -62,6 +62,7 @@ function page() {
 
                                 <button 
                                     disabled={!inquiryForm.title.trim() || !inquiryForm.inquiryContent.trim()}
+                                    
                                     className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] block ml-auto disabled:bg-[#c7adff]">등록</button>
                             </form>
                         </div>
@@ -164,7 +165,7 @@ function page() {
                                 </li>
                             ))
                         ) : (
-                            "없음"
+                            <p className="text-textMuted text-center text-[1.6rem] my-[2rem]">현재 작성된 문의글이 없습니다. 궁금하신 점을 문의해주세요.</p>
                         )}
                     </ul>
                 </div>

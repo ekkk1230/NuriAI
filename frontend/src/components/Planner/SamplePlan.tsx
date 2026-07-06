@@ -36,13 +36,14 @@ function SamplePlan() {
                         <li>
                             <p className="text-[2rem] font-bold mb-[1.2rem] flex gap-[.4rem] items-center"><TbPencil /> 활동 내용</p>
                             <ul className="space-y-[1rem] pl-[2rem]">
-                                {Object.entries(randomPlan.plans[0].introduction)
-                                    .slice(0, 1)
-                                    .map(([key, cont], idx) => (
-                                        <li key={idx} className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">
-                                            {cont}
-                                        </li>
-                                ))}
+                            {Object.entries(randomPlan?.plans?.[0]?.introduction ?? {})
+                                .slice(0, 1)
+                                .map(([key, cont], idx) => (
+                                    <li key={idx} className="...">
+                                        {cont}
+                                    </li>
+                                ))
+                            }
                             </ul>
                         </li>
                     </ul>

@@ -21,14 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     useEffect(() => {
         const init = async () => {
-            const token = localStorage.getItem("accessToken");
-            if (token) {
-                await fetchUserInfo();
-            }
+            await fetchUserInfo(); 
             setIsLoading(false);
         };
         init();
-    }, [fetchUserInfo]);
+    }, []);
 
     useEffect(() => {
         if (isLoading) return; 
@@ -37,6 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             router.push("/welcome/login");
         }
     }, [user, isWelcomePage, isLoading, router]);
+
+    if (isLoading) {
+        return <html lang="ko"><body><div className="loading">로딩 중...</div></body></html>;
+    }
 
     return (
         <html className="min-h-screen" lang="ko">

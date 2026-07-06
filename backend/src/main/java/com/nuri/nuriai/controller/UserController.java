@@ -25,7 +25,7 @@ public class UserController {
     public ResponseEntity<UserDto.LoginResponse> loginUser(@RequestBody UserDto.LoginRequest request) {
 
         UserDto.UserResponse userDto = userService.loginUser(request);
-        String token = jwtTokenProvider.createToken(String.valueOf(userDto.getId()));
+        String token = jwtTokenProvider.createToken(userDto.getUserId());
 
         return ResponseEntity.ok(new UserDto.LoginResponse(userDto, token));
     }
@@ -38,6 +38,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(Principal principal) {
         String userId = principal.getName();
+        System.out.println(userId);
         UserDto.UserResponse userDto = userService.getCurrentUser(userId);
 
         return ResponseEntity.ok(userDto);

@@ -49,11 +49,16 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             // [추가] CORS 설정 적용
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/plans/delete-batch").permitAll()
-                    .requestMatchers("/h2-console/**", "/api/users/**", "/api/plans/**").permitAll()
+                    // H2 콘솔 접근 허용
+                    .requestMatchers("/h2-console/**").permitAll()
+                    .requestMatchers("/api/users/login", "/api/users/join").permitAll()
+                    .requestMatchers("/api/users/userId/**", "/api/users/userNickname/**").permitAll()
+
+                    .requestMatchers("/api/plans/**", "/api/users/me").authenticated()
                     .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtAuthenticationFilter(secretKey), UsernamePasswordAuthenticationFilter.class);

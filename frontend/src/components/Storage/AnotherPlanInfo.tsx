@@ -16,18 +16,17 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
 
     if (!user) return <div>로그인이 필요한 페이지입니다.</div>;
 
-    const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-full bg-[#e6e6e6] mb-[1rem] last:mb-0 hover:bg-[#e5dbff]";
-
+    
     const handleFetchPlansByAuthor = async () => {
         try {
             await fetchPlansByAuthor(plan);
         } catch (err) {
             console.error(`작성자 계획안 조회 실패: ${err}`);
         }
-
+        
         route.push(`/storage?author=${encodeURIComponent(plan.author)}`);
     };
-
+    
     const handleLike = async () => { 
         try {
             await likePlan(user, plan); 
@@ -35,7 +34,7 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
             console.error(`handleLike 실패: ${err}`);
         }
     };
-
+    
     const handleSave = async () => {
         try {
             await addStorage(user, plan);
@@ -44,6 +43,24 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
             console.error(`handleSave 실패: ${err}`)
         }
     }
+    
+    // console.log(plan.savedUserIds)
+    // console.log(user)
+    const utilBtnClass = "flex items-center justify-center gap-[.4rem] rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-full transition-colors";
+   
+    // 상태 확인
+    const isLiked = plan.likeUserIds.includes(user.id!);
+    const isSaved = plan.savedUserIds.includes(user.id!);
+
+    // 좋아요 활성화
+    const likeActiveClass = isLiked 
+    ? "bg-blue-300 text-blue-800 hover:bg-blue-200 font-bold" 
+    : "bg-blue-100 hover:bg-blue-200";
+
+    // 보관하기 활성화
+    const saveActiveClass = isSaved 
+        ? "bg-purple-300 text-purple-800 hover:bg-purple-200 font-bold" 
+        : "bg-purple-100 hover:bg-purple-200";
 
     return (
         <div className="grid grid-cols-3 gap-[2rem] mb-[2rem]">
@@ -78,18 +95,16 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
                 </div>
             </div>
             
-            <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm flex flex-col items-center justify-center">
-                <button type="button" onClick={handleLike} className={utilBtnClass}>
+            <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm gap-[1rem] items-stretch flex items-center justify-center">
+                <button type="button" onClick={handleLike} className={`${utilBtnClass} ${likeActiveClass}`}>
                     {plan.likeUserIds.includes(user.id!) ? <AiFillLike /> : <AiOutlineLike />} 
                     좋아요
                 </button>
 
-                {plan.author !== user.userNickname && (
-                <button type="button" onClick={handleSave} className={utilBtnClass}>
+                <button type="button" onClick={handleSave} className={`${utilBtnClass} ${saveActiveClass}`}>
                     {plan.savedUserIds.includes(user.id!) ? <FaSave /> : <FaRegSave />}
                     보관하기
                 </button>
-                )}
             </div>
         </div>
     )

@@ -55,6 +55,7 @@ public class UserService {
     }
 
     public UserDto.UserResponse getCurrentUser(String userId) {
+        System.out.println("조회하려는 userId: " + userId);
         User findUser = userRepository.findByUserId(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보 입니다."));
         return new UserDto.UserResponse(findUser);
     }

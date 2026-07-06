@@ -10,12 +10,15 @@ import EditModal from '@/components/Modal/modalContents/EditModal';
 import { useWelcomeStore } from '@/store/useWelcomeStore';
 import { AnotherPlanInfo } from '@/components/Storage/AnotherPlanInfo';
 import { MyPlanInfo } from '@/components/Storage/MyPlanInfo';
+import TextModal from '@/components/Modal/modalContents/TextModal';
 
 function page() {
     const { id: planId } = useParams();
-    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount } = usePlanStore();
-    const { openModal } = useUiStore();
+    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount, deletePlans } = usePlanStore();
+    const { openModal, closeModal } = useUiStore();
     const { user } = useWelcomeStore();
+
+    const router = useRouter();
 
     const hasIncreasedRef = useRef(false);
     const pdfRef = useRef<HTMLDivElement>(null);
@@ -38,6 +41,8 @@ function page() {
     const [ageGroup, setAgeGroup] = useState<string>("");
 
     const plan = planStorage.find(p => p.id === Number(planId));
+
+    console.log(user)
 
     useEffect(() => {
         if (!plan?.age) return;
@@ -65,7 +70,6 @@ function page() {
 
     const currentPlanAuthor = plan.author;
     const currentAuthorPlans = planStorage.filter(p => p.author === currentPlanAuthor);
-    // console.log(currentAuthorPlans)
 
     const handleEdit = () => {
         openModal(
@@ -76,7 +80,34 @@ function page() {
     };
 
     const handleDelete = async () => {
-        
+        openModal(
+            "계획안 삭제",
+            "CONFIRM",
+            <TextModal 
+                txt={"계획안을 삭제하시겠습니까?"} 
+                onConfirm={async () => {
+                    try {
+                        await deletePlans([plan.id]);
+
+                        closeModal();
+                        openModal(
+                            "계획안 삭제",
+                            "CHECK",
+                            <TextModal txt={"성공적으로 삭제되었습니다."} onConfirm={() => {
+                                closeModal();
+                                router.push('/storage');
+                            }} />
+                        )
+                    } catch (err) {
+                        closeModal();
+                        openModal("오류", "CHECK", <TextModal txt={"삭제 중 오류가 발생했습니다."} onConfirm={() => {
+                            closeModal();
+                            router.push('/storage');
+                        }} />)
+                    }
+                }} 
+            />
+        )
     };
 
     const handleDownloadPdf = async () => {
@@ -104,12 +135,17 @@ function page() {
                             {/* <button onClick={handleDownloadPdf} className={`${baseBtnClass} bg-blueActive hover:bg-[#1f69ca] text-textLight`}>
                                 pdf 내보내기
                             </button> */}
-                            <button onClick={handleEdit} className={`${baseBtnClass} bg-main hover:bg-hoverMain text-textLight`}>
-                                활동 수정
-                            </button>
-                            <button className={`${baseBtnClass} bg-red-600 hover:bg-red-700 text-textLight`} onClick={handleDelete}>
-                                삭제
-                            </button>
+
+                            { plan.author === user.userNickname && (
+                                <>
+                                    <button onClick={handleEdit} className={`${baseBtnClass} bg-main hover:bg-hoverMain text-textLight`}>
+                                        활동 수정
+                                    </button>
+                                    <button onClick={handleDelete} className={`${baseBtnClass} bg-red-600 hover:bg-red-700 text-textLight`}>
+                                        삭제
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

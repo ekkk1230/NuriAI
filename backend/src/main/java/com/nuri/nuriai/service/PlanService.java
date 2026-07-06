@@ -238,6 +238,7 @@ public class PlanService {
 
     @Transactional
     public PlanDto.GeminiResponse toggleSave(Long planId, Long userId) {
+        log.info("조회 시도하는 유저 ID 값: {}", userId);
         Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + planId));
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + userId));
 
@@ -256,7 +257,7 @@ public class PlanService {
 
         planRepository.flush();
 
-        Plan updatedPlan = planRepository.findByIdWithSaves(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + planId));
+        Plan updatedPlan = planRepository.findByIdWithSaves(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원정보 입니다." + planId));
 
         return new PlanDto.GeminiResponse(updatedPlan);
     }
