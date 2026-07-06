@@ -7,8 +7,9 @@ import { useWelcomeStore } from "@/store/useWelcomeStore";
 export const useMypage = () => {
     const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem } = usePlanStore();
     const { user } = useWelcomeStore();
-    const { inquries, fetchtInquries, addInquriy, deleteInquiry, updateInquiry } = useMypageStore();
+    const { inquries, fetchtInquries, addInquriy, deleteInquiry, updateInquiry, insertAnswer } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
+    const { form: answerForm, setForm: setAnswerForm, handleChange: handleAnswerChange, resetForm: resetAnswerForm } = useForm({ answerContent: "" });
 
     useEffect(() => {
         if (user) {
@@ -38,12 +39,12 @@ export const useMypage = () => {
         setWriteInquiry(false);
     };
 
-    const toggleAnswer = (id: number) => setAnswerOpen(prev => ({ ...prev, [id]: !prev[id] }));
+    const toggleInquiry = (id: number) => setAnswerOpen(prev => ({ ...prev, [id]: !prev[id] }));
 
     const handleDelete = (id: number) => deleteInquiry(id);
     
     const onClickEdit = (item: Inquiry) => {
-        setEditingId(item.id);
+        setEditingId(item.id!);
         setForm({
             title: item.title,
             inquiryContent: item.inquiryContent,
@@ -61,9 +62,6 @@ export const useMypage = () => {
             id: editingId,
             title: inquiryForm.title,
             inquiryContent: inquiryForm.inquiryContent,
-            status: originalInquiry.status,
-            createdAt: originalInquiry?.createdAt,
-            updatedAt: new Date().toISOString(),
         };
 
         updateInquiry(updatedInquiry);
@@ -71,13 +69,23 @@ export const useMypage = () => {
         resetForm();
     };
 
+    const onSubmitAnswer = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const newAnswer = {
+            answerContent: answerForm.answerContent
+        };
+
+        insertAnswer(newAnswer);
+    };
+
     return { 
         userPlans, 
         inquries, inquiryForm, 
-        answerOpen, toggleAnswer,
+        answerOpen, toggleInquiry,
         writeInQuiry, handleWrite,
         handleChange, onSubmitInquiry, handleDelete,
-        editingId, setEditingId, onClickEdit, handleUpdate,
+        editingId, setEditingId, onClickEdit, handleUpdate, 
+        onSubmitAnswer,
         userCollectPlans
     };
 }

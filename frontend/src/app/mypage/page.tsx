@@ -4,17 +4,25 @@ import { MdOutlineKeyboardArrowUp  } from "react-icons/md";
 import { useMypage } from "@/hook/useMypage";
 import { IoCloseCircle } from "react-icons/io5";
 import { formatDate } from "@/util/format";
+import { useUiStore } from "@/store/useUiStore";
+import TextModal from "@/components/Modal/modalContents/TextModal";
+import { useRouter } from "next/navigation";
 
 function page() {
     const { 
         userPlans, 
         inquries, inquiryForm, 
-        answerOpen, toggleAnswer,
+        answerOpen, toggleInquiry,
         writeInQuiry, handleWrite,
         handleChange, onSubmitInquiry, handleDelete, 
         editingId, setEditingId, onClickEdit, handleUpdate,
+        onSubmitAnswer,
         userCollectPlans
     } = useMypage();
+
+    const { openModal, closeModal } = useUiStore();
+
+    const route = useRouter();
 
     const useItemBoxClass = "rounded-[.8rem] p-[1.6rem_1rem] flex-1 text-center";
     const statusClass = "rounded-[60rem] p-[.8rem_1.2rem]";
@@ -73,22 +81,22 @@ function page() {
                             inquries.map(item => (
                                 <li key={item.id} className="border-b border-solid border-[#eee] last:border-b-0 py-[1rem]">
                                     <button 
-                                        onClick={() => toggleAnswer(item.id)} 
+                                        onClick={() => toggleInquiry(item.id!)} 
                                         className="flex items-center text-[1.4rem] w-full gap-[1rem]"
                                     >
                                         <p className="mr-auto font-semibold">{item.title}</p>
-                                        <p className="text-textMuted">{formatDate(item.createdAt)}</p>
+                                        <p className="text-textMuted">{formatDate(item.createdAt!)}</p>
                                         <p className={`${statusClass} ${item.status === "ANSWERED" ? isActiveStatus : noActiveStatus}`}>
                                             {item.status === "ANSWERED" ? "답변완료" : "답변대기"}
                                         </p>
-                                        <span className={`transition-transform duration-200 ${answerOpen[item.id] ? "rotate-0" : "rotate-180"}`}>
+                                        <span className={`transition-transform duration-200 ${answerOpen[item.id!] ? "rotate-0" : "rotate-180"}`}>
                                             <MdOutlineKeyboardArrowUp />
                                         </span>
                                     </button>
                                     
-                                    {answerOpen[item.id] && (
+                                    {answerOpen[item.id!] && (
                                         <>
-                                            {answerOpen[item.id] && (
+                                            {answerOpen[item.id!] && (
                                             <>
                                                 {editingId === item.id ? (
                                                     <form onSubmit={handleUpdate} className="bg-[#efefef] rounded-[.8rem] p-[1.6rem_1rem] my-[1rem]">
@@ -125,12 +133,12 @@ function page() {
                                                     </form>
                                                 ) : (
                                                     <>
-                                                        <div className="rounded-[.8rem] my-[1rem] bg-[#f7f7f7] p-[1.6rem_1rem_1rem_1rem] text-[1.2rem] relative">
+                                                        <div className="rounded-[.8rem] my-[1rem] bg-[#f7f7f7] p-[1.6rem_1rem_1rem_1rem] text-[1.4rem] relative">
                                                             <div className="flex justify-between items-center mb-[.6rem]">
-                                                                <p className="font-semibold text-[#333]">문의 내용</p>
+                                                                <p className="font-semibold text-[#555]">문의 내용</p>
                                                                 
                                                                 {item.status === "PENDING" && (
-                                                                    <div className="flex gap-[.8rem] text-[1.1rem] text-textMuted font-medium">
+                                                                    <div className="flex gap-[.8rem] text-[1.4rem] text-textMuted font-medium">
                                                                         <button 
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
@@ -141,20 +149,62 @@ function page() {
                                                                             수정
                                                                         </button>
                                                                         <span className="text-[#ddd]">|</span>
-                                                                        <button onClick={(e) => { e.stopPropagation(); /* 삭제로직 */ }} className="hover:text-red-500 transition-colors">삭제</button>
+                                                                        <button 
+                                                                            className="hover:text-red-500 transition-colors"
+                                                                            onClick={(e) => { 
+                                                                                e.stopPropagation(); 
+                                                                                openModal(
+                                                                                    "문의글 삭제",
+                                                                                    "CONFIRM",
+                                                                                    <TextModal 
+                                                                                        txt={"문의글을 삭제하시겠습니까?"}
+                                                                                        onConfirm={async () => {
+                                                                                            await handleDelete(item.id!); 
+                                                                                            closeModal(); 
+                                                                                            
+                                                                                            openModal(
+                                                                                                "알림",
+                                                                                                "CHECK",
+                                                                                                <TextModal 
+                                                                                                    txt={"게시글이 성공적으로 삭제되었습니다."} 
+                                                                                                    onConfirm={() => {
+                                                                                                        closeModal();
+                                                                                                        route.push("/mypage");
+                                                                                                    }}
+                                                                                                />
+                                                                                            );
+                                                                                        }}
+                                                                                    />
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            삭제
+                                                                        </button>
                                                                     </div>
                                                                 )}
                                                             </div>
-                                                            <div className="text-textDark leading-relaxed">{item.inquiryContent}</div>
+                                                            <div className="text-textDark leading-relaxed font-semibold text-[1.4rem]">{item.inquiryContent}</div>
                                                         </div>
 
                                                         {item.answer ? (
-                                                            <div className="bg-[#ecdbff] text-textMuted p-[1rem] text-[1.2rem] rounded-[.8rem]">
+                                                            <div className="bg-[#ecdbff] text-textMuted p-[1rem_1rem_2rem] text-[1.4rem] rounded-[.8rem]">
                                                                 <p className="text-main font-semibold">답변</p>
                                                                 <div>{item.answer.answerContent}</div>
                                                             </div>
                                                         ) : (
-                                                            <div className="bg-[#fffbf3] text-[#e28c0c] p-[1rem] text-[1.2rem] rounded-[.8rem]">답변을 준비중 입니다. 잠시만 기다려 주세요.</div>
+                                                            <>
+                                                            <div className="bg-[#fffbf3] rounded-[.8rem] relative p-[1rem]">
+                                                                <div 
+                                                                    className="text-[#e28c0c] text-[1.4rem] font-semibold text-center">
+                                                                    답변을 준비중 입니다. 잠시만 기다려 주세요.
+                                                                </div>
+                                                            </div>
+                                                            <form onSubmit={onSubmitAnswer} className="border-[.1rem] border-dashed border-mainLight mt-[1rem] rounded-[.8rem] p-[1rem]">
+                                                                <p className="text-mainLight font-semibold text-[1.4rem] mb-[1rem]">답변 입력</p>
+                                                                <textarea name="answer-area" className="border-solid border-[#eee] p-[1rem] text-[1.4rem] leading-relaxed" placeholder="답변 내용을 입력하세요"></textarea>
+                                                                <button className="block m-[1rem_0_0_auto] text-textLight bg-mainLight rounded-[.8rem] p-[1rem] text-[1.2rem] font-semibold hover:bg-[#820bd7]">답변 등록</button>
+                                                            </form>
+                                                            </>
                                                         )}
                                                     </>
                                                 )}

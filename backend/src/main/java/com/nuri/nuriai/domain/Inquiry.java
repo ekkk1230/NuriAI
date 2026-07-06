@@ -34,4 +34,9 @@ public class Inquiry extends BaseTimeEntity {
         this.inquiryContent = inquiryContent;
         this.user = user;
     }
+
+    public void update(String title, String inquiryContent) {
+        this.title = title;
+        this.inquiryContent = inquiryContent;
+    }
 }

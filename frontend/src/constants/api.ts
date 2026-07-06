@@ -21,5 +21,7 @@ export const API_ROUTES = {
     },
     INQUIRY: {
         BASE: `${API_BASE_URL}/api/inquiry`,
+        UPDATE: (inquiryId: number) => `${API_BASE_URL}/api/inquiry/${inquiryId}`,
+        DELETE: (inquiryId: number) => `${API_BASE_URL}/api/inquiry/${inquiryId}`,
     }
 } as const;

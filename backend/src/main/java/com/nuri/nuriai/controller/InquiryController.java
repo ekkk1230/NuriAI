@@ -29,4 +29,23 @@ public class InquiryController {
         InquiryDto.Response response = inquiryService.insertInquiry(userId, request);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/{inquiryId}")
+    public ResponseEntity<InquiryDto.Response> updateInquiry(
+            @AuthenticationPrincipal String userId,
+            @PathVariable("inquiryId") Long inquiryId,
+            @RequestBody InquiryDto.Request request
+    ) {
+        InquiryDto.Response response = inquiryService.updateInquiry(userId, inquiryId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{inquiryId}")
+    public ResponseEntity<Void> deleteInquiry(
+        @AuthenticationPrincipal String userId,
+        @PathVariable("inquiryId") Long inquiryId
+    ) {
+        inquiryService.deleteInquiry(userId, inquiryId);
+        return ResponseEntity.noContent().build();
+    }
 }

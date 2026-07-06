@@ -32,8 +32,10 @@ interface MypageStore {
 
     fetchtInquries: () => Promise<void>;
     addInquriy: (inquiry: InquiryForm) => Promise<void>;
-    deleteInquiry: (id: number) => void;
-    updateInquiry: (inquiry: Inquiry) => void;
+    deleteInquiry: (inquiryId: number) => Promise<void>;
+    updateInquiry: (updateInquiry: Inquiry) => Promise<void>;
+
+    insertAnswer: (answer: AnswerForm) => Promise<void>;
 };
 
 export const useMypageStore = create<MypageStore>((set) => ({
@@ -53,7 +55,6 @@ export const useMypageStore = create<MypageStore>((set) => ({
         }
     },
     addInquriy: async(inquiry) => {
-
         try {
             const response = await apiFetch(`${API_ROUTES.INQUIRY.BASE}`, {
                 method: "POST",
@@ -70,8 +71,41 @@ export const useMypageStore = create<MypageStore>((set) => ({
             console.error(`addInquiry 실패: ${err}`);
         }
     },
-    deleteInquiry: id => set(state => ({ inquries: state.inquries.filter(q => q.id !== id) })),
-    updateInquiry: inquiry => set(state => ({
-        inquries: state.inquries.map(item => item.id === inquiry.id ? { ...inquiry, updatedAt: new Date().toISOString() } : item)
-    })),
+    deleteInquiry: async(inquiryId) => {
+        try {
+            const response = await apiFetch(`${API_ROUTES.INQUIRY.DELETE(inquiryId)}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) throw new Error("문의글 삭제 실패");
+
+            set(state => ({
+                inquries: state.inquries.filter(i => i.id !== inquiryId)
+            }));
+        } catch (err) {
+            console.error(`deleteInquiry 실패: ${err}`);
+        }
+    },
+    updateInquiry: async(updateInquiry) => {
+        const inquiryId = updateInquiry.id!;
+        const url = API_ROUTES.INQUIRY.UPDATE(inquiryId);
+        try {
+            const response = await apiFetch(`${url}`, {
+                method: "POST",
+                body: JSON.stringify(updateInquiry)
+            });
+
+            if (!response.ok) throw new Error("문의글 수정 실패");
+            const updateInquiryData = await response.json();
+
+            set(state => ({
+                inquries: state.inquries.map(i => i.id === inquiryId ? updateInquiryData : i)
+            }));
+        } catch (err) {
+            console.error(`updateInquiry 실패; ${err}`);
+        };
+    },
+    insertAnswer: async(answer) => {
+        console.log(answer)
+    },
 }));
