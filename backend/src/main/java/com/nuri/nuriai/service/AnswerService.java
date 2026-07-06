@@ -51,6 +51,13 @@ public class AnswerService {
 
     @Transactional
     public void deleteAnswer(Long inquiryId) {
-        inquiryRepository.deleteById(inquiryId);
+        Inquiry inquiry = inquiryRepository.findById(inquiryId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 문의글입니다."));
+
+        Answer answer = inquiry.getAnswer();
+        if (answer == null) {
+            throw new IllegalStateException("삭제할 답변이 존재하지 않습니다.");
+        }
+        answerRepository.delete(answer);
+        inquiry.updateStatus(InquiryStatus.PENDING);
     }
 }
