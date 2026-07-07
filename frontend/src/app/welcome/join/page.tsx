@@ -7,7 +7,7 @@ import { UserRegisterForm } from "@/type/User";
 import { useWelcomeStore } from "@/store/useWelcomeStore";
 import { useUiStore } from "@/store/useUiStore";
 import TextModal from "@/components/Modal/modalContents/TextModal";
-import { useRef } from "react";
+import React, { useRef, useState } from "react";
 import DuplicateModal from "@/components/Modal/modalContents/DuplicateModal";
 import { useRouter } from "next/navigation";
 
@@ -29,7 +29,38 @@ function page() {
     const userNicknameRef = useRef<HTMLInputElement>(null);
     const confirmPwdRef = useRef<HTMLInputElement>(null);
 
+    const [isIdChecked, setIsIdChecked] = useState(false);
+    const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+
     const handleJoin = async () => {
+        if (!userForm.userId || !userForm.userNickname || !userForm.userPwd || !userForm.userConfirmPwd) {
+            openModal(
+                "오류",
+                "CHECK",
+                <TextModal
+                    txt={"모든 필수 항목을 입력해주세요."}
+                    onConfirm={() => {
+                        closeModal();
+                    }}
+                />
+            )
+            return;
+        };
+
+        if (!isIdChecked || !isNicknameChecked) {
+            openModal(
+                "오류",
+                "CHECK",
+                <TextModal 
+                    txt={"아이디와 닉네임 중복확인을 해주세요."}
+                    onConfirm={() => {
+                        closeModal();
+                    }}
+                />
+            )
+            return;
+        }
+
         if (userForm.userPwd !== userForm.userConfirmPwd) {
             openModal(
                 "비밀번호 오류",
@@ -52,7 +83,7 @@ function page() {
 
             openModal(
                 "가입완료",
-                "CONFIRM",
+                "CHECK",
                 <TextModal 
                     txt={"회원가입이 정상적으로 완료되었습니다!"} 
                     onConfirm={() => {
@@ -66,6 +97,12 @@ function page() {
         }
 
     };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e);
+        if (e.target.name === "userId") setIsIdChecked(false);
+        if (e.target.name === "userNickname") setIsNicknameChecked(false);
+    }
 
     const handleDuplication = async(type: "userId" | "userNickname") => {
         const tgText = type === "userId" ? "아이디" : "닉네임"
@@ -89,6 +126,10 @@ function page() {
         try {
             const result = await confirmData(type, value);
 
+            if (!result.isDuplicated) {
+                type === "userId" ? setIsIdChecked(true) : setIsNicknameChecked(true);
+            }
+
             openModal(
                 `${tgText} 확인 결과`,
                 "CHECK",
@@ -110,7 +151,7 @@ function page() {
             <label className="block">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">아이디</p>
                 <div className="flex gap-[.8rem]">
-                    <input type="text" ref={userIdRef} onChange={handleChange} value={userForm.userId} name="userId" />
+                    <input type="text" ref={userIdRef} onChange={handleInputChange} value={userForm.userId} name="userId" />
                     <button type="button" onClick={() => handleDuplication("userId")} className="rounded-[.8rem] p-[1rem_1.4rem] bg-[#f7ecfe] text-main font-semibold text-[1.4rem] whitespace-nowrap">중복확인</button>
                 </div>
             </label>
@@ -118,19 +159,19 @@ function page() {
             <label className="block mt-[2rem]">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">닉네임</p>
                 <div className="flex gap-[.8rem]">
-                    <input type="text" ref={userNicknameRef} onChange={handleChange} value={userForm.userNickname} name="userNickname" />
+                    <input type="text" ref={userNicknameRef} onChange={handleInputChange} value={userForm.userNickname} name="userNickname" />
                     <button type="button" onClick={() => handleDuplication("userNickname")} className="rounded-[.8rem] p-[1rem_1.4rem] bg-[#f7ecfe] text-main font-semibold text-[1.4rem] whitespace-nowrap">중복확인</button>
                 </div>
             </label>
 
             <label className="block mt-[2rem]">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">비밀번호</p>
-                <input type="password" onChange={handleChange} value={userForm.userPwd} name="userPwd" />
+                <input type="password" onChange={handleInputChange} value={userForm.userPwd} name="userPwd" />
             </label>
 
             <label className="block mt-[2rem]">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">비밀번호 확인</p>
-                <input type="password" ref={confirmPwdRef} onChange={handleChange} value={userForm.userConfirmPwd} name="userConfirmPwd" />
+                <input type="password" ref={confirmPwdRef} onChange={handleInputChange} value={userForm.userConfirmPwd} name="userConfirmPwd" />
             </label>
 
             <div className="block mt-[2rem]">
