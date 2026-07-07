@@ -34,8 +34,8 @@ dependencies {
 
     // H2: 로컬 테스트용 인메모리 DB
 //    runtimeOnly 'com.mysql:mysql-connector-j'
-    implementation 'com.h2database:h2'
-//    runtimeOnly 'org.postgresql:postgresql'
+//    implementation 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql'
 
     // Lombok: Getter, Setter 자동 생성
     compileOnly 'org.projectlombok:lombok'
