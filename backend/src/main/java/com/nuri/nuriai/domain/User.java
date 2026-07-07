@@ -18,11 +18,16 @@ public class User extends BaseTimeEntity {
     private String userNickname;
     private Integer userClassAge;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Builder
     public User (String userId, String userPwd, String userNickname, Integer userClassAge) {
         this.userId = userId;
         this.userPwd = userPwd;
         this.userNickname = userNickname;
         this.userClassAge = userClassAge;
+        this.role = (role == null) ? Role.USER : role;
     }
 }

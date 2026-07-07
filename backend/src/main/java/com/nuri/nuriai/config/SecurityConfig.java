@@ -1,5 +1,6 @@
 package com.nuri.nuriai.config;
 
+import com.nuri.nuriai.repository.UserRepository;
 import com.nuri.nuriai.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,9 @@ public class SecurityConfig {
 
     @Autowired
     private Key secretKey;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -62,7 +66,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/plans/**", "/api/users/me").authenticated()
                     .anyRequest().authenticated()
             )
-            .addFilterBefore(new JwtAuthenticationFilter(secretKey), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthenticationFilter(secretKey, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

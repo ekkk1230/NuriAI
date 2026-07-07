@@ -7,15 +7,23 @@ import { useWelcomeStore } from "@/store/useWelcomeStore";
 export const useMypage = () => {
     const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem } = usePlanStore();
     const { user } = useWelcomeStore();
-    const { inquries, fetchtInquries, addInquriy, deleteInquiry, updateInquiry, insertAnswer, updateAnswer, deleteAnswer } = useMypageStore();
+    const { inquries, fetchtUserInquiries, fetchtAllInquiries, addInquriy, deleteInquiry, updateInquiry, insertAnswer, updateAnswer, deleteAnswer } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
     const { form: answerForm, setForm: setAnswerForm, handleChange: handleAnswerChange, resetForm: resetAnswerForm } = useForm({ answerContent: "" });
 
     useEffect(() => {
+        console.log(user?.role)
         if (user) {
             fetchUserPlans(user);
-            fetchUserCollectItem(Number(user.id))
-            fetchtInquries();
+            fetchUserCollectItem(Number(user.id));
+
+            if (user.role === "ADMIN") {
+                console.log('admin')
+                fetchtAllInquiries();
+            } else {
+                console.log('user')
+                fetchtUserInquiries();
+            }
         }
     }, [user, fetchUserPlans]);
 

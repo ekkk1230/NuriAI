@@ -13,7 +13,7 @@ import org.hibernate.annotations.Fetch;
 @Table(name = "plan_like", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "plan_id"})
 })
-public class PlanLike {
+public class PlanLike extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

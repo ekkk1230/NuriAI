@@ -7,6 +7,7 @@ import { formatDate } from "@/util/format";
 import { useUiStore } from "@/store/useUiStore";
 import TextModal from "@/components/Modal/modalContents/TextModal";
 import { useRouter } from "next/navigation";
+import { useWelcomeStore } from "@/store/useWelcomeStore";
 
 function page() {
     const { 
@@ -22,6 +23,7 @@ function page() {
     } = useMypage();
 
     const { openModal, closeModal } = useUiStore();
+    const { user } = useWelcomeStore();
 
     const route = useRouter();
 
@@ -35,6 +37,8 @@ function page() {
     const completedCount = inquries.filter(q => q.answer != null).length;
     // console.log(inquries)
     // console.log(completedCount)
+
+    console.log(inquries)
 
     return (
         <div className="bg-bgCard flex flex-col h-[100%]">
@@ -282,12 +286,14 @@ function page() {
                                                             답변을 준비중 입니다. 잠시만 기다려 주세요.
                                                         </div>
                                                     </div>
-                                                    <form onSubmit={(e) => onSubmitAnswer(e, item.id!)} className={formClass}>
-                                                        <p className="text-mainLight font-semibold text-[1.4rem] mb-[1rem]">답변 입력</p>
+                                                    {user?.role === "ADMIN" && (
+                                                        <form onSubmit={(e) => onSubmitAnswer(e, item.id!)} className={formClass}>
+                                                            <p className="text-mainLight font-semibold text-[1.4rem] mb-[1rem]">답변 입력</p>
 
-                                                        <textarea value={answerForm.answerContent} onChange={e => setAnswerForm(prev => ({ ...prev, answerContent: e.target.value }))} name="answer-area" className="border-solid border-[#eee] p-[1rem] text-[1.4rem] leading-relaxed" placeholder="답변 내용을 입력하세요"></textarea>
-                                                        <button className={formBtnClass + " m-[1rem_0_0_auto] bg-mainLight hover:bg-[#820bd7]"}>답변 등록</button>
-                                                    </form>
+                                                            <textarea value={answerForm.answerContent} onChange={e => setAnswerForm(prev => ({ ...prev, answerContent: e.target.value }))} name="answer-area" className="border-solid border-[#eee] p-[1rem] text-[1.4rem] leading-relaxed" placeholder="답변 내용을 입력하세요"></textarea>
+                                                            <button className={formBtnClass + " m-[1rem_0_0_auto] bg-mainLight hover:bg-[#820bd7]"}>답변 등록</button>
+                                                        </form>
+                                                    )}
                                                     </>
                                                 )}
                                             </>

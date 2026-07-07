@@ -1,5 +1,6 @@
 package com.nuri.nuriai.controller;
 
+import com.nuri.nuriai.domain.User;
 import com.nuri.nuriai.dto.InquiryDto;
 import com.nuri.nuriai.service.InquiryService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,13 @@ public class InquiryController {
     public final InquiryService inquiryService;
 
     @GetMapping
-    public List<InquiryDto.Response> getAllInquiries(@AuthenticationPrincipal String userId) {
+    public List<InquiryDto.Response> getUserInquiries(@AuthenticationPrincipal String userId) {
         return inquiryService.getInquiriesByUserId(userId);
+    }
+
+    @GetMapping("/all")
+    public List<InquiryDto.Response> getAllInquiries(@AuthenticationPrincipal User principal) {
+        return inquiryService.getAllInquiries(principal.getRole());
     }
 
     @PostMapping
