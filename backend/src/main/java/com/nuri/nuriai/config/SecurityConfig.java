@@ -2,6 +2,7 @@ package com.nuri.nuriai.config;
 
 import com.nuri.nuriai.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,11 +31,14 @@ public class SecurityConfig {
         return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+
     // [추가] CORS 설정 빈 등록
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://nuri-ai-one.vercel.app/")); // 프론트엔드 주소 허용
+        config.setAllowedOrigins(List.of(allowedOrigins)); // 프론트엔드 주소 허용
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // 쿠키나 Authorization 헤더 허용
