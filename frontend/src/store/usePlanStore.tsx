@@ -218,18 +218,29 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         }
     },
     getFilteredPlans: (searchTit, searchAge, isSavedFilter, authorFilter, user) => {
-        const { userPlans, userCollectPlans } = get();
-        const userStoragePlans = [...userPlans, ...userCollectPlans];
+        const { planStorage} = get();
 
-        return userStoragePlans.filter(plan => {
+        return planStorage.filter(plan => {
             const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
             const matchesAge = (!searchAge || searchAge === "전체") ? true : plan.age === `만 ${searchAge}세`;
-            const safeIds = (plan.savedUserIds || []).map(Number);
-            const isSaved = safeIds.includes(Number(user?.id ?? 0));
-            const isMyPlan = plan.author === user?.userNickname;
 
-            if (isSavedFilter) return matchesTitle && matchesAge && (isMyPlan || isSaved);
-            return matchesTitle && matchesAge && (authorFilter ? plan.author === decodeURIComponent(authorFilter) : isMyPlan);
+            // 공통 조건
+            if (!matchesTitle || !matchesAge) return false;
+
+            // 작성자 필터
+            if (authorFilter) {
+                return plan.author === decodeURIComponent(authorFilter);
+            }
+
+            // 보관함 필터
+            if (isSavedFilter) {
+                const safeIds = (plan.savedUserIds || []).map(Number);
+                const isSaved = safeIds.includes(Number(user.id ?? 0));
+                const isMyPlan = plan.author === user.userNickname;
+                return isMyPlan || isSaved;
+            };
+
+            return plan.author === user?.userNickname;
         })
     },
 }));
