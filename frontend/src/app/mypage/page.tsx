@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 function page() {
     const { 
         userPlans, 
-        inquries, inquiryForm, 
+        inquries, inquiryForm, sortedInquiries, activeTab, setActiveTab,
         answerOpen, toggleInquiry,
         writeInQuiry, handleWrite,
         handleChange, onSubmitInquiry, handleDelete, 
@@ -23,8 +23,6 @@ function page() {
 
     const { openModal, closeModal } = useUiStore();
 
-    // console.log(inquries)
-
     const route = useRouter();
 
     const useItemBoxClass = "rounded-[.8rem] p-[1.6rem_1rem] flex-1 text-center";
@@ -32,7 +30,11 @@ function page() {
     const isActiveStatus = "bg-[#eeffe6] text-[#309e8c]";
     const noActiveStatus = "bg-[#fffbf3] text-[#e28c0c]";
     const formClass = "border-[.1rem] border-dashed border-mainLight mt-[1rem] rounded-[.8rem] p-[1rem] relative";
-    const formBtnClass = "block text-textLight rounded-[.8rem] p-[1rem] text-[1.2rem] font-semibold"
+    const formBtnClass = "block text-textLight rounded-[.8rem] p-[1rem] text-[1.2rem] font-semibold";
+
+    const completedCount = inquries.filter(q => q.answer != null).length;
+    // console.log(inquries)
+    // console.log(completedCount)
 
     return (
         <div className="bg-bgCard flex flex-col h-[100%]">
@@ -55,8 +57,8 @@ function page() {
                             <p className="text-[1.6rem] font-semibold text-textMuted">보관함 저장</p>
                         </li>
                         <li className={`${useItemBoxClass} bg-[#eeffe6]`}>
-                            <p className="text-[3rem] mb-[2rem] font-bold text-[#309e8c]">{inquries.length}</p>
-                            <p className="text-[1.6rem] font-semibold text-textMuted">작성 문의글</p>
+                            <p className="text-[3rem] mb-[2rem] font-bold text-[#309e8c]">{completedCount} / {inquries.length}</p>
+                            <p className="text-[1.6rem] font-semibold text-textMuted">답변 완료 / 전체 문의</p>
                         </li>
                         {/* <li className={`${useItemBoxClass} bg-[#eeffe6]`}>
                             <p className="text-[3rem] mb-[2rem] font-bold text-[#309e8c]">{userPlans.length}</p>
@@ -68,7 +70,26 @@ function page() {
                 <div className="bg-bgCard w-[60%] mx-auto p-[2rem] rounded-[1.2rem] shadow-sm relative">
                     <p className="text-[2rem] font-semibold mb-[1.2rem]">문의 게시판</p>
 
-                    <button onClick={handleWrite} className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] absolute right-[2rem] top-[2rem]">문의하기</button>
+                    <div className="flex flex-row absolute right-[2rem] top-[2rem]">
+                        {inquries.length >= 1 && (
+                            <div className="flex items-center gap-[1rem] mr-[2rem] font-semibold justify-end text-[1.4rem]">
+                                <button
+                                    onClick={() => setActiveTab('latest')}
+                                    className={`flex gap-[.4rem] after:content[""] after:w-[.1rem] after:h-[2rem] after:mx-[1rem] after:bg-[#ebebeb] py-2 ${activeTab === 'latest' ? 'font-bold text-main' : 'text-gray-400'}`}
+                                >
+                                    최근 작성 순
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('answered')}
+                                    className={`py-2 ${activeTab === 'answered' ? 'font-bold text-main' : 'text-gray-400'}`}
+                                >
+                                    최근 답변 순
+                                </button>
+                            </div>
+                        )}
+                        
+                        <button onClick={handleWrite} className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem]">문의하기</button>
+                    </div>
 
                     {writeInQuiry && (
                         <div className="bg-[#efefef] rounded-[.8rem] p-[5.2rem_1.6rem_2rem] my-[2rem] relative">
@@ -87,7 +108,7 @@ function page() {
 
                     <ul className="mt-[2.8rem]">
                         {inquries.length >= 1 ? (
-                            inquries.map((item, index) => (
+                            sortedInquiries.map((item, index) => (
                                 <li key={index} className="border-b border-solid border-[#eee] last:border-b-0 py-[1rem]">
                                     <button 
                                         onClick={() => toggleInquiry(item.id!)} 

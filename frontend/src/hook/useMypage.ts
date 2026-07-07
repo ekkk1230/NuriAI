@@ -23,6 +23,17 @@ export const useMypage = () => {
     const [answerOpen, setAnswerOpen] = useState<Record<number, boolean>>({});
     const [writeInQuiry, setWriteInquiry] = useState<boolean>(false);
     const [editingAnswerId, setEditingAnswerId] = useState<number | null>(null);
+    const [activeTab, setActiveTab] = useState("latest");
+
+    const sortedInquiries = [...inquries].sort((a, b) => {
+        if (activeTab === 'answered') {
+            const aAnswered = a.status === 'ANSWERED' ? 1 : 0;
+            const bAnswered = b.status === 'ANSWERED' ? 1 : 0;
+            if (aAnswered !== bAnswered) return bAnswered - aAnswered;
+        }
+
+        return new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime();
+    });
 
     const handleWrite = () => setWriteInquiry(!writeInQuiry);
 
@@ -110,7 +121,7 @@ export const useMypage = () => {
 
     return { 
         userPlans, 
-        inquries, inquiryForm, 
+        inquries, inquiryForm, sortedInquiries, activeTab, setActiveTab,
         answerOpen, toggleInquiry,
         writeInQuiry, handleWrite,
         handleChange, onSubmitInquiry, handleDelete,
