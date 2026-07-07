@@ -75,7 +75,7 @@ function page() {
     };
 
     const filteredPlans = getFilteredPlans(searchTit, searchAge, isSavedFilter, authorFilter, user);
-
+    // console.log(authorFilter)
     console.log(filteredPlans)
 
     // 필터링 로직: 검색어와 선택된 연령에 따라 plans 배열 필터링
@@ -104,8 +104,8 @@ function page() {
             return plan?.author !== user?.userNickname; 
         });
 
-        console.log(myPlanIds)
-        console.log(collectedPlanIds)
+        // console.log(myPlanIds)
+        // console.log(collectedPlanIds)
 
         // 2. 각각 다른 API 호출
         try {

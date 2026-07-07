@@ -42,7 +42,7 @@ function page() {
 
     const plan = planStorage.find(p => p.id === Number(planId));
 
-    console.log(user)
+    // console.log(user)
 
     useEffect(() => {
         if (!plan?.age) return;
