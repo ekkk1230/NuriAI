@@ -34,7 +34,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://https://nuri-ai-one.vercel.app/")); // 프론트엔드 주소 허용
+        config.setAllowedOrigins(List.of("https://nuri-ai-one.vercel.app/")); // 프론트엔드 주소 허용
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // 쿠키나 Authorization 헤더 허용
