@@ -1,6 +1,7 @@
 package com.nuri.nuriai.controller;
 
 import com.nuri.nuriai.domain.Plan;
+import com.nuri.nuriai.domain.User;
 import com.nuri.nuriai.dto.PlanDto;
 import com.nuri.nuriai.dto.PlanLikeDto;
 import com.nuri.nuriai.dto.PlanSaveDto;
@@ -137,8 +138,9 @@ public class PlanController {
     @PostMapping("/delete-batch")
     public ResponseEntity<Void> deletePlans(
             @RequestBody List<Long> planIds, // 배열로 받기
-            @AuthenticationPrincipal Long userId) {
+            @AuthenticationPrincipal User user) {
         System.out.println("컨트롤러 진입 성공!");
+        Long userId = user.getId();
         System.out.println("userId: " + userId + ", planIds: " + planIds);
         planService.deletePlans(planIds, userId);
         return ResponseEntity.noContent().build();

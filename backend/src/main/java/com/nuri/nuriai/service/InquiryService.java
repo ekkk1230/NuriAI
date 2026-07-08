@@ -1,6 +1,7 @@
 package com.nuri.nuriai.service;
 
 import com.nuri.nuriai.domain.Inquiry;
+import com.nuri.nuriai.domain.Role;
 import com.nuri.nuriai.domain.User;
 import com.nuri.nuriai.dto.InquiryDto;
 import com.nuri.nuriai.repository.InquiryRepository;
@@ -20,6 +21,16 @@ public class InquiryService {
 
     public List<InquiryDto.Response> getInquiriesByUserId(String userId) {
         return inquiryRepository.findByUserUserId(userId).stream()
+                .map(InquiryDto.Response::new)
+                .toList();
+    }
+
+    public List<InquiryDto.Response> getAllInquiries(Role role) {
+        if (role != Role.ADMIN) {
+            throw new IllegalArgumentException("관리자 권한이 없습니다.");
+        };
+
+        return inquiryRepository.findAll().stream()
                 .map(InquiryDto.Response::new)
                 .toList();
     }

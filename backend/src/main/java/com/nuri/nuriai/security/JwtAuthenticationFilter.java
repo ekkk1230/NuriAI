@@ -1,5 +1,7 @@
 package com.nuri.nuriai.security;
 
+import com.nuri.nuriai.domain.User;
+import com.nuri.nuriai.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,10 +18,12 @@ import java.util.Collections;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final UserRepository userRepository;
     private final Key secretKey;
 
-    public JwtAuthenticationFilter(Key secretKey) {
+    public JwtAuthenticationFilter(Key secretKey, UserRepository userRepository) {
         this.secretKey = secretKey;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -36,22 +40,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null && token.startsWith("Bearer ")) {
             String jwt = token.substring(7);
             try {
-                String subject = Jwts.parserBuilder()
+                String userId = Jwts.parserBuilder()
                         .setSigningKey(secretKey)
                         .build()
                         .parseClaimsJws(jwt)
                         .getBody()
                         .getSubject();
 
-                String userId = subject;
+                User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+                String role = user.getRole().getKey();
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        userId, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                        user, null, Collections.singletonList(new SimpleGrantedAuthority(role))
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                System.out.println("인증 성공! userId: " + userId);
+                System.out.println("인증 성공! 유저: " + user.getUserNickname() + ", 권한: " + role);
             } catch (Exception e) {
-                System.err.println("JWT 파싱 에러 발생: " + e.getMessage());
+                System.err.println("인승 실패: " + e.getMessage());
             }
         }
         filterChain.doFilter(request, response);

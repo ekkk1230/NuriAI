@@ -4,6 +4,7 @@ export interface User {
     userNickname: string;
     userPwd: string;
     userClassAge: number | null;
+    role?: string;
 }
 
 export interface UserRegisterForm extends User {

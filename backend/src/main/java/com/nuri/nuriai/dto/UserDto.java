@@ -1,6 +1,7 @@
 package com.nuri.nuriai.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nuri.nuriai.domain.Role;
 import com.nuri.nuriai.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,12 +46,14 @@ public class UserDto {
         private String userId;
         private String userNickname;
         private Integer userClassAge;
+        private Role role;
 
         public UserResponse(User user) {
             this.id = user.getId();
             this.userId = user.getUserId();
             this.userNickname = user.getUserNickname();
             this.userClassAge = user.getUserClassAge();
+            this.role = user.getRole();
         }
     }
 }
