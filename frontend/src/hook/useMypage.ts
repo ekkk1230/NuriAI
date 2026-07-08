@@ -3,6 +3,7 @@ import { useMypageStore } from "@/store/useMypageStore";
 import { usePlanStore } from "@/store/usePlanStore";
 import { useForm } from "./useForm";
 import { useWelcomeStore } from "@/store/useWelcomeStore";
+import { Inquiry } from "@/type/Mypage";
 
 export const useMypage = () => {
     const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem } = usePlanStore();
@@ -12,16 +13,16 @@ export const useMypage = () => {
     const { form: answerForm, setForm: setAnswerForm, handleChange: handleAnswerChange, resetForm: resetAnswerForm } = useForm({ answerContent: "" });
 
     useEffect(() => {
-        console.log(user?.role)
+        // console.log(user?.role)
         if (user) {
             fetchUserPlans(user);
             fetchUserCollectItem(Number(user.id));
 
             if (user.role === "ADMIN") {
-                console.log('admin')
+                // console.log('admin')
                 fetchtAllInquiries();
             } else {
-                console.log('user')
+                // console.log('user')
                 fetchtUserInquiries();
             }
         }

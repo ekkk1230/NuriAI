@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nuri.nuriai.domain.*;
 import com.nuri.nuriai.dto.PlanDto;
-import com.nuri.nuriai.repository.PlanLikeRepository;
-import com.nuri.nuriai.repository.PlanRepository;
-import com.nuri.nuriai.repository.PlanSaveRepository;
-import com.nuri.nuriai.repository.UserRepository;
+import com.nuri.nuriai.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j; // log 사용을 위해 추가
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +27,7 @@ public class PlanService {
     private final UserRepository userRepository;
     private final PlanLikeRepository planLikeRepository;
     private final PlanSaveRepository planSaveRepository;
+    private final RecentViewRepository recentViewRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -263,11 +261,28 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanDto.GeminiResponse increaseViewCount(Long planId) {
+    public PlanDto.GeminiResponse increaseViewCount(Long planId, User user) {
         Plan plan = planRepository.findById(planId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + planId));
         plan.updateViewCount();
-        planRepository.save(plan);
+
+        if (user != null) {
+            saveView(user, plan);
+        }
+
         return new PlanDto.GeminiResponse(plan);
+    }
+
+    @Transactional
+    public void saveView(User user, Plan plan) {
+        if (recentViewRepository.existsToday(user, plan)) {
+            recentViewRepository.updateViewTime(user, plan);
+        } else {
+            RecentView recentView = RecentView.builder()
+                    .user(user)
+                    .plan(plan)
+                    .build();
+            recentViewRepository.save(recentView);
+        }
     }
 
     public List<PlanDto.GeminiResponse> getCollectList(Long userId) {

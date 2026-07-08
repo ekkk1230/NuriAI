@@ -121,8 +121,11 @@ public class PlanController {
     }
 
     @PostMapping("/{id}/view")
-    public ResponseEntity<PlanDto.GeminiResponse> increaseViewCount(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(planService.increaseViewCount(id));
+    public ResponseEntity<PlanDto.GeminiResponse> increaseViewCount(
+            @PathVariable("id") Long id,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(planService.increaseViewCount(id, user));
     }
 
     @GetMapping("/user/{userId}/collected")

@@ -175,7 +175,7 @@ function page() {
                         </>
                     ) 
                     : (
-                        <NoPlan txt="현재 준비되어 있는 계획안이 없습니다. 새로운 계획안을 만들어주세요." showButton={true} />
+                        <NoPlan txt="현재 준비되어 있는 계획안이 없습니다. 새로운 계획안을 만들어주세요." showButton={true} router={router} />
                     )
                 }
             </div>

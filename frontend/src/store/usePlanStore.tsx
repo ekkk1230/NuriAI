@@ -218,7 +218,8 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         }
     },
     getFilteredPlans: (searchTit, searchAge, isSavedFilter, authorFilter, user) => {
-        const { planStorage} = get();
+        const { planStorage } = get();
+
 
         return planStorage.filter(plan => {
             const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
@@ -235,7 +236,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             // 보관함 필터
             if (isSavedFilter) {
                 const safeIds = (plan.savedUserIds || []).map(Number);
-                const isSaved = safeIds.includes(Number(user.id ?? 0));
+                const isSaved = safeIds.includes(Number(user.id || 0));
                 const isMyPlan = plan.author === user.userNickname;
                 return isMyPlan || isSaved;
             };

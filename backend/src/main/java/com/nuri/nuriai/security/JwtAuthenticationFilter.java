@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 System.out.println("인증 성공! 유저: " + user.getUserNickname() + ", 권한: " + role);
             } catch (Exception e) {
-                System.err.println("인승 실패: " + e.getMessage());
+                System.err.println("인증 실패: " + e.getMessage());
             }
         }
         filterChain.doFilter(request, response);

@@ -1,3 +1,5 @@
+import { Activity } from "./Activity";
+
 export interface Plan {
     id: number;
     age: string;

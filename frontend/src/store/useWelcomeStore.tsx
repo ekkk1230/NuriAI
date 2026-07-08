@@ -23,7 +23,7 @@ export const useWelcomeStore = create<WelcomeStore>()(
             fetchUserInfo: async () => {
                 // const { accessToken } = get();
                 // if (!accessToken) return;
-                const token = useWelcomeStore.getState().accessToken;
+                const token = localStorage.getItem('accessToken')
                 if (!token) return;
         
                 const response = await apiFetch(`${API_ROUTES.USER.BASE}/me`);

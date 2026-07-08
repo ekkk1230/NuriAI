@@ -1,9 +1,9 @@
-interface ContentDetail {
+export interface ContentDetail {
     description: string;
     teacherTalk: string;
 }
 
-interface Activity {
+export interface Activity {
     domain: string;
     groupType: string;
     activityType: string; 

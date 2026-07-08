@@ -1,23 +1,26 @@
-interface Answer {
+import { User } from "./User";
+
+export interface Answer {
     answerContent: string,
     createdAt: string,
 };
 
-interface Inquiry {
+export interface Inquiry {
     id?: number,
     title: string,
     inquiryContent: string,
     status?: "PENDING" | "ANSWERED",
     createdAt?: string,
     updatedAt?: string,
-    answer?: Answer
+    answer?: Answer,
+    user: User
 };
 
-interface InquiryForm {
+export interface InquiryForm {
     title: string;
     inquiryContent: string;
 }
 
-interface AnswerForm {
+export interface AnswerForm {
     answerContent: string;
 }

@@ -25,6 +25,9 @@ public class Plan extends BaseTimeEntity {
     private Long saveCount = 0L;
     private String activeIntro;
 
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.REMOVE)
+    private List<RecentView> recentViews;
+
     // cascade 설정으로 Plan 저장 시 Activity도 같이 저장되게 함
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Activity> activities = new ArrayList<>();
@@ -76,9 +79,6 @@ public class Plan extends BaseTimeEntity {
     public void updateViewCount() {
         this.viewCount++;
     }
-
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlanSave> savedPlans = new ArrayList<>();
 
     public void update(String age, String mainTheme, String curriculum, String activeIntro, List<Activity> newActivities) {
         this.age = age;

@@ -3,6 +3,7 @@ package com.nuri.nuriai.dto;
 
 import com.nuri.nuriai.domain.Answer;
 import com.nuri.nuriai.domain.Inquiry;
+import com.nuri.nuriai.domain.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class InquiryDto {
         private String title;
         private String inquiryContent;
         private String status;
+        private UserDto.UserResponse user;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         private AnswerResponse answer;
@@ -32,6 +34,7 @@ public class InquiryDto {
             this.title = inquiry.getTitle();
             this.inquiryContent = inquiry.getInquiryContent();
             this.status = (inquiry.getStatus() != null) ? inquiry.getStatus().toString() : "PENDING";
+            if (inquiry.getUser() != null) this.user = new UserDto.UserResponse(inquiry.getUser());
             this.createdAt = inquiry.getCreatedAt();
             this.updatedAt = inquiry.getUpdatedAt();
 

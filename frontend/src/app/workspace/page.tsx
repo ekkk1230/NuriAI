@@ -101,7 +101,7 @@ function page() {
                 </div>
             </div>
             
-            <div className="w-[100%] bg-bgPreview relative">
+            <div className="w-[100%] bg-bgPreview relative flex items-center justify-center flex-col">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-full">
                         <div className="w-[5rem] h-[5rem] border-[.6rem] border-[#eee] border-t-[#ad46ff] rounded-full animate-spin"></div>
