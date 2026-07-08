@@ -44,4 +44,6 @@ bin/
 .DS_Store
 
 application.properties
-/src/main/resources/application-local.yml
+**/application-local.properties
+**/application.yml
+**/application-local.yml

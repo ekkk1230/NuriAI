@@ -26,7 +26,9 @@ yarn-error.log*
 
 # --- Project Specific Secrets ---
 **/application.properties
+**/application-local.properties
 **/application.yml
+**/application-local.yml
 **/workspace.xml
 frontend/.env.local
 frontend/.env.development.local
