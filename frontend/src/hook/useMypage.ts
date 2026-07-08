@@ -6,9 +6,9 @@ import { useWelcomeStore } from "@/store/useWelcomeStore";
 import { Inquiry } from "@/type/Mypage";
 
 export const useMypage = () => {
-    const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem } = usePlanStore();
+    const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem, recentStatistics, fetchRecentStatistics } = usePlanStore();
     const { user } = useWelcomeStore();
-    const { inquries, fetchtUserInquiries, fetchtAllInquiries, addInquriy, deleteInquiry, updateInquiry, insertAnswer, updateAnswer, deleteAnswer } = useMypageStore();
+    const { inquries, fetchtUserInquiries, fetchtAllInquiries, addInquriy, deleteInquiry, updateInquiry, insertAnswer, updateAnswer, deleteAnswer, fetchRecentViewPlans, recentViewPlans } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
     const { form: answerForm, setForm: setAnswerForm, handleChange: handleAnswerChange, resetForm: resetAnswerForm } = useForm({ answerContent: "" });
 
@@ -17,6 +17,8 @@ export const useMypage = () => {
         if (user) {
             fetchUserPlans(user);
             fetchUserCollectItem(Number(user.id));
+            fetchRecentViewPlans();
+            fetchRecentStatistics();
 
             if (user.role === "ADMIN") {
                 // console.log('admin')
@@ -137,6 +139,6 @@ export const useMypage = () => {
         editingId, setEditingId, onClickEdit, handleUpdate, 
         onSubmitAnswer, answerForm, setAnswerForm, handleAnswerChange, resetAnswerForm,
         editingAnswerId, setEditingAnswerId, handleUpdateAnswer, handledeleteAnswer,
-        userCollectPlans
+        userCollectPlans, recentViewPlans, recentStatistics
     };
 }

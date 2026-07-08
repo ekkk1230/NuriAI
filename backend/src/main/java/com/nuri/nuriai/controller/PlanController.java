@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/plans")
@@ -147,5 +148,10 @@ public class PlanController {
         System.out.println("userId: " + userId + ", planIds: " + planIds);
         planService.deletePlans(planIds, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/statistics/recent")
+    public ResponseEntity<List<PlanDto.Chart>> getStatistics() {
+        return ResponseEntity.ok(planService.getRecentActivityChartData());
     }
 }

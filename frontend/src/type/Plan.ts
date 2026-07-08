@@ -22,4 +22,10 @@ export interface GenerateAIPlanForm {
     mainTheme: string;
     selections: string[];
     groupType: string;
+};
+
+export interface PlanChartData {
+    date: string;
+    likes: number;
+    saves: number;
 }

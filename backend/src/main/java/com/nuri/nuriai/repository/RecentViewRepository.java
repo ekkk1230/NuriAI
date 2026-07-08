@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface RecentViewRepository extends JpaRepository<RecentView, Long> {
     @Query("SELECT COUNT(r) > 0 FROM RecentView r WHERE r.user = :user AND r.plan = :plan AND r.viewedAt >= CURRENT_DATE")
@@ -17,4 +19,6 @@ public interface RecentViewRepository extends JpaRepository<RecentView, Long> {
     @Modifying
     @Query("UPDATE RecentView r SET r.viewedAt = CURRENT_TIMESTAMP WHERE r.user = :user AND r.plan = :plan")
     void updateViewTime(@Param("user") User user, @Param("plan") Plan plan);
+
+    List<RecentView> findByUserOrderByViewedAtDesc(User user);
 }

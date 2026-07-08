@@ -1,4 +1,5 @@
 import { API_ROUTES } from "@/constants/api";
+import { AnswerForm, Inquiry, InquiryForm, recentViewPlan } from "@/type/Mypage";
 import { apiFetch } from "@/util/api";
 import { create } from "zustand";
 
@@ -14,6 +15,9 @@ interface MypageStore {
     insertAnswer: (id: number,answer: AnswerForm) => Promise<void>;
     updateAnswer: (id: number, updatedAnswer: AnswerForm) => Promise<void>;
     deleteAnswer: (inquiryId: number) => Promise<void>;
+
+    recentViewPlans: recentViewPlan[];
+    fetchRecentViewPlans: () => Promise<void>;
 };
 
 export const useMypageStore = create<MypageStore>((set) => ({
@@ -166,6 +170,17 @@ export const useMypageStore = create<MypageStore>((set) => ({
             )}));
         } catch (err) {
             console.error(`deleteAnswer 실패: ${err}`);
+        }
+    },
+    recentViewPlans: [],
+    fetchRecentViewPlans: async () => {
+        try{
+            const response = await apiFetch(`${API_ROUTES.RECENT_VIEW.BASE}`);
+            if (!response.ok) throw new Error("최근 조회한 계획안 조회 실패");
+            const recentViewPlansData = await response.json();
+            set({ recentViewPlans: Array.isArray(recentViewPlansData) ? recentViewPlansData : [] });
+        } catch (err) {
+            console.error(`fetchRecentViewPlans 실패: ${err}`);
         }
     }
 }));

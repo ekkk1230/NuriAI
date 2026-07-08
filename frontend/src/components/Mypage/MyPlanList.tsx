@@ -25,7 +25,7 @@ export default function MyPlanList() {
                 ? (
                     <>
                         <ul>
-                            {userPlans.map(p => (
+                            {userPlans.slice(0, 4).map(p => (
                                 <li key={p.id} className="relative flex flex-wrap flex-row items-center w-full p-[1.4rem_1.2rem]">
                                     <div className="w-[5rem] h-[5rem] flex items-center justify-center bg-act0 rounded-[1.2rem] mr-[1.6rem]">
                                         <PiBookOpenTextLight className="text-act0-text text-[3rem]" />
@@ -40,8 +40,8 @@ export default function MyPlanList() {
                                         </div>
                                     </div>
                                     <div className="absolute top-[50%] right-0 translate-[-50%]">
-                                        <div className="flex items-center text-[1.4rem] text-[#777] gap-[.8rem]"><LuEye className="text-[1.4rem] text-[#777]" />{p.viewCount}</div>
-                                        <div className="flex items-center text-[1.4rem] text-[#d020e4] gap-[.8rem]"><CiHeart className="text-[1.4rem] text-[#d020e4]" />{p.likeCount}</div>
+                                        <div className="flex items-center text-[1.4rem] text-[#777] gap-[.8rem]"><LuEye className="text-[1.4rem] text-[#777]" /><span className="font-bold min-w-[2rem]">{p.viewCount}</span></div>
+                                        <div className="flex items-center text-[1.4rem] text-[#d020e4] gap-[.8rem]"><CiHeart className="text-[1.4rem] text-[#d020e4]" /><span className="font-bold min-w-[2rem]">{p.likeCount}</span></div>
                                     </div>
                                 </li>
                             ))}

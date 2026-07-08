@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -351,5 +352,41 @@ public class PlanService {
                 planSaveRepository.delete(save);
             }
         }
+    }
+
+    public List<PlanDto.Chart> getRecentActivityChartData() {
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(6).withHour(0).withMinute(0);
+
+        List<Object[]> likes = planLikeRepository.countLikesByDate(sevenDaysAgo);
+        List<Object[]> saves = planSaveRepository.countSavesByDate(sevenDaysAgo);
+
+        Map<String, Map<String, Long>> chartMap = new LinkedHashMap<>();
+        for (int i = 6; i >= 0; i--) {
+            String date = LocalDateTime.now().minusDays(i).format(DateTimeFormatter.ofPattern("MM.dd"));
+            chartMap.put(date, new HashMap<>(Map.of("likes", 0L, "saves", 0L)));
+        }
+
+        for (Object[] row : likes) {
+            String date = (String) row[0];
+            if (chartMap.containsKey(date)) {
+                chartMap.get(date).put("likes", (Long) row[1]);
+            }
+        }
+        for (Object[] row : saves) {
+            String date = (String) row[0];
+            if (chartMap.containsKey(date)) {
+                chartMap.get(date).put("saves", (Long) row[1]);
+            }
+        }
+
+        List<PlanDto.Chart> result = new ArrayList<>();
+        chartMap.forEach((date, counts) -> {
+            result.add(PlanDto.Chart.builder()
+                    .date(date)
+                    .likes(counts.get("likes"))
+                    .saves(counts.get("saves"))
+                    .build());
+        });
+        return result;
     }
 }

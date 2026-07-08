@@ -1,5 +1,6 @@
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { ContentBox } from "./ContentBox";
+import { Plan } from "@/type/Plan";
 
 const data = [
     { name: '신체운동', count: 3 },
@@ -11,13 +12,22 @@ const data = [
 
 const COLORS = [ '#e9ecef', '#d0ebff', '#e2f9b8', '#ffdeeb', '#d3f9d8',];
 
-export default function CategoryBarChart() {
+export default function CategoryBarChart({ userPlans }: { userPlans: Plan[] }) {
+    const CATEGORIES = ['신체운동', '의사소통', '사회관계', '예술경험', '자연탐구'];
+    const allPlans = userPlans.flatMap(user => user.plans);
+    // console.log(allPlans)
+
+    const chartDatas = CATEGORIES.map(cate => {
+        const count = allPlans.filter(p => p.domain === cate).length;
+        return { name: cate, count: count };
+    });
+
     return (
         <ContentBox title="영역별 계획안" subTitle="내가 생성한 영역별 계획안">
             <ResponsiveContainer width="100%" height="80%">
                 <BarChart
                     layout="vertical" // 가로형 차트를 위한 설정
-                    data={data}
+                    data={chartDatas}
                     margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
                 >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0f0f0" />

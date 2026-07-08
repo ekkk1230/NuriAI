@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { API_ROUTES } from "@/constants/api";
-import { GenerateAIPlanForm, Plan } from "@/type/Plan";
+import { GenerateAIPlanForm, Plan, PlanChartData } from "@/type/Plan";
 import { apiFetch } from "@/util/api";
 import { User } from "@/type/User";
 
@@ -23,6 +23,8 @@ interface PlanStore {
     likePlan: (user: User, plan: Plan) => Promise<void>;
     addStorage: (user: User, plan: Plan) => Promise<void>;
     getFilteredPlans: (searchTit: string, searchAge: string, isSavedFilter: boolean, authorFilter: string, user: any) => Plan[];
+    recentStatistics: PlanChartData[];
+    fetchRecentStatistics: () => Promise<void>;
 };
 
 export const usePlanStore = create<PlanStore>((set, get) => ({
@@ -243,5 +245,20 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
 
             return plan.author === user?.userNickname;
         })
+    },
+    recentStatistics: [],
+    fetchRecentStatistics: async () => {
+        try {
+            const response = await apiFetch(`${API_ROUTES.PLAN.RECENT}`);
+            
+            if (!response.ok) throw new Error("통계 데이터를 가져오는 데 실패했습니다.");
+            
+            // response.json()을 통해 실제 데이터(List<PlanDto.Chart>)를 받습니다.
+            const statisticsData = await response.json();
+            
+            set({ recentStatistics: statisticsData });
+        } catch (err) {
+            console.error(`통계 조회 실패: ${err}`);
+        }
     },
 }));

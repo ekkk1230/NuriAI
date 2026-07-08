@@ -13,14 +13,22 @@ export interface Inquiry {
     createdAt?: string,
     updatedAt?: string,
     answer?: Answer,
-    user: User
+    user?: User
 };
 
 export interface InquiryForm {
     title: string;
     inquiryContent: string;
-}
+};
 
 export interface AnswerForm {
     answerContent: string;
+};
+
+export interface recentViewPlan {
+    planId: number;
+    mainTheme: string;
+    age: string;
+    author: string;
+    viewedAt: string;
 }

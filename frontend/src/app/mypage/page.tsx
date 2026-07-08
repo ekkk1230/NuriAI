@@ -23,7 +23,7 @@ function page() {
         editingId, setEditingId, onClickEdit, handleUpdate,
         onSubmitAnswer, answerForm, setAnswerForm,
         editingAnswerId, setEditingAnswerId, handleUpdateAnswer, handledeleteAnswer,
-        userCollectPlans
+        userCollectPlans, recentViewPlans, recentStatistics
     } = useMypage();
 
     const { openModal, closeModal } = useUiStore();
@@ -73,13 +73,13 @@ function page() {
                     </div>
 
                     <div className="mb-[4rem] grid gap-[2rem] mx-auto grid-cols-[2fr_1.5fr]">
-                        <RelationChart />
-                        <CategoryBarChart />
+                        <RelationChart recentStatistics={recentStatistics} />
+                        <CategoryBarChart userPlans={userPlans} />
                     </div>
 
                     <div className="mb-[4rem] grid gap-[2rem] mx-auto grid-cols-2">
                         <MyPlanList />
-                        <MyRecentViewList />
+                        <MyRecentViewList recentViewPlans={recentViewPlans} />
                     </div>
 
                     <div className="bg-bgCard mx-auto mb-[4rem] p-[2rem] rounded-[1.2rem] shadow-sm relative">
@@ -180,7 +180,7 @@ function page() {
                                                         <div className="flex justify-between items-center mb-[.6rem]">
                                                             <p className="font-semibold text-[#555]">문의 내용</p>
                                                             
-                                                            {item.status === "PENDING" && item.user.userId === user?.userId && (
+                                                            {item.status === "PENDING" && item.user?.userId === user?.userId && (
                                                                 <div className="flex gap-[.8rem] text-[1.4rem] text-textMuted font-medium">
                                                                     <button 
                                                                         onClick={(e) => {

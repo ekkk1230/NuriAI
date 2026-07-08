@@ -139,4 +139,14 @@ public class PlanDto {
     public static class PlanId {
         private Long id;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Chart {
+        private String date;
+        private Long likes;
+        private Long saves;
+    }
 }

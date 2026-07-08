@@ -18,6 +18,7 @@ export const API_ROUTES = {
         COLLECTED: (userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
         UPDATE: `${API_BASE_URL}/api/plans/update`,
         DELETEMYITEMS: `${API_BASE_URL}/api/plans/delete-batch`,
+        RECENT: `${API_BASE_URL}/api/plans/statistics/recent`,
     },
     INQUIRY: {
         BASE: `${API_BASE_URL}/api/inquiries`,
@@ -26,5 +27,9 @@ export const API_ROUTES = {
         INSERT_ANSWER: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}/answer`,
         UPDATE_ANSWER: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}/answer`,
         DELETE_ANSWER: (inquiryId: number) => `${API_BASE_URL}/api/inquiries/${inquiryId}/answer`,
+    },
+    RECENT_VIEW: {
+        BASE: `${API_BASE_URL}/api/recent-views`,
     }
+
 } as const;
