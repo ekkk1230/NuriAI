@@ -9,7 +9,7 @@ interface PlanStore {
     isLoaded: boolean;
     currentCreatePlan: Plan[];
     isFetchPlanLoading: boolean;
-    fetchAllPlans: () => Promise<void>;
+    fetchAllPlans: (page: number, keyword: string, age: string, domain: string) => Promise<void>;
     fetchPlanById: (id: number) => Promise<void>;
     updatePlanViewCount: (id: number) => Promise<void>;
     fetchUserPlans: (user: User)  => Promise<void>;
@@ -23,10 +23,19 @@ interface PlanStore {
     updatePlan: (plan: Plan) => Promise<void>;
     likePlan: (user: User, plan: Plan) => Promise<void>;
     addStorage: (user: User, plan: Plan) => Promise<void>;
-    getFilteredPlans: (searchTit: string, searchAge: string, isSavedFilter: boolean, authorFilter: string, user: any) => Plan[];
+    getFilteredPlans: (searchTit: string, searchAge: string, isSavedFilter: boolean, authorFilter: string, user: any, customData?: Plan[]) => Plan[];
     recentStatistics: PlanChartData[];
     fetchRecentStatistics: () => Promise<void>;
     isLoadingUserPlans: boolean;
+    totalPages: number;
+    totalCounts: number;
+    currentPage: number;
+    currentKeyword: string;
+    currentAge: string;
+    currentDomain: string;
+    searchPlans: (keyword: string, age: string, domain: string) => Promise<void>;
+    fetchPage: (page: number) => Promise<void>;
+    userCollectedData: Plan[];
 };
 
 export const usePlanStore = create<PlanStore>((set, get) => ({
@@ -34,18 +43,45 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     isLoaded: false,
     isLoadingUserPlans: false,
     isFetchPlanLoading: false,
-    fetchAllPlans: async () => {
+    totalPages: 0,
+    totalCounts: 0,
+    currentPage: 0,
+    currentKeyword: "",
+    currentAge: "전체",
+    currentDomain: "전체",
+    userCollectedData: [],
+    searchPlans: async (keyword, age, domain) => {
+        set({ currentKeyword: keyword, currentAge: age, currentDomain: domain });
+        await get().fetchAllPlans(0, keyword, age, domain);
+    },
+    fetchPage: async (page) => {
+        const { currentKeyword, currentAge, currentDomain } = get();
+        await get().fetchAllPlans(page, currentKeyword, currentAge, currentDomain);
+    },
+    fetchAllPlans: async (page = 0, keyword = "", age = "전체", domain = "전체") => {
         set ({ isFetchPlanLoading: true });
         try {
-            const response = await apiFetch(`${API_ROUTES.PLAN.BASE}`); 
+            let url = `${API_ROUTES.PLAN.BASE}?page=${page}&size=12`;
+            if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
+            if (age && age !== "전체") url += `&age=${encodeURIComponent(age)}`;
+            if (domain && domain !== "전체") url += `&domain=${encodeURIComponent(domain)}`;
+
+            const response = await apiFetch(url);
             // console.log("응답 상태:", response.status);
             if (!response.ok) throw new Error("전체 목록 조회 실패");
             const data = await response.json();
-            // console.log("가져온 데이터:", data);
-            set({ planStorage: Array.isArray(data) ? data : [data], isLoaded: true });
+            console.log("가져온 데이터:", data);
+            // set({ planStorage: Array.isArray(data) ? data : [data], isLoaded: true });
+            set({
+                planStorage: data.content || [],
+                totalPages: data.totalPages,
+                totalCounts: data.totalElements,
+                currentPage: data.number,
+                isLoaded: true
+            });
         } catch (err) {
             console.error(err);
-            set({ isLoaded: true });
+            set({ isLoaded: true, planStorage: [] });
         } finally {
             set ({ isFetchPlanLoading: false });
         }
@@ -123,12 +159,16 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     fetchUserCollectItem: async (userId) => {
         try {
             const response = await apiFetch(API_ROUTES.PLAN.COLLECTED(userId));
+            const data = await response.json();
+            
+            // [디버깅] 서버 응답이 어떤 구조인지 콘솔로 확실히 확인
+            console.log("서버가 보내준 raw 데이터 구조:", data);
 
-            if (!response.ok) throw new Error("사용자 보관함 목록 조회 실패");
-            const collectItem = await response.json();
-            set({ userCollectPlans: Array.isArray(collectItem) ? collectItem : [collectItem] })
+            const result = Array.isArray(data) ? data : (data.content || data.data || []);
+            
+            set({ userCollectPlans: result, userCollectedData: result }); 
         } catch (err) {
-            console.error(`fetchUserCollectItem 실패 ${err}`);
+            console.error(`fetchUserCollectItem 실패: ${err}`);
         }
     },
     userPlans: [],
@@ -230,9 +270,8 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             console.error(`addStorage 실패: ${err}`);
         }
     },
-    getFilteredPlans: (searchTit, searchAge, isSavedFilter, authorFilter, user) => {
+    getFilteredPlans: (searchTit, searchAge, isSavedFilter, authorFilter, user, customData) => {
         const { planStorage } = get();
-
 
         return planStorage.filter(plan => {
             const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
@@ -245,6 +284,8 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             if (authorFilter) {
                 return plan.author === decodeURIComponent(authorFilter);
             }
+
+            if (!user) return true;
 
             // 보관함 필터
             if (isSavedFilter) {

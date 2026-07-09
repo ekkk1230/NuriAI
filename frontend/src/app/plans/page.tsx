@@ -9,26 +9,46 @@ import NoPlan from "@/components/Planner/NoPlan";
 import { FaUserLarge, FaHeart, FaEye } from "react-icons/fa6";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { useForm } from "@/hook/useForm";
-import LoadingFecthPlans from "@/components/Loading/LoadingFetchPlans";
 import LoadingFetchPlans from "@/components/Loading/LoadingFetchPlans";
+import { Paging } from "@/components/Paging/Paging";
 
 
 function page() {
     const router = useRouter();
     const { user } = useWelcomeStore();
-    const { planStorage, fetchAllPlans, isFetchPlanLoading } = usePlanStore();
+    const { planStorage, searchPlans, isFetchPlanLoading, currentPage, totalPages, totalCounts } = usePlanStore();
 
-    useEffect(() => {
-        fetchAllPlans()
-    }, [fetchAllPlans]);
-
-    // console.log(planStorage)
     const { form: searchForm, handleChange } = useForm({
         searchTxt: "",
         searchAge: "",
         searchArea: "",
         sortType: "latest"
     });
+
+    useEffect(() => {
+        usePlanStore.getState().fetchPage(0);
+    }, []);
+        
+    const handleSearch = () => {
+        searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea);
+    };
+
+    const handlePageChange = (page: number) => {
+        usePlanStore.getState().fetchPage(page);
+    };
+
+    // console.log(planStorage)
+
+
+    useEffect(() => {
+        if (searchForm.searchTxt === undefined) return; 
+
+        const timer = setTimeout(() => {
+            usePlanStore.getState().searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea);
+        }, 500);
+        
+        return () => clearTimeout(timer);
+    }, [searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea]);
  
     const [sortType, setSortType] = useState<string>("rank");
 
@@ -38,44 +58,44 @@ function page() {
         return `${base} ${active}`;
     };
 
-    const filteredPlans = planStorage.filter(plan => {
-        const keyword = searchForm.searchTxt.toLowerCase();
-        const matchesKeyword = !keyword || 
-                           plan.mainTheme.toLowerCase().includes(keyword) || 
-                           plan.activeIntro.toLowerCase().includes(keyword);
-        const matchesAge = (!searchForm.searchAge || searchForm.searchAge === "전체") 
-                       ? true 
-                       : plan.age === `만 ${searchForm.searchAge}세`;
-        const matchesDomain = (!searchForm.searchArea || searchForm.searchArea === "전체") 
-                        ? true
-                        : plan.plans.some(p => p.domain === searchForm.searchArea);
+    // const filteredPlans = (planStorage || []).filter(plan => {
+    //     const keyword = searchForm.searchTxt.toLowerCase();
+    //     const matchesKeyword = !keyword || 
+    //                        plan.mainTheme.toLowerCase().includes(keyword) || 
+    //                        plan.activeIntro.toLowerCase().includes(keyword);
+    //     const matchesAge = (!searchForm.searchAge || searchForm.searchAge === "전체") 
+    //                    ? true 
+    //                    : plan.age === `만 ${searchForm.searchAge}세`;
+    //     const matchesDomain = (!searchForm.searchArea || searchForm.searchArea === "전체") 
+    //                     ? true
+    //                     : plan.plans.some(p => p.domain === searchForm.searchArea);
 
-        return matchesKeyword && matchesAge && matchesDomain;
-    });
+    //     return matchesKeyword && matchesAge && matchesDomain;
+    // });
     
-    const sortedPlans = [...filteredPlans].sort((a, b) => {
-        const dateA = new Date(a.createdAt).getTime();
-        const dateB = new Date(b.createdAt).getTime();
-        const viewA = a.viewCount;
-        const viewB = b.viewCount;
-        const likeA = a.likeCount;
-        const likeB = b.likeCount;
+    // const sortedPlans = [...filteredPlans].sort((a, b) => {
+    //     const dateA = new Date(a.createdAt).getTime();
+    //     const dateB = new Date(b.createdAt).getTime();
+    //     const viewA = a.viewCount;
+    //     const viewB = b.viewCount;
+    //     const likeA = a.likeCount;
+    //     const likeB = b.likeCount;
 
-        return sortType === "date" ? dateB - dateA : sortType === "view" ? viewB - viewA : likeB - likeA;
-    });
+    //     return sortType === "date" ? dateB - dateA : sortType === "view" ? viewB - viewA : likeB - likeA;
+    // });
 
     const handleNavigate = (id: number) => {
         router.push(`/storage/${id}`);
     }
 
     return (
-        <div className="bg-bgCard flex flex-col h-[100%]">
+        <div className="bg-bgCard flex flex-col h-[100%] overflow-y-hidden">
             <div className="border-b-[.1rem] border-solid border-[#eee] p-[2.6rem]">
                 <p className="text-[2.8rem] font-bold mb-[1rem]">계획안 둘러보기</p>
                 <p className="text-[1.8rem] font-semibold text-textMuted">다른 선생님들이 만든 교육 계획안을 참고하여 활용해보세요.</p>
             </div>
 
-            <div className="h-full border-b-[.1rem] border-solid border-[#eee] p-[1.8rem_2.6rem] bg-bgPreview">
+            <div className="h-full overflow-y-hidden border-b-[.1rem] border-solid border-[#eee] p-[1.8rem_2.6rem] bg-bgPreview">
                 <div className="mt-[2rem] shadow-sm p-[2rem] rounded-[.8rem] bg-bgCard">
                     <div className="flex gap-[.4rem]">
                         <input type="text" name="searchTxt" value={searchForm.searchTxt} onChange={handleChange} placeholder="제목이나 내용으로 계획안을 검색할 수 있습니다." />
@@ -129,53 +149,55 @@ function page() {
 
                 {isFetchPlanLoading ? (
                     <LoadingFetchPlans type="plans" />
-                ) : sortedPlans.length >= 1 ? (
+                ) : planStorage.length >= 1 ? (
                     <>
-                            <p className="text-textMuted text-[1.4rem] font-semibold my-[3rem_1rem]">총 <span className="text-main font-bold">{sortedPlans.length}개</span>의 계획안</p>
-                            <div className="grid grid-cols-4 gap-[1.6rem]">
-                                {sortedPlans.map((plan, idx) => (
-                                    <div onClick={() => handleNavigate(plan.id)} key={`${plan.id}-${idx}`} className="cursor-pointer relative bg-bgCard rounded-[.8rem] shadow-sm before:content-[''] before:absolute before:left-0 before:top-0 before:rounded-[.8rem_.8rem_0_0] p-[1.6rem] before:bg-main-gradient before:w-full before:h-[.4rem]">
-                                        <p className="text-[2rem] font-bold mb-[1rem]">{plan.mainTheme}</p>
-                                        <ul className="flex gap-[.4rem] items-center text-[1.4rem] text-textMuted mb-[1rem]">
-                                            <li className="after:content-['|'] flex gap-[.4rem] items-center text-[1.4rem] text-textMuted"><FaUserLarge />{plan.author} 선생님</li>
-                                            <li className="text-[1.4rem] ">{plan.age}</li>
-                                        </ul>
+                        <p className="text-textMuted text-[1.4rem] font-semibold my-[3rem_1rem]">총 <span className="text-main font-bold">{totalCounts}개</span>의 계획안</p>
+                        <div className="grid grid-cols-4 gap-[1.6rem]">
+                            {planStorage.map((plan, idx) => (
+                                <div onClick={() => handleNavigate(plan.id)} key={`${plan.id}-${idx}`} className="cursor-pointer relative bg-bgCard rounded-[.8rem] shadow-sm before:content-[''] before:absolute before:left-0 before:top-0 before:rounded-[.8rem_.8rem_0_0] p-[1.6rem] before:bg-main-gradient before:w-full before:h-[.4rem]">
+                                    <p className="text-[2rem] font-bold mb-[1rem]">{plan.mainTheme}</p>
+                                    <ul className="flex gap-[.4rem] items-center text-[1.4rem] text-textMuted mb-[1rem]">
+                                        <li className="after:content-['|'] flex gap-[.4rem] items-center text-[1.4rem] text-textMuted"><FaUserLarge />{plan.author} 선생님</li>
+                                        <li className="text-[1.4rem] ">{plan.age}</li>
+                                    </ul>
 
-                                        <div>
-                                            <div className="flex gap-[.4rem] mb-[.8rem] items-center">
-                                                <p className="text-[1.4rem]">{plan.plans.length}개 활동 - </p>
-                                                {/* 활동 영역 */}
-                                                <ul className="flex gap-[.4rem]">
-                                                    {plan.plans.map((item, idx) => {
-                                                        const domain = item.domain.split(" ")[0];
-                                                        const domainStyle = DOMAIN_STYLES[domain as keyof typeof DOMAIN_STYLES];
-                                                        // console.log(DOMAIN_STYLES[domain])
+                                    <div>
+                                        <div className="flex gap-[.4rem] mb-[.8rem] items-center">
+                                            <p className="text-[1.4rem]">{plan.plans.length}개 활동 - </p>
+                                            {/* 활동 영역 */}
+                                            <ul className="flex gap-[.4rem]">
+                                                {plan.plans.slice(0,3).map((item, idx) => {
+                                                    const domain = item.domain.split(" ")[0];
+                                                    const domainStyle = DOMAIN_STYLES[domain as keyof typeof DOMAIN_STYLES];
+                                                    // console.log(DOMAIN_STYLES[domain])
 
-                                                        return (
-                                                            <li 
-                                                                key={idx} 
-                                                                className={`text-[1.2rem] px-[.8rem] py-[.4rem] rounded-[60rem] ${domainStyle}`}
-                                                            >
-                                                                {item.domain}
-                                                            </li>
-                                                        )
-                                                    })}
-                                                </ul>
-                                            </div>
+                                                    return (
+                                                        <li 
+                                                            key={idx} 
+                                                            className={`text-[1.2rem] px-[.8rem] py-[.4rem] rounded-[60rem] ${domainStyle}`}
+                                                        >
+                                                            {item.domain}
+                                                        </li>
+                                                    )
+                                                })}
+                                            </ul>
+                                        </div>
 
-                                            {/* 활동 목표 */}
-                                            <div className="text-[1.4rem] mt-[1rem] line-clamp-2">{plan.activeIntro}</div>
+                                        {/* 활동 목표 */}
+                                        <div className="text-[1.4rem] mt-[1rem] line-clamp-2">{plan.activeIntro}</div>
 
-                                            <div className="flex gap-[1.2rem] mt-[.8rem]">
-                                                <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaHeart className="text-red-500" />{plan.likeCount}</p>
-                                                <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaEye />{plan.viewCount}</p>
-                                                <p className="text-[1.4rem] text-textMuted flex gap-[.4rem] text-textMuted items-center ml-auto"><MdOutlineAccessTime />{plan.createdAt.split('T')[0]}</p>
-                                            </div>
+                                        <div className="flex gap-[1.2rem] mt-[.8rem]">
+                                            <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaHeart className="text-red-500" />{plan.likeCount}</p>
+                                            <p className="text-[1.4rem] flex items-center gap-[.4rem] text-textMuted"><FaEye />{plan.viewCount}</p>
+                                            <p className="text-[1.4rem] text-textMuted flex gap-[.4rem] text-textMuted items-center ml-auto"><MdOutlineAccessTime />{plan.createdAt.split('T')[0]}</p>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <Paging currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                    </>
                 ) : (
                     <NoPlan txt="현재 준비되어 있는 계획안이 없습니다." showButton={true} router={router} />
                 )}

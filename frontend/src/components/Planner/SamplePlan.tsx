@@ -8,7 +8,7 @@ function SamplePlan() {
     const { planStorage, fetchAllPlans } = usePlanStore();
 
     useEffect(() => {
-        fetchAllPlans()
+        fetchAllPlans(0, "", "전체", "전체")
     }, [fetchAllPlans]);
 
     const randomIndex = planStorage.length > 0 
@@ -17,7 +17,14 @@ function SamplePlan() {
 
     const randomPlan = randomIndex !== null ? planStorage[randomIndex] : null;
 
-    if (!randomPlan) return <p className="text-center text-[1.6rem] text-textMuted">샘플 계획안이 없습니다.</p>
+    if (!randomPlan) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[38rem]">
+                <div className="w-[5rem] h-[5rem] border-[.6rem] border-[#eee] border-t-[#ad46ff] rounded-full animate-spin"></div>
+            
+            </div>
+        )
+    }
     
     return (
          <div className="rounded-[2.4rem] bg-bgPreview padding-12 p-[3.2rem]">
@@ -39,7 +46,7 @@ function SamplePlan() {
                             {Object.entries(randomPlan?.plans?.[0]?.introduction ?? {})
                                 .slice(0, 1)
                                 .map(([key, cont], idx) => (
-                                    <li key={idx} className="...">
+                                    <li key={idx} className="text-[1.6rem] before:content-['·'] before:mr-2 flex items-center gap-[.4rem]">
                                         {cont}
                                     </li>
                                 ))
