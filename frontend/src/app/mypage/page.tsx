@@ -74,7 +74,7 @@ function page() {
 
                     <InquiryWrap />
 
-                    <button onClick={handleWithdraw} className="text-[1.6rem] bg-red-800 text-textLight font-semibold rounded-2xl p-[1.8rem_2rem] mb-[4rem] block ml-auto">회원 탈퇴</button>
+                    <button onClick={handleWithdraw} className="text-[1.4rem] bg-red-800 text-textLight font-semibold rounded-2xl p-[1.2rem_2rem] mb-[4rem] block ml-auto">회원 탈퇴</button>
                 </div>
             </div>
         </div>

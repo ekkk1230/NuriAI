@@ -51,7 +51,7 @@ export default function InquiryWrap() {
                     </div>
                 )}
                 
-                <button onClick={handleWrite} className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem]">문의하기</button>
+                <button onClick={handleWrite} className="bg-main text-textLight text-[1.4rem] font-semibold p-[1rem_1.2rem] rounded-[.8rem] block ml-auto disabled:bg-[#c7adff]">문의하기</button>
             </div>
 
             {writeInQuiry && (
@@ -64,7 +64,7 @@ export default function InquiryWrap() {
                         <button 
                             disabled={!inquiryForm.title.trim() || !inquiryForm.inquiryContent.trim()}
                             
-                            className="bg-main text-textLight text-[1.2rem] p-[.8rem_1rem] rounded-[.8rem] block ml-auto disabled:bg-[#c7adff]">등록</button>
+                            className="bg-main text-textLight text-[1.4rem] font-semibold p-[1rem_1.2rem] rounded-[.8rem] block ml-auto disabled:bg-[#c7adff] block ml-auto disabled:bg-[#c7adff]">등록</button>
                     </form>
                 </div>
             )}
