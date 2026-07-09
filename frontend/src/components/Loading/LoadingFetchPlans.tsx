@@ -12,15 +12,15 @@ export default function LoadingFetchPlans({ type }: { type: string }) {
                                         <div className="h-[3rem] w-[80%] mb-[1rem] bg-gray-300"></div>
                                     </div>
 
-                                    <div className="h-[3rem] w-[25rem] ml-[2rem] my-[2rem_1rem] bg-gray-300"></div>
-                                    <div className="h-[8rem] w-[20rem] ml-[2rem] mb-[1rem] bg-gray-300"></div>
+                                    <div className="h-[3rem] w-[20%] ml-[2rem] my-[2rem_1rem] bg-gray-300"></div>
+                                    <div className="h-[8rem] w-[80%] ml-[2rem] mb-[1rem] bg-gray-300"></div>
                                 </div>;
 
     return (
         <div className="w-full h-full bg-bgPreview">
             <div className="grid grid-cols-4 gap-[1.6rem] mt-[4rem]">
                 {[1, 2, 3, 4].map((i) => (
-                    type === "plans" ? (<PlansItemBox />) : <StorageItemBox />
+                    type === "plans" ? (<PlansItemBox key={i} />) : <StorageItemBox key={i} />
                 ))}
             </div>
 
