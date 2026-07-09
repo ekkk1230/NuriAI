@@ -370,8 +370,6 @@ public class PlanService {
         List<PlanLike> allLikes = planLikeRepository.findAllByPlan_Author(user.getUserNickname());
 
         System.out.println("가져온 저장 로그 개수: " + allSaves.size());
-
-        System.out.println("가져온 저장 로그 개수: " + allSaves.size());
         System.out.println("가져온 좋아요 로그 개수: " + allLikes.size());
 
         for (PlanSave save : allSaves) {
