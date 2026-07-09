@@ -6,6 +6,7 @@ import { usePlanStore } from "@/store/usePlanStore";
 import { AGE_OPTIONS } from "@/constants/activityOptions"; 
 import PlanItem from "@/components/Planner/PlanItem";
 import { useWelcomeStore } from "@/store/useWelcomeStore";
+import LoadingFetchPlans from "../Loading/LoadingFetchPlans";
 
 const SORT_OPTIONS = [
     { value: "latest", label: "최신 순" },
@@ -18,7 +19,7 @@ function page() {
 
     const router = useRouter();
     const { fetchAllPlans, isLoaded, getFilteredPlans,
-        fetchUserPlans, fetchUserCollectItem, userPlans, userCollectPlans, deletePlans } = usePlanStore();
+        fetchUserPlans, fetchUserCollectItem, userPlans, userCollectPlans, deletePlans, isFetchPlanLoading } = usePlanStore();
     const { user } = useWelcomeStore();
     
     const [searchTit, setSearchTit]  = useState<string>("");
@@ -76,7 +77,7 @@ function page() {
 
     const filteredPlans = getFilteredPlans(searchTit, searchAge, isSavedFilter, authorFilter, user);
     // console.log(authorFilter)
-    console.log(filteredPlans)
+    // console.log(filteredPlans)
 
     // 필터링 로직: 검색어와 선택된 연령에 따라 plans 배열 필터링
     const displayedPlans = [...filteredPlans].sort((a, b) => {
@@ -166,7 +167,9 @@ function page() {
 
             {/* 계획안 목록 렌더링 영역 */}
             <div className="bg-bgPreview w-[100%] h-[100%] p-[2.6rem] flex-1">
-                {displayedPlans.length >= 1 ? (
+                {isFetchPlanLoading ? (
+                    <LoadingFetchPlans type="storage" />
+                ) : displayedPlans.length >= 1 ? (
                     <>
                         <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
                         <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
@@ -186,7 +189,6 @@ function page() {
                         </div>
                     </>
                 ) : (
-                    // 데이터가 없을 때 표시할 UI
                     <>
                         <div className="mt-[10rem] text-center flex flex-col gap-[0.6rem] mb-[2.4rem]">
                             <p className="text-[1.8rem] font-bold text-[#212529]">보관된 계획안이 없습니다</p>

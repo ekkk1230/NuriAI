@@ -3,7 +3,6 @@ import { API_ROUTES } from "@/constants/api";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { apiFetch } from "@/util/api";
-import { access } from "node:fs/promises";
 
 interface WelcomeStore {
     user: User | null,

@@ -9,12 +9,14 @@ import NoPlan from "@/components/Planner/NoPlan";
 import { FaUserLarge, FaHeart, FaEye } from "react-icons/fa6";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { useForm } from "@/hook/useForm";
+import LoadingFecthPlans from "@/components/Loading/LoadingFetchPlans";
+import LoadingFetchPlans from "@/components/Loading/LoadingFetchPlans";
 
 
 function page() {
     const router = useRouter();
     const { user } = useWelcomeStore();
-    const { planStorage, fetchAllPlans } = usePlanStore();
+    const { planStorage, fetchAllPlans, isFetchPlanLoading } = usePlanStore();
 
     useEffect(() => {
         fetchAllPlans()
@@ -125,9 +127,10 @@ function page() {
                     </div>
                 </div>
 
-                {sortedPlans.length >= 1 
-                    ? (
-                        <>
+                {isFetchPlanLoading ? (
+                    <LoadingFetchPlans type="plans" />
+                ) : sortedPlans.length >= 1 ? (
+                    <>
                             <p className="text-textMuted text-[1.4rem] font-semibold my-[3rem_1rem]">총 <span className="text-main font-bold">{sortedPlans.length}개</span>의 계획안</p>
                             <div className="grid grid-cols-4 gap-[1.6rem]">
                                 {sortedPlans.map((plan, idx) => (
@@ -173,13 +176,10 @@ function page() {
                                 ))}
                             </div>
                         </>
-                    ) 
-                    : (
-                        <NoPlan txt="현재 준비되어 있는 계획안이 없습니다. 새로운 계획안을 만들어주세요." showButton={true} router={router} />
-                    )
-                }
+                ) : (
+                    <NoPlan txt="현재 준비되어 있는 계획안이 없습니다." showButton={true} router={router} />
+                )}
             </div>
-
             
         </div>
     )

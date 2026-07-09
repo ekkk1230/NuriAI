@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import StorageContent from "@/components/Storage/StorageContent";
-import { useParams } from "next/navigation";
 
 export default function Page() {
     return (

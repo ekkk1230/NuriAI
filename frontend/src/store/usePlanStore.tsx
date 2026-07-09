@@ -8,6 +8,7 @@ interface PlanStore {
     planStorage: Plan[];
     isLoaded: boolean;
     currentCreatePlan: Plan[];
+    isFetchPlanLoading: boolean;
     fetchAllPlans: () => Promise<void>;
     fetchPlanById: (id: number) => Promise<void>;
     updatePlanViewCount: (id: number) => Promise<void>;
@@ -32,7 +33,9 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     planStorage: [],
     isLoaded: false,
     isLoadingUserPlans: false,
+    isFetchPlanLoading: false,
     fetchAllPlans: async () => {
+        set ({ isFetchPlanLoading: true });
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.BASE}`); 
             // console.log("응답 상태:", response.status);
@@ -43,6 +46,8 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         } catch (err) {
             console.error(err);
             set({ isLoaded: true });
+        } finally {
+            set ({ isFetchPlanLoading: false });
         }
     },
 
