@@ -1,12 +1,16 @@
 import { DOMAIN_STYLES } from "@/constants/activityOptions";
 import { usePlanStore } from "@/store/usePlanStore";
+import { useUiStore } from "@/store/useUiStore";
 // import html2pdf from "html2pdf.js";
 import { useRef } from "react";
-import { MdEdit, MdSave, MdSaveAlt, MdMenuBook, MdReportProblem } from "react-icons/md"
+import { MdEdit, MdMenuBook, MdReportProblem } from "react-icons/md"
 import { TbTargetArrow } from "react-icons/tb";
+import EditModal from "../Modal/modalContents/EditModal";
+import { Plan } from "@/type/Plan";
 
 function PlanPreview() {
     const { currentCreatePlan } = usePlanStore();
+    const { openModal, closeModal } = useUiStore();
     // console.log(currentCreatePlan)
     const pdfRef = useRef<HTMLDivElement>(null);
 
@@ -25,11 +29,16 @@ function PlanPreview() {
             html2canvas: { scale: 2 }, 
             jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
         };
+    };
+    
+    const handleEdit = () => {
+        const deepCopiedPlan = JSON.parse(JSON.stringify(currentCreatePlan[0])); // 원본을 완전히 복제한 새로운 데이터 생성
+        openModal("계획안 수정", "CONFIRM", <EditModal plan={deepCopiedPlan} />);
     }
 
     return (
         <>
-            <div className="border-b-[0.1rem] border-solid border-[#eee] bg-bgCard p-[2rem] flex justify-between">
+            <div className="w-full border-b-[0.1rem] border-solid border-[#eee] bg-bgCard p-[2rem] flex justify-between">
                 <div>
                     <p className="text-[1.6rem] font-bold">{currentCreatePlan[0].mainTheme}</p>
                     <ul className="flex gap-[.4rem] mt-[.4rem] text-[1.4rem] text-textMuted">
@@ -62,7 +71,7 @@ function PlanPreview() {
                                     <span className="font-semibold text-[#000]">{idx + 1}</span> / {planCount}
                                 </div>
 
-                                <button className="p-[1.2rem_2rem] text-[1.6rem] font-semibold text-[#06599d] bg-[#c8e0fd] hover:bg-[#a6caf7] transition-bg duration-300 flex gap-[.4rem] rounded-[1.2rem] ml-auto items-center cursor-pointer"><MdEdit className="text-[1.8rem]"/>수정하기</button>
+                                <button onClick={handleEdit} className="p-[1.2rem_2rem] text-[1.6rem] font-semibold text-[#06599d] bg-[#c8e0fd] hover:bg-[#a6caf7] transition-bg duration-300 flex gap-[.4rem] rounded-[1.2rem] ml-auto items-center cursor-pointer"><MdEdit className="text-[1.8rem]"/>수정하기</button>
                             </div>
 
                             <p className="text-[2.4rem] font-bold my-[2.2rem]">{p.activityName}-{p.domain}</p>
@@ -98,9 +107,6 @@ function PlanPreview() {
                                                 </div>
                                             </li>
                                         ))}
-                                        {/* <li className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">도입: asf 주제를 소개하고 유아들의 흥미를 유발합니다</li>
-                                        <li className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">전개: 신체운동 영역의 핵심 활동을 진행하며 유아들이 적극적으로 참여하도록 합니다</li>
-                                        <li className="flex gap-[.4rem] before:content-['•'] before:block text-[1.6rem]">마무리: 활동을 정리하고 경험을 나누며 마무리합니다</li> */}
                                     </ul>
                                 </li>
                                 <li>

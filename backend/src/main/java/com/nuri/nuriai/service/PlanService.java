@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -388,5 +390,29 @@ public class PlanService {
                     .build());
         });
         return result;
+    }
+
+    public List<PlanDto.Chart> getMyStatistics(User user) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(6); // 오늘 포함 7일 전
+
+        List<Plan> plans = planRepository.findByAuthorAndCreatedAtAfter(
+                user.getUserNickname(), startDate.atStartOfDay());
+
+        Map<String, PlanDto.Chart> dbDataMap = plans.stream()
+                .collect(Collectors.groupingBy(
+                        p -> p.getCreatedAt().toLocalDate().toString(),
+                        Collectors.collectingAndThen(Collectors.toList(), list -> {
+                            long totalLikes = list.stream().mapToLong(Plan::getLikeCount).sum();
+                            long totalSaves = list.stream().mapToLong(Plan::getSaveCount).sum();
+                            return new PlanDto.Chart(list.get(0).getCreatedAt().toLocalDate().toString(), totalLikes, totalSaves);
+                        })
+                ));
+
+        // 3. 7일치 날짜를 순회하며 데이터가 있으면 넣고, 없으면 0으로 채움
+        return IntStream.range(0, 7)
+                .mapToObj(i -> startDate.plusDays(i).toString())
+                .map(date -> dbDataMap.getOrDefault(date, new PlanDto.Chart(date, 0L, 0L)))
+                .collect(Collectors.toList());
     }
 }

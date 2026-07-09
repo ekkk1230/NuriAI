@@ -154,4 +154,9 @@ public class PlanController {
     public ResponseEntity<List<PlanDto.Chart>> getStatistics() {
         return ResponseEntity.ok(planService.getRecentActivityChartData());
     }
+
+    @GetMapping("/my-statistics")
+    public ResponseEntity<List<PlanDto.Chart>> getMyStatistics(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(planService.getMyStatistics(user));
+    }
 }

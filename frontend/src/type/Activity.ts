@@ -4,6 +4,7 @@ export interface ContentDetail {
 }
 
 export interface Activity {
+    id: number;
     domain: string;
     groupType: string;
     activityType: string; 

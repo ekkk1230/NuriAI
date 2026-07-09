@@ -148,5 +148,11 @@ public class PlanDto {
         private String date;
         private Long likes;
         private Long saves;
+
+        public Chart(Plan plan) {
+            this.date = plan.getCreatedAt().toLocalDate().toString();
+            this.likes = plan.getLikeCount();
+            this.saves = plan.getSaveCount();
+        }
     }
 }

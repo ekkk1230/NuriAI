@@ -3,6 +3,7 @@ import { API_ROUTES } from "@/constants/api";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { apiFetch } from "@/util/api";
+import { access } from "node:fs/promises";
 
 interface WelcomeStore {
     user: User | null,
@@ -13,6 +14,8 @@ interface WelcomeStore {
 
     joinUser: (userFormData: User) => Promise<void>;
     confirmData: (type: string, value: string) => Promise<ConfirmResult>;
+
+    withdraw: () => Promise<void>;
 };
 
 export const useWelcomeStore = create<WelcomeStore>()(
@@ -90,6 +93,19 @@ export const useWelcomeStore = create<WelcomeStore>()(
                 const isDuplicated = await response.json();
             
                 return { typeText, value, isDuplicated };
+            },
+            withdraw: async () => {
+                try {
+                    const response = await apiFetch(`${API_ROUTES.USER.WITHDRAW}`, {
+                        method: "DELETE",
+                    });
+                    if (!response.ok) throw new Error("회원 탈퇴 실패");
+
+                    set({ accessToken: null, user: null });
+                    window.location.href = '/';
+                } catch (err) {
+                    console.error(`withdraw 실패: ${err}`)
+                }
             }
         }),
         {

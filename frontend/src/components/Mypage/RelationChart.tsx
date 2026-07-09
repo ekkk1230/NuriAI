@@ -34,7 +34,7 @@ const relationChartData = [
 
 function RelationChart({ recentStatistics }: { recentStatistics: any }) {    
     
-    // console.log(recentStatistics);
+    console.log(recentStatistics);
 
     return (
         <ContentBox title="사용자 반응 추이" subTitle="최근 7일간의 좋아요 및 저장 수치 추이">

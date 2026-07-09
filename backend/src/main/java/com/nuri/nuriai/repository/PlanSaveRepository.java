@@ -24,4 +24,6 @@ public interface PlanSaveRepository extends JpaRepository<PlanSave, Long> {
             "GROUP BY TO_CHAR(created_at, 'MM.DD') " +
             "ORDER BY date ASC", nativeQuery = true)
     List<Object[]> countSavesByDate(@Param("startDate") LocalDateTime startDate);
+
+    void deleteByUser(User user);
 }

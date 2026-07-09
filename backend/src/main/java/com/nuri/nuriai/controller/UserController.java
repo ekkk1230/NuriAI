@@ -1,10 +1,13 @@
 package com.nuri.nuriai.controller;
 
+import com.nuri.nuriai.domain.User;
 import com.nuri.nuriai.dto.UserDto;
 import com.nuri.nuriai.security.JwtTokenProvider;
 import com.nuri.nuriai.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -42,5 +45,14 @@ public class UserController {
         UserDto.UserResponse userDto = userService.getCurrentUser(userId);
 
         return ResponseEntity.ok(userDto);
+    }
+
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Void> withdrawUser(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        userService.withdrawUser(user);
+        return ResponseEntity.noContent().build();
     }
 }

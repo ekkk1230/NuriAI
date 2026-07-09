@@ -10,29 +10,28 @@ export const useForm = <T>(initialState: T) => {
 
     const resetForm = () => setForm(initialState);
 
-    const handleActiveChange = (idx: number, e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleActiveChange = (
+        activityIdx: number, 
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+        step?: 'introduction' | 'development' | 'conclusion',
+        field?: 'description' | 'teacherTalk'
+    ) => {
         const { name, value } = e.target;
 
         setForm((prev: any) => {
             const updatedPlans = [...prev.plans];
+            const activity = { ...updatedPlans[activityIdx] };
 
-            if (name === "content") {
-                const stepKey = e.target.dataset.step;
-
-                updatedPlans[idx] = {
-                    ...updatedPlans[idx], 
-                    content: {
-                        ...updatedPlans[idx].content,
-                        [stepKey as string]: value
-                    }
+            if (step && field) {
+                activity[step] = {
+                    ...activity[step],
+                    [field]: value
                 };
             } else {
-                updatedPlans[idx] = {
-                    ...updatedPlans[idx],
-                    [name]: value
-                };
+                activity[name as keyof typeof activity] = value as any;
             }
 
+            updatedPlans[activityIdx] = activity;
             return { ...prev, plans: updatedPlans };
         });
     };

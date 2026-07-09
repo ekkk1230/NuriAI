@@ -22,4 +22,6 @@ public interface PlanLikeRepository extends JpaRepository<PlanLike, Long> {
             "GROUP BY TO_CHAR(created_at, 'MM.DD') " +
             "ORDER BY date ASC", nativeQuery = true)
     List<Object[]> countLikesByDate(@Param("startDate") LocalDateTime startDate);
+
+    void deleteByUser(User user);
 }

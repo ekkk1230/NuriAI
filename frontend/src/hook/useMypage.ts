@@ -7,7 +7,7 @@ import { Inquiry } from "@/type/Mypage";
 
 export const useMypage = () => {
     const { userPlans, fetchUserPlans, userCollectPlans, fetchUserCollectItem, recentStatistics, fetchRecentStatistics } = usePlanStore();
-    const { user } = useWelcomeStore();
+    const { user, withdraw } = useWelcomeStore();
     const { inquries, fetchtUserInquiries, fetchtAllInquiries, addInquriy, deleteInquiry, updateInquiry, insertAnswer, updateAnswer, deleteAnswer, fetchRecentViewPlans, recentViewPlans } = useMypageStore();
     const { form: inquiryForm, setForm, handleChange, resetForm } = useForm({ title: "", inquiryContent: "" });
     const { form: answerForm, setForm: setAnswerForm, handleChange: handleAnswerChange, resetForm: resetAnswerForm } = useForm({ answerContent: "" });
@@ -139,6 +139,6 @@ export const useMypage = () => {
         editingId, setEditingId, onClickEdit, handleUpdate, 
         onSubmitAnswer, answerForm, setAnswerForm, handleAnswerChange, resetAnswerForm,
         editingAnswerId, setEditingAnswerId, handleUpdateAnswer, handledeleteAnswer,
-        userCollectPlans, recentViewPlans, recentStatistics
+        userCollectPlans, recentViewPlans, recentStatistics, withdraw
     };
 }

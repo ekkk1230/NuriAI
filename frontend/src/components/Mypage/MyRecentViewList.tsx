@@ -3,12 +3,22 @@ import { recentViewPlan } from '@/type/Mypage'
 import Link from 'next/link'
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import NoPlan from '../Planner/NoPlan'
+import { useMypageStore } from '@/store/useMypageStore'
+import { LoadingSkeleton } from '../Loading/LoadingSkeleton'
 
-export default function MyRecentViewList({ recentViewPlans }: { recentViewPlans: recentViewPlan[] }) {
+export default function MyRecentViewList() {
+    const { isRecentLoading, recentViewPlans } = useMypageStore();
     // console.log(recentViewPlans)
+    // console.log(isRecentLoading, recentViewPlans)
+
     return (
         <ContentBox title="최근 조회한 계획안">
-            {recentViewPlans.length >= 1
+            {isRecentLoading 
+            ? (
+                <LoadingSkeleton />
+            ) 
+            : (
+                recentViewPlans.length >= 1
                 ? (
                     <ul>
                         {recentViewPlans.slice(0, 4).map((p, idx) => (
@@ -32,7 +42,7 @@ export default function MyRecentViewList({ recentViewPlans }: { recentViewPlans:
                 : (
                     <NoPlan txt="최근 조회한 계획안이 없습니다." />
                 )
-            }
+            )}
         </ContentBox>
     )
 }

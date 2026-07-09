@@ -8,6 +8,7 @@ import { usePlanStore } from "@/store/usePlanStore";
 import { Plan } from "@/type/Plan";
 
 function EditModal({ plan }: { plan: Plan }) {
+    // console.log(plan)
     const { form: planForm, handleChange, setForm, handleActiveChange } = useForm<Plan>(plan);
     const { closeModal } = useUiStore();
     const { updatePlan } = usePlanStore();
@@ -134,15 +135,21 @@ function EditModal({ plan }: { plan: Plan }) {
                                 ].map(step => (
                                     <div key={step.key} className="last:mt-0 mt-[1.2rem]">
                                         <p className={`${step.color} text-[1.4rem] font-semibold mb-[1.2rem]`}>{step.label}</p>
-                                        {/* 수정: activity[step.key]에 바로 접근합니다. 
-                                            ContentDetail 타입이라면 .description 등을 써야 할 수도 있습니다. 
-                                        */}
+
+                                        {/* 내용 입력 */}
                                         <textarea 
-                                            className="p-[1rem]" 
-                                            name="content" 
-                                            data-step={step.key} 
-                                            onChange={(e) => handleActiveChange(activityIdx, e)} 
+                                            className="p-[1rem] w-full border" 
+                                            placeholder="활동 내용"
+                                            onChange={(e) => handleActiveChange(activityIdx, e, step.key, 'description')}
                                             value={activity[step.key]?.description || ""} 
+                                        />
+                                        
+                                        {/* 교사 발문 입력 */}
+                                        <textarea 
+                                            className="p-[1rem] w-full border mt-[0.6rem]" 
+                                            placeholder="교사 발문"
+                                            onChange={(e) => handleActiveChange(activityIdx, e, step.key, 'teacherTalk')}
+                                            value={activity[step.key]?.teacherTalk || ""} 
                                         />
                                     </div>
                                 ))}

@@ -18,7 +18,7 @@ export default function CategoryBarChart({ userPlans }: { userPlans: Plan[] }) {
     // console.log(allPlans)
 
     const chartDatas = CATEGORIES.map(cate => {
-        const count = allPlans.filter(p => p.domain === cate).length;
+        const count = allPlans.filter(p => p.domain.includes(cate)).length;
         return { name: cate, count: count };
     });
 

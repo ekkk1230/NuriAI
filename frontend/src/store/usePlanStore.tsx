@@ -25,11 +25,13 @@ interface PlanStore {
     getFilteredPlans: (searchTit: string, searchAge: string, isSavedFilter: boolean, authorFilter: string, user: any) => Plan[];
     recentStatistics: PlanChartData[];
     fetchRecentStatistics: () => Promise<void>;
+    isLoadingUserPlans: boolean;
 };
 
 export const usePlanStore = create<PlanStore>((set, get) => ({
     planStorage: [],
     isLoaded: false,
+    isLoadingUserPlans: false,
     fetchAllPlans: async () => {
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.BASE}`); 
@@ -77,6 +79,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         }
     },
     fetchUserPlans: async (user) => {
+        set({ isLoadingUserPlans: true });
         const url = API_ROUTES.PLAN.USER(user);
         try {
             const response = await apiFetch(url);
@@ -90,6 +93,8 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         } catch (err) {
             console.error(`fetchUserPlans 실패: ${err}`);
             set({ isLoaded: true }); 
+        } finally {
+            set({ isLoadingUserPlans: false });
         }
     },
     fetchPlansByAuthor: async (plan) => {
@@ -178,7 +183,8 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             const planData = await response.json();
 
             set(state => ({ 
-                planStorage: state.planStorage.map(p => p.id === planData.id ? { ...planData } : p)
+                planStorage: state.planStorage.map(p => p.id === planData.id ? { ...planData } : p),
+                currentCreatePlan: state.currentCreatePlan.map(p => p.id === planData.id ? { ...planData } : p)
             }))
         } catch (err) {
             console.error(`updatePlan 실패: ${err}`);
@@ -249,7 +255,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     recentStatistics: [],
     fetchRecentStatistics: async () => {
         try {
-            const response = await apiFetch(`${API_ROUTES.PLAN.RECENT}`);
+            const response = await apiFetch(`${API_ROUTES.PLAN.STATISTICS}`);
             
             if (!response.ok) throw new Error("통계 데이터를 가져오는 데 실패했습니다.");
             

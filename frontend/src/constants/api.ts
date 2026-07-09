@@ -6,6 +6,7 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://loca
 export const API_ROUTES = {
     USER: {
         BASE: `${API_BASE_URL}/api/users`,
+        WITHDRAW: `${API_BASE_URL}/api/users/withdraw`,
     },
     PLAN: {
         BASE: `${API_BASE_URL}/api/plans`,
@@ -19,6 +20,7 @@ export const API_ROUTES = {
         UPDATE: `${API_BASE_URL}/api/plans/update`,
         DELETEMYITEMS: `${API_BASE_URL}/api/plans/delete-batch`,
         RECENT: `${API_BASE_URL}/api/plans/statistics/recent`,
+        STATISTICS: `${API_BASE_URL}/api/plans/my-statistics`,
     },
     INQUIRY: {
         BASE: `${API_BASE_URL}/api/inquiries`,
@@ -30,6 +32,6 @@ export const API_ROUTES = {
     },
     RECENT_VIEW: {
         BASE: `${API_BASE_URL}/api/recent-views`,
-    }
+    },
 
 } as const;

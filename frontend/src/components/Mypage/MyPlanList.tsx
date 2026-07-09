@@ -8,10 +8,11 @@ import { CiHeart } from "react-icons/ci";
 import { ContentBox } from "./ContentBox";
 import { FaArrowRight } from "react-icons/fa6";
 import NoPlan from "../Planner/NoPlan";
+import { LoadingSkeleton } from "../Loading/LoadingSkeleton";
 
 export default function MyPlanList() {
     const { user } = useWelcomeStore();
-    const { fetchUserPlans, userPlans } = usePlanStore();
+    const { fetchUserPlans, userPlans, isLoadingUserPlans } = usePlanStore();
 
     useEffect(() => {
         if (user) fetchUserPlans(user);
@@ -19,9 +20,14 @@ export default function MyPlanList() {
 
     if (!user) return <div>회원정보를 찾을 수 없습니다.</div>
 
+
+
     return (
         <ContentBox title="내가 쓴 계획안">
-            {userPlans.length >= 1 
+            {isLoadingUserPlans 
+            ? (<LoadingSkeleton />) 
+            : (
+                userPlans.length >= 1 
                 ? (
                     <>
                         <ul>
@@ -52,7 +58,7 @@ export default function MyPlanList() {
                 : (
                     <NoPlan txt="현재 작성된 계획안이 없습니다." />
                 )
-            }
+            )}
         </ContentBox>
     )
 }
