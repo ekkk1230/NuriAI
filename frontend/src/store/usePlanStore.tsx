@@ -140,7 +140,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             if (!response.ok) throw new Error("계획안 업데이트 실패");
 
             const planData = await response.json();
-            console.log(planData)
+            // console.log(planData)
 
             // console.log("planData:", planData);
 
@@ -153,7 +153,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         }
     },
     deletePlans: async (planIds: number[]) => { 
-        console.log(`deletePlans: ${planIds}`)
+        // console.log(`deletePlans: ${planIds}`)
         try {
             const response = await apiFetch(API_ROUTES.PLAN.DELETEMYITEMS, { 
                 method: "POST",
@@ -197,7 +197,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
                 method: "POST",
                 body: JSON.stringify({ userId: user.id }),
             });
-            console.log(response)
+            // console.log(response)
 
             if (!response.ok) throw new Error("계획안 좋아요 실패");
             const likePlan = await response.json();
@@ -208,7 +208,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         }
     },
     addStorage: async(user, plan) => {
-        console.log(user, plan)
+        // console.log(user, plan)
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.SAVE(plan.id)}`, {
                 method: "POST",
