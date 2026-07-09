@@ -150,10 +150,10 @@ public class PlanController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/statistics/recent")
-    public ResponseEntity<List<PlanDto.Chart>> getStatistics() {
-        return ResponseEntity.ok(planService.getRecentActivityChartData());
-    }
+//    @GetMapping("/statistics/recent")
+//    public ResponseEntity<List<PlanDto.Chart>> getStatistics() {
+//        return ResponseEntity.ok(planService.getRecentActivityChartData());
+//    }
 
     @GetMapping("/my-statistics")
     public ResponseEntity<List<PlanDto.Chart>> getMyStatistics(@AuthenticationPrincipal User user) {

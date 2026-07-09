@@ -154,5 +154,13 @@ public class PlanDto {
             this.likes = plan.getLikeCount();
             this.saves = plan.getSaveCount();
         }
+
+        public void setLikes(long count) {
+            this.likes = count;
+        }
+
+        public void setSaves(long count) {
+            this.saves = count;
+        }
     }
 }

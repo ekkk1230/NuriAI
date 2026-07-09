@@ -356,63 +356,48 @@ public class PlanService {
         }
     }
 
-    public List<PlanDto.Chart> getRecentActivityChartData() {
-        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(6).withHour(0).withMinute(0);
-
-        List<Object[]> likes = planLikeRepository.countLikesByDate(sevenDaysAgo);
-        List<Object[]> saves = planSaveRepository.countSavesByDate(sevenDaysAgo);
-
-        Map<String, Map<String, Long>> chartMap = new LinkedHashMap<>();
-        for (int i = 6; i >= 0; i--) {
-            String date = LocalDateTime.now().minusDays(i).format(DateTimeFormatter.ofPattern("MM.dd"));
-            chartMap.put(date, new HashMap<>(Map.of("likes", 0L, "saves", 0L)));
-        }
-
-        for (Object[] row : likes) {
-            String date = (String) row[0];
-            if (chartMap.containsKey(date)) {
-                chartMap.get(date).put("likes", (Long) row[1]);
-            }
-        }
-        for (Object[] row : saves) {
-            String date = (String) row[0];
-            if (chartMap.containsKey(date)) {
-                chartMap.get(date).put("saves", (Long) row[1]);
-            }
-        }
-
-        List<PlanDto.Chart> result = new ArrayList<>();
-        chartMap.forEach((date, counts) -> {
-            result.add(PlanDto.Chart.builder()
-                    .date(date)
-                    .likes(counts.get("likes"))
-                    .saves(counts.get("saves"))
-                    .build());
-        });
-        return result;
-    }
-
     public List<PlanDto.Chart> getMyStatistics(User user) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(6); // 오늘 포함 7일 전
+        List<PlanDto.Chart> result = new ArrayList<>();
+        List<LocalDate> targetDates = new ArrayList<>();
 
-        List<Plan> plans = planRepository.findByAuthorAndCreatedAtAfter(
-                user.getUserNickname(), startDate.atStartOfDay());
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = LocalDate.now().minusDays(i);
+            targetDates.add(date);
+            result.add(new PlanDto.Chart(date.toString(), 0L, 0L));
+        }
 
-        Map<String, PlanDto.Chart> dbDataMap = plans.stream()
-                .collect(Collectors.groupingBy(
-                        p -> p.getCreatedAt().toLocalDate().toString(),
-                        Collectors.collectingAndThen(Collectors.toList(), list -> {
-                            long totalLikes = list.stream().mapToLong(Plan::getLikeCount).sum();
-                            long totalSaves = list.stream().mapToLong(Plan::getSaveCount).sum();
-                            return new PlanDto.Chart(list.get(0).getCreatedAt().toLocalDate().toString(), totalLikes, totalSaves);
-                        })
-                ));
+        List<PlanSave> allSaves = planSaveRepository.findAllByPlan_Author(user.getUserNickname());
+        List<PlanLike> allLikes = planLikeRepository.findAllByPlan_Author(user.getUserNickname());
 
-        // 3. 7일치 날짜를 순회하며 데이터가 있으면 넣고, 없으면 0으로 채움
-        return IntStream.range(0, 7)
-                .mapToObj(i -> startDate.plusDays(i).toString())
-                .map(date -> dbDataMap.getOrDefault(date, new PlanDto.Chart(date, 0L, 0L)))
-                .collect(Collectors.toList());
+        System.out.println("가져온 저장 로그 개수: " + allSaves.size());
+
+        System.out.println("가져온 저장 로그 개수: " + allSaves.size());
+        System.out.println("가져온 좋아요 로그 개수: " + allLikes.size());
+
+        for (PlanSave save : allSaves) {
+            if (save.getCreatedAt() == null) continue;
+            LocalDate logDate = save.getCreatedAt().toLocalDate();
+
+            for (int i = 0; i < targetDates.size(); i++) {
+                if (targetDates.get(i).equals(logDate)) {
+                    PlanDto.Chart chart = result.get(i);
+                    chart.setSaves(chart.getSaves() + 1);
+                }
+            }
+        }
+
+        for (PlanLike like : allLikes) {
+            if (like.getCreatedAt() == null) continue;
+            LocalDate logDate = like.getCreatedAt().toLocalDate();
+
+            for (int i = 0; i <targetDates.size(); i++) {
+                if (targetDates.get(i).equals(logDate)) {
+                    PlanDto.Chart chart = result.get(i);
+                    chart.setLikes(chart.getLikes() + 1);
+                }
+            }
+        }
+
+        return result;
     }
 }

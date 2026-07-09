@@ -39,7 +39,7 @@ function RelationChart({ recentStatistics }: { recentStatistics: any }) {
     return (
         <ContentBox title="사용자 반응 추이" subTitle="최근 7일간의 좋아요 및 저장 수치 추이">
             <ResponsiveContainer width="100%" height="85%">
-                <LineChart data={recentStatistics} margin={{ top: 5, right: 5, left: -30, bottom: 20 }}>
+                <LineChart data={recentStatistics} margin={{ top: 5, right: 10, left: -10, bottom: 20 }}>
                     <defs>
                         <linearGradient id="colorLikes" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2}/>

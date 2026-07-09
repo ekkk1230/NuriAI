@@ -1,6 +1,7 @@
 package com.nuri.nuriai.repository;
 
 import com.nuri.nuriai.domain.Plan;
+import com.nuri.nuriai.domain.PlanLike;
 import com.nuri.nuriai.domain.PlanSave;
 import com.nuri.nuriai.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,12 +19,7 @@ public interface PlanSaveRepository extends JpaRepository<PlanSave, Long> {
     List<PlanSave> findByUserId(Long userId);
     void deleteByUserIdAndPlanId(Long userId, Long planId);
 
-    @Query(value = "SELECT TO_CHAR(created_at, 'MM.DD') as date, COUNT(*) as count " +
-            "FROM plan_save " +
-            "WHERE created_at >= :startDate " +
-            "GROUP BY TO_CHAR(created_at, 'MM.DD') " +
-            "ORDER BY date ASC", nativeQuery = true)
-    List<Object[]> countSavesByDate(@Param("startDate") LocalDateTime startDate);
-
     void deleteByUser(User user);
+
+    List<PlanSave> findAllByPlan_Author(String nickname);
 }
