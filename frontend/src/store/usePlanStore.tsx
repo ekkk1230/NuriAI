@@ -161,8 +161,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             const response = await apiFetch(API_ROUTES.PLAN.COLLECTED(userId));
             const data = await response.json();
             
-            // [디버깅] 서버 응답이 어떤 구조인지 콘솔로 확실히 확인
-            console.log("서버가 보내준 raw 데이터 구조:", data);
+            // console.log("서버가 보내준 데이터 구조:", data);
 
             const result = Array.isArray(data) ? data : (data.content || data.data || []);
             

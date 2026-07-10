@@ -1,6 +1,8 @@
 package com.nuri.nuriai.repository;
 
 import com.nuri.nuriai.domain.Plan;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +28,15 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     void updateAuthorName(@Param("oldName") String oldName, @Param("newName") String newName);
 
     List<Plan> findByAuthorAndCreatedAtAfter(String userNickname, LocalDateTime date);
+
+    @Query("SELECT DISTINCT p FROM Plan p JOIN p.activities ac WHERE " +
+           "(:keyword IS NULL OR (p.mainTheme LIKE %:keyword% OR p.activeIntro LIKE %:keyword%)) AND " +
+           "(:age IS NULL OR p.age = :age) AND " +
+           "(:area IS NULL OR ac.domain = :area)")
+    Page<Plan> findByConditions(
+        @Param("keyword") String keyword,
+        @Param("age") String age,
+        @Param("area") String area,
+        Pageable pageable
+    );
 }
