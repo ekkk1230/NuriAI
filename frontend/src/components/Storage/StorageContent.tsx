@@ -21,17 +21,13 @@ function Page() {
     const router = useRouter();
     const { fetchUserPlans, fetchUserCollectItem, userPlans, userCollectPlans, deletePlans, isFetchPlanLoading } = usePlanStore();
     const { user } = useWelcomeStore();
-
-    const handlePageChange = (page: number) => {
-        usePlanStore.getState().fetchPage(page);
-    }
     
     const [searchTit, setSearchTit]  = useState<string>("");
     const [searchAge, setSearchAge] = useState<string>("");
     const [sortType, setSortType] = useState<string>("latest");
     const [checkedIds, setCheckedIds] = useState<number[]>([]);
     const [isSavedFilter, setIsSavedFilter] = useState(true);
-    const [currentPage, setCurrentPage] = useState(0); 
+    const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) || 0); 
     const ITEMS_PER_PAGE = 12;
 
     useEffect(() => {
@@ -76,6 +72,7 @@ function Page() {
 
     const handleLocalPageChange = (page: number) => {
         setCurrentPage(page);
+        router.push(`?page=${page}`, { scroll: false });
     };
 
     const handleRemove = async () => {
@@ -143,11 +140,11 @@ function Page() {
             <div className="bg-bgPreview w-[100%] h-[100%] p-[2.6rem] flex-1 overflow-y-auto">
                 {isFetchPlanLoading ? (
                     <LoadingFetchPlans type="storage" />
-                ) : displayedPlans.length >= 1 ? (
+                ) : paginatedPlans.length >= 1 ? (
                     <>
                         <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
                         <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
-                            {displayedPlans.map((plan, idx) => (
+                            {paginatedPlans.map((plan, idx) => (
                                 <PlanItem 
                                     plan={plan} 
                                     key={`${plan.id}-${idx}`} 
@@ -159,7 +156,7 @@ function Page() {
                         </div>
                         
                         {totalLocalPages > 1 && (
-                            <Paging currentPage={currentPage} totalPages={totalLocalPages} onPageChange={handlePageChange} />
+                            <Paging currentPage={currentPage} totalPages={totalLocalPages} onPageChange={handleLocalPageChange} />
                         )}
                     </>
                 ) : (

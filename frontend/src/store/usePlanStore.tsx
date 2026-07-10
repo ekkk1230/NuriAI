@@ -33,7 +33,7 @@ interface PlanStore {
     currentKeyword: string;
     currentAge: string;
     currentDomain: string;
-    searchPlans: (keyword: string, age: string, domain: string) => Promise<void>;
+    searchPlans: (keyword: string, age: string, domain: string, page: number) => Promise<void>;
     fetchPage: (page: number) => Promise<void>;
     userCollectedData: Plan[];
 };
@@ -50,8 +50,8 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     currentAge: "전체",
     currentDomain: "전체",
     userCollectedData: [],
-    searchPlans: async (keyword, age, domain) => {
-        set({ currentKeyword: keyword, currentAge: age, currentDomain: domain });
+    searchPlans: async (keyword, age, domain, page = 0) => {
+        set({ currentKeyword: keyword, currentAge: age, currentDomain: domain, currentPage: page });
         await get().fetchAllPlans(0, keyword, age, domain);
     },
     fetchPage: async (page) => {

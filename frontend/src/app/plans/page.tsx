@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AGE_OPTIONS, DOMAIN_STYLES, DOMAIN_TYPES } from "@/constants/activityOptions"; 
 import { useWelcomeStore } from "@/store/useWelcomeStore";
 import { usePlanStore } from "@/store/usePlanStore";
@@ -15,38 +15,57 @@ import { Paging } from "@/components/Paging/Paging";
 
 function page() {
     const router = useRouter();
-    const { user } = useWelcomeStore();
+    const searchParams = useSearchParams();
+
+    const pageFromUrl = Number(searchParams.get("page")) || 0;
+
     const { planStorage, searchPlans, isFetchPlanLoading, currentPage, totalPages, totalCounts } = usePlanStore();
 
     const { form: searchForm, handleChange } = useForm({
-        searchTxt: "",
-        searchAge: "",
-        searchArea: "",
+        searchTxt: searchParams.get("txt") || "",
+        searchAge: searchParams.get("age") || "",
+        searchArea: searchParams.get("area") || "",
         sortType: "latest"
     });
 
-    useEffect(() => {
-        usePlanStore.getState().fetchPage(0);
-    }, []);
-        
-    const handleSearch = () => {
-        searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea);
-    };
-
     const handlePageChange = (page: number) => {
+        router.push(`?page=${page}&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}`);
         usePlanStore.getState().fetchPage(page);
     };
 
     // console.log(planStorage)
 
-
+   // 1. 처음 마운트 될 때 실행 (데이터가 없거나 처음 진입 시)
     useEffect(() => {
-        if (searchForm.searchTxt === undefined) return; 
+        if (planStorage.length > 0) return;
 
+        // 데이터가 없다면 URL의 페이지 정보로 첫 로딩
+        usePlanStore.getState().searchPlans(
+            searchForm.searchTxt, 
+            searchForm.searchAge, 
+            searchForm.searchArea, 
+            pageFromUrl 
+        );
+    }, []); 
+
+    const [isMounted, setIsMounted] = useState(false);
+    // 2. 검색 조건 변경 시 실행 (검색어를 칠 때)
+    useEffect(() => {
+        if (!isMounted) {
+            setIsMounted(true);
+            return;
+        }
+    
         const timer = setTimeout(() => {
-            usePlanStore.getState().searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea);
+            // 검색어 변경 시 0페이지로 이동
+            router.push(`?page=0&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}`);
+            usePlanStore.getState().searchPlans(
+                searchForm.searchTxt, 
+                searchForm.searchAge, 
+                searchForm.searchArea, 
+                0
+            );
         }, 500);
-        
         return () => clearTimeout(timer);
     }, [searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea]);
  
@@ -57,32 +76,6 @@ function page() {
         const active = sortType === value ? "bg-white shadow-sm font-bold text-main" : "text-gray-500";
         return `${base} ${active}`;
     };
-
-    // const filteredPlans = (planStorage || []).filter(plan => {
-    //     const keyword = searchForm.searchTxt.toLowerCase();
-    //     const matchesKeyword = !keyword || 
-    //                        plan.mainTheme.toLowerCase().includes(keyword) || 
-    //                        plan.activeIntro.toLowerCase().includes(keyword);
-    //     const matchesAge = (!searchForm.searchAge || searchForm.searchAge === "전체") 
-    //                    ? true 
-    //                    : plan.age === `만 ${searchForm.searchAge}세`;
-    //     const matchesDomain = (!searchForm.searchArea || searchForm.searchArea === "전체") 
-    //                     ? true
-    //                     : plan.plans.some(p => p.domain === searchForm.searchArea);
-
-    //     return matchesKeyword && matchesAge && matchesDomain;
-    // });
-    
-    // const sortedPlans = [...filteredPlans].sort((a, b) => {
-    //     const dateA = new Date(a.createdAt).getTime();
-    //     const dateB = new Date(b.createdAt).getTime();
-    //     const viewA = a.viewCount;
-    //     const viewB = b.viewCount;
-    //     const likeA = a.likeCount;
-    //     const likeB = b.likeCount;
-
-    //     return sortType === "date" ? dateB - dateA : sortType === "view" ? viewB - viewA : likeB - likeA;
-    // });
 
     const handleNavigate = (id: number) => {
         router.push(`/storage/${id}`);
