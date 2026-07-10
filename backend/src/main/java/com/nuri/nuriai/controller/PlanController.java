@@ -9,15 +9,14 @@ import com.nuri.nuriai.service.PlanService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/plans")
@@ -65,9 +64,13 @@ public class PlanController {
 //    }
 
     @GetMapping
-    public ResponseEntity<List<PlanDto.GeminiResponse>> getAll() {
-        List<PlanDto.GeminiResponse> list = planService.getAll();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<Page<PlanDto.GeminiResponse>> getAll(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String age,
+        @RequestParam(required = false) String area,
+        @PageableDefault(size = 12) Pageable pageable
+    ) {
+        return ResponseEntity.ok(planService.getAll(keyword, age, area, pageable));
     }
 
     @GetMapping("/{id}")
@@ -91,12 +94,6 @@ public class PlanController {
         PlanDto.GeminiResponse savedDto = planService.savePlan(responseDto, request.getAuthor());
 
         return ResponseEntity.ok(savedDto);
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<Plan>> getAllPlans() {
-        List<Plan> plans = planService.getAllPlans();
-        return ResponseEntity.ok(plans);
     }
 
     @GetMapping("/user/{userNickname}")

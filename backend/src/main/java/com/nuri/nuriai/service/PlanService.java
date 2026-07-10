@@ -8,6 +8,8 @@ import com.nuri.nuriai.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j; // log 사용을 위해 추가
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,10 +41,9 @@ public class PlanService {
 
     private final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=";
 
-    public List<PlanDto.GeminiResponse> getAll() {
-        return planRepository.findAll().stream()
-                .map(PlanDto.GeminiResponse::new)
-                .collect(Collectors.toList());
+    public Page<PlanDto.GeminiResponse> getAll(String keyword, String age, String area, Pageable pageable) {
+        Page<Plan> planPage = planRepository.findByConditions(keyword, age, area, pageable);
+        return planPage.map(PlanDto.GeminiResponse::new);
     }
 
     public PlanDto.GeminiResponse getOne(Long id) {
@@ -204,10 +205,6 @@ public class PlanService {
 //        });
         Plan savedPlan = planRepository.save(plan);
         return new PlanDto.GeminiResponse(savedPlan);
-    }
-
-    public List<Plan> getAllPlans() {
-        return planRepository.findAll();
     }
 
     public List<PlanDto.GeminiResponse> getUserPlans(String author) {

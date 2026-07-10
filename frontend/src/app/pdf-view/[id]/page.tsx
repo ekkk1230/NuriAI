@@ -40,7 +40,13 @@ export default function PdfPage() {
 
     const plan = planStorage.find(p => p.id === Number(id));
 
-    if (!plan) return <div>로딩 중...</div>
+    if (!plan) {
+        return (
+             <div className="flex flex-col items-center justify-center h-full bg-[rgba(0,0,0,.6)]">
+                <div className="w-[5rem] h-[5rem] border-[.6rem] border-[#eee] border-t-[#ad46ff] rounded-full animate-spin"></div>
+            </div>
+        )
+    }
 
     return (
         <div id="pdf-content" className="pdf-container">

@@ -36,7 +36,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }, [user, isWelcomePage, isLoading, router]);
 
     if (isLoading) {
-        return <html lang="ko"><body><div className="loading">로딩 중...</div></body></html>;
+        return (
+            <html className="min-h-screen" lang="ko">
+            <body className="min-h-screen">
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center h-screen bg-[rgba(0,0,0,.6)]">
+                        <div className="w-[5rem] h-[5rem] border-[.6rem] border-[#eee] border-t-[#ad46ff] rounded-full animate-spin"></div>
+                    </div>
+                ) : (
+                    <>
+                        {isOpen && <ModalLayout />}
+                        <div className="wrap">
+                            {!isStorageSubPage && !isWelcomePage && <Nav />}
+                            <main>{children}</main>
+                        </div>
+                    </>
+                )}
+            </body>
+        </html>
+        )
     }
 
     return (
