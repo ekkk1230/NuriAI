@@ -54,12 +54,12 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
 
     // 좋아요 활성화
     const likeActiveClass = isLiked 
-    ? "bg-blue-300 text-blue-800 hover:bg-blue-200 font-bold" 
+    ? "bg-blue-200 text-blue-800 hover:bg-blue-200 font-bold" 
     : "bg-blue-100 hover:bg-blue-200";
 
     // 보관하기 활성화
     const saveActiveClass = isSaved 
-        ? "bg-purple-300 text-purple-800 hover:bg-purple-200 font-bold" 
+        ? "bg-purple-200 text-purple-800 hover:bg-purple-200 font-bold" 
         : "bg-purple-100 hover:bg-purple-200";
 
     return (
@@ -75,7 +75,17 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
                         <p className="font-bold">{currentAuthorPlans.length}개</p>
                     </div>
                 </div>
-                <button type="button" className="text-[1.4rem] font-semibold p-[1.2rem] rounded-[.8rem] border-solid border-[.2rem] text-mainLight border-[#e9d4ff] bg-[#faf5ff]" onClick={() => handleFetchPlansByAuthor()}>
+                <button 
+                    type="button" 
+                    className={`
+                        text-[1.4rem] font-semibold p-[1.2rem] rounded-[.8rem] 
+                        border-solid border-[.2rem] 
+                        ${plan.author === "탈퇴한 사용자" ? `text-textMuted border-[#dbd8de] bg-[#ececec]` : `text-mainLight border-[#e9d4ff] bg-[#faf5ff]`}
+                    `
+                    }
+                    onClick={() => handleFetchPlansByAuthor()}
+                    disabled={plan.author === "탈퇴한 사용자" ? true : false}
+                >
                     {plan.author} 선생님이 작성한 계획안 보러가기
                 </button>
             </div>
@@ -96,12 +106,30 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
             </div>
             
             <div className="bg-bgCard rounded-[1.2rem] p-[2rem] shadow-sm gap-[1rem] items-stretch flex items-center justify-center">
-                <button type="button" onClick={handleLike} className={`${utilBtnClass} ${likeActiveClass}`}>
+                <button 
+                    type="button" 
+                    onClick={handleLike} 
+                    className={`
+                        ${utilBtnClass} 
+                        ${likeActiveClass}
+                        ${plan.author === "탈퇴한 사용자" ? "!text-textMuted !border-[.1rem] !border-[#dbd8de] !bg-[#ececec]" : ""}    
+                    `}
+                    disabled={plan.author === "탈퇴한 사용자" ? true : false}
+                >
                     {plan.likeUserIds.includes(user.id!) ? <AiFillLike /> : <AiOutlineLike />} 
                     좋아요
                 </button>
 
-                <button type="button" onClick={handleSave} className={`${utilBtnClass} ${saveActiveClass}`}>
+                <button 
+                    type="button" 
+                    onClick={handleSave}
+                    className={`
+                        ${utilBtnClass} 
+                        ${saveActiveClass}
+                        ${plan.author === "탈퇴한 사용자" ? "!text-textMuted !border-[.1rem] !border-[#dbd8de] !bg-[#ececec]" : ""}    
+                    `}
+                    disabled={plan.author === "탈퇴한 사용자" ? true : false}
+                >
                     {plan.savedUserIds.includes(user.id!) ? <FaSave /> : <FaRegSave />}
                     보관하기
                 </button>

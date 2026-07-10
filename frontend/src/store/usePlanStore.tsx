@@ -70,7 +70,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             // console.log("응답 상태:", response.status);
             if (!response.ok) throw new Error("전체 목록 조회 실패");
             const data = await response.json();
-            console.log("가져온 데이터:", data);
+            // console.log("가져온 데이터:", data);
             // set({ planStorage: Array.isArray(data) ? data : [data], isLoaded: true });
             set({
                 planStorage: data.content || [],
@@ -292,9 +292,11 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
                 const isSaved = safeIds.includes(Number(user.id || 0));
                 const isMyPlan = plan.author === user.userNickname;
                 return isMyPlan || isSaved;
-            };
+            }
 
-            return plan.author === user?.userNickname;
+            else {
+                return plan.author === user.userNickname;
+            }
         })
     },
     recentStatistics: [],

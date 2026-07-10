@@ -18,8 +18,10 @@ function Page() {
     const searchParams = useSearchParams();
     const authorFilter = searchParams.get("author") || "";
 
+    console.log(authorFilter)
+
     const router = useRouter();
-    const { fetchUserPlans, fetchUserCollectItem, userPlans, userCollectPlans, deletePlans, isFetchPlanLoading } = usePlanStore();
+    const { fetchUserPlans, fetchAllPlans, fetchUserCollectItem, planStorage, userPlans, userCollectPlans, deletePlans, isFetchPlanLoading } = usePlanStore();
     const { user } = useWelcomeStore();
     
     const [searchTit, setSearchTit]  = useState<string>("");
@@ -31,17 +33,24 @@ function Page() {
     const ITEMS_PER_PAGE = 12;
 
     useEffect(() => {
-        if (!user) return;
-        fetchUserPlans(user);
-        fetchUserCollectItem(Number(user.id));
-    }, [user]);
+        if (authorFilter) {
+            fetchAllPlans(0, "", "", "");
+        } else if (user) {
+            fetchUserPlans(user);
+            fetchUserCollectItem(Number(user.id));
+        }
+    }, [user, authorFilter]);
 
     const combinedPlans = [...(userPlans || []), ...(userCollectPlans || [])];
-    
-    const uniquePlans = Array.from(new Map(combinedPlans.map(item => [item.id, item])).values());
-
+    const sourcePlans = authorFilter ? planStorage : combinedPlans;
+    const uniquePlans = Array.from(new Map(sourcePlans.map(item => [item.id, item])).values());
     const filteredPlans = uniquePlans.filter(plan => {
         if (!plan) return false;
+
+        if (authorFilter) {
+            console.log(authorFilter,  decodeURIComponent(authorFilter));
+            return plan.author === decodeURIComponent(authorFilter);
+        }
         
         const matchesTitle = searchTit ? plan.mainTheme.includes(searchTit) : true;
         const matchesAge = (!searchAge || searchAge === "전체") ? true : plan.age === `만 ${searchAge}세`;
@@ -125,12 +134,16 @@ function Page() {
                 </div>
 
                 <div className="flex justify-between items-center mt-[1.2rem]">
-                    <ul className="space-x-[.6rem] flex">
-                        { ArrToBtn(AGE_OPTIONS, "age") }
-                        <button onClick={() => setIsSavedFilter(!isSavedFilter)} className={`ml-[1rem] text-white p-[0.6rem_1.2rem] rounded-[0.8rem] text-[1.4rem] font-bold border transition ${isSavedFilter ? "bg-main" : "bg-mainLight"}`}>
-                            {isSavedFilter ? "전체 보기" : "내가 작성한 계획안만 보기"}
-                        </button>
-                    </ul>
+                    <div className="flex gap-[1rem]">
+                        <ul className="space-x-[.6rem] flex">
+                            { ArrToBtn(AGE_OPTIONS, "age") }
+                        </ul>
+                        {!authorFilter && (
+                            <button onClick={() => setIsSavedFilter(!isSavedFilter)} className={`ml-[1rem] text-white p-[0.6rem_1.2rem] rounded-[0.8rem] text-[1.4rem] font-bold border transition ${isSavedFilter ? "bg-main" : "bg-mainLight"}`}>
+                                {isSavedFilter ? "전체 보기" : "내가 작성한 계획안만 보기"}
+                            </button>
+                        )}
+                    </div>
                     <ul className="space-x-[.6rem] flex">
                         { ArrToBtn(SORT_OPTIONS, "type") }
                     </ul>

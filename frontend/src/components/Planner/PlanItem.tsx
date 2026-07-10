@@ -33,6 +33,9 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
                     </li>
                     <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight">{plan.age}</li>
                     <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight">{plan.plans.length}개 활동</li>
+
+                    {/* 확인용 */}
+                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap">{plan.author}선생님</li>
                 </ul>
 
                 {!authorFilter && (
