@@ -63,6 +63,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     // H2 콘솔 접근 허용
                     .requestMatchers("/h2-console/**").permitAll()
+                    .requestMatchers("/api/ping").permitAll()
                     .requestMatchers("/api/users/login", "/api/users/join").permitAll()
                     .requestMatchers("/api/users/userId/**", "/api/users/userNickname/**").permitAll()
 

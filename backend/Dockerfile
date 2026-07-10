@@ -1,7 +1,14 @@
-# 1단계: 빌드 환경 (Render 서버가 직접 빌드)
+# 1단계: 의존성 캐시 활용 빌드
 FROM gradle:8.10-jdk17 AS build
-COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
+
+# 1. build.gradle 등 설정 파일만 먼저 복사
+COPY --chown=gradle:gradle build.gradle settings.gradle ./
+# 2. 의존성만 미리 다운로드 (캐시됨)
+RUN gradle dependencies --no-daemon
+
+# 3. 전체 소스 코드 복사 후 빌드
+COPY --chown=gradle:gradle . .
 RUN gradle build -x test --no-daemon
 
 # 2단계: 실행 환경
