@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -57,14 +58,15 @@ public class UserController {
     }
 
     @PostMapping("/find")
-    public ResponseEntity<UserDto.FindResponse> findUserId(
+    public ResponseEntity<?> findUserId(
             @RequestParam("findType") String findType,
             @RequestBody UserDto.FindRequest request
     ) {
         if ("id".equals(findType)) {
             return ResponseEntity.ok(userService.findUserId(request.getEmail()));
         } else {
-            return ResponseEntity.ok(userService.findUserPwd(request.getUserId(), request.getEmail()));
+            userService.findUserPwd(request.getUserId(), request.getEmail());
+            return ResponseEntity.ok(Map.of("message", "임시 비밀번호 이메일 발송 성공"));
         }
     }
 }

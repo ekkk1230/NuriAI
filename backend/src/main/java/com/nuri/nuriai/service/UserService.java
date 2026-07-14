@@ -8,11 +8,14 @@ import com.nuri.nuriai.repository.PlanSaveRepository;
 import com.nuri.nuriai.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -24,6 +27,7 @@ public class UserService {
     private final PlanLikeRepository planLikeRepository;
     private final PlanSaveRepository planSaveRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
 
     @Transactional
     public UserDto.UserResponse joinUser(UserDto.UserRequest request) {
@@ -92,13 +96,25 @@ public class UserService {
 
     }
 
-    public UserDto.FindResponse findUserPwd(String userId, String email) {
+    @Transactional
+    public void findUserPwd(String userId, String email) {
         User user = userRepository.findByUserIdAndEmail(userId, email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보 입니다."));
 
-        return UserDto.FindResponse.builder()
-                .id(user.getId())
-                .userId(user.getUserId())
-                .build();
+        String newPassword = UUID.randomUUID().toString().substring(0, 8);
 
+        user.changePassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("임시 비밀번호 안내");
+        message.setText("발급된 임시 비밀번호는 " + newPassword + " 입니다.");
+        try {
+            mailSender.send(message);
+            log.info("메일 발송 완료");
+        } catch (Exception e) {
+            log.error("메일 발송 중 에러 발생: ", e);
+        }
     }
+
 }

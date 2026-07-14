@@ -17,7 +17,7 @@ interface WelcomeStore {
     withdraw: () => Promise<void>;
 
     findUserId: (email: string) => Promise<string>;
-    findPwd: () => Promise<void>;
+    findUserPwd: (userId: string, email: string) => Promise<void>;
 };
 
 export const useWelcomeStore = create<WelcomeStore>()(
@@ -126,8 +126,20 @@ export const useWelcomeStore = create<WelcomeStore>()(
                 }
                 
             },
-            findPwd: async () => {
+            findUserPwd: async (userId, email) => {
+                try {
+                    const response = await apiFetch(`${API_ROUTES.USER.FINDUSERDATA("password")}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ userId, email }),
+                    });
 
+                    if (!response.ok) throw new Error("비밀번호 찾기에 실패했습니다.");
+                    const data = await response.json();
+                    console.log(data)
+                } catch (err) {
+                    console.error(`findUserPwd 실패: ${err}`);
+                }
             }
         }) as WelcomeStore,
         {

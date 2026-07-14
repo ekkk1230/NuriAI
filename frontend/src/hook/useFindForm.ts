@@ -1,13 +1,14 @@
 import { useWelcomeStore } from "@/store/useWelcomeStore";
 
 export const useFindForm = () => {
-    const { findUserId } = useWelcomeStore();
+    const { findUserId, findUserPwd } = useWelcomeStore();
 
     const findIdApi = async (email: string) => {
         return await findUserId(email);
     };
 
-    const findPwdApi = (userId: string, email: string) => {
+    const findPwdApi = async (userId: string, email: string) => {
+        return await findUserPwd(userId, email);
         // console.log(userId, email)
     };
 
