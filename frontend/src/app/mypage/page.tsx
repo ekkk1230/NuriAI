@@ -9,6 +9,7 @@ import { ContentBox } from "@/components/Mypage/ContentBox";
 import InquiryWrap from "@/components/Mypage/InquiryWrap";
 import { useUiStore } from "@/store/useUiStore";
 import TextModal from "@/components/Modal/modalContents/TextModal";
+import { ChangePasswordModal } from "@/components/Modal/modalContents/ChangePasswordModal";
 
 function page() {
     const { userPlans, inquries, userCollectPlans, recentStatistics, withdraw } = useMypage();
@@ -17,6 +18,14 @@ function page() {
     const useItemBoxClass = "rounded-[.8rem] p-[1.6rem_1rem] flex-1 text-center";
 
     const completedCount = inquries.filter(q => q.answer != null).length;
+
+    const handleChangPwd = () => {
+        openModal(
+            "비밀번호 변경",
+            "CHECK",
+            <ChangePasswordModal />
+        )
+    }
 
     const handleWithdraw = () => {
         openModal(
@@ -74,7 +83,10 @@ function page() {
 
                     <InquiryWrap />
 
-                    <button onClick={handleWithdraw} className="text-[1.4rem] bg-red-800 text-textLight font-semibold rounded-2xl p-[1.2rem_2rem] mb-[4rem] block ml-auto">회원 탈퇴</button>
+                    <div className="flex gap-[.8rem] justify-end items-center mb-[4rem]">
+                        <button onClick={handleChangPwd} className="text-[1.4rem] w-[12rem] bg-mainLight text-textLight font-semibold rounded-2xl p-[1.2rem_2rem] block">비밀번호 변경</button>
+                        <button onClick={handleWithdraw} className="text-[1.4rem] w-[12rem] bg-red-800 text-textLight font-semibold rounded-2xl p-[1.2rem_2rem] block">회원 탈퇴</button>
+                    </div>
                 </div>
             </div>
         </div>

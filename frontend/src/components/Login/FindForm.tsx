@@ -5,6 +5,7 @@ import { useForm } from "@/hook/useForm";
 import { useUiStore } from "@/store/useUiStore";
 import TextModal from "../Modal/modalContents/TextModal";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function FindForm({ findType }: { findType: string}) {
     const { findIdApi, findPwdApi } = useFindForm();
@@ -87,6 +88,8 @@ export default function FindForm({ findType }: { findType: string}) {
             >
                 {findType === "id" ? "아이디 찾기" : "비밀번호 찾기"}
             </button>
+
+            <Link href="/welcome/login" className="block mt-[2rem] text-[1.4rem] text-center text-textMuted !underline underline-offset-3">로그인 하러 가기</Link>
         </form>
     )
 }
