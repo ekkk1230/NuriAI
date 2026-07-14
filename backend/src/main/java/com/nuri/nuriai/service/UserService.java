@@ -81,4 +81,24 @@ public class UserService {
 
         log.info("사용자 탈퇴 완료: {}, 작성한 글 처리", nickname);
     }
+
+    public UserDto.FindResponse findUserId(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 이메일 입니다."));
+
+        return UserDto.FindResponse.builder()
+                .id(user.getId())
+                .userId(user.getUserId())
+                .build();
+
+    }
+
+    public UserDto.FindResponse findUserPwd(String userId, String email) {
+        User user = userRepository.findByUserIdAndEmail(userId, email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보 입니다."));
+
+        return UserDto.FindResponse.builder()
+                .id(user.getId())
+                .userId(user.getUserId())
+                .build();
+
+    }
 }

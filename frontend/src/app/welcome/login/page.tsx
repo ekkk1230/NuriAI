@@ -19,6 +19,7 @@ function page() {
     const { openModal } = useUiStore();
     const { form: loginForm, handleChange } = useForm<LoginUserForm>(initialLoginValue);
 
+    const findType = "";
 
     const handleLogin = async () => {
         const user = {
@@ -52,6 +53,11 @@ function page() {
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">비밀번호</p>
                 <input type="password" name="userPwd" value={loginForm.userPwd} onChange={handleChange} />
             </label>
+
+            <div className="flex items-center justify-end mt-[1.6rem]">
+                <Link href="/welcome/login/find?findType=id" className="text-[1.4rem] text-textMuted flex items-center after:content[''] after:block after:w-[.1rem] after:h-[1.4rem] after:bg-[#ccc] after:mx-[1rem]">아이디 찾기</Link>
+                <Link href="/welcome/login/find?findType=password" className="text-[1.4rem] text-textMuted">비밀번호 찾기</Link>
+            </div>
 
             <button type="button" onClick={handleLogin} className="bg-main-gradient mt-[2rem] rounded-[.8rem] p-[1rem] w-full block text-textLight font-semibold text-[1.8rem]">로그인</button>
 

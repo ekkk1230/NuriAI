@@ -15,6 +15,9 @@ interface WelcomeStore {
     confirmData: (type: string, value: string) => Promise<ConfirmResult>;
 
     withdraw: () => Promise<void>;
+
+    findUserId: (email: string) => Promise<string>;
+    findPwd: () => Promise<void>;
 };
 
 export const useWelcomeStore = create<WelcomeStore>()(
@@ -105,8 +108,28 @@ export const useWelcomeStore = create<WelcomeStore>()(
                 } catch (err) {
                     console.error(`withdraw 실패: ${err}`)
                 }
+            },
+            findUserId: async (email) => {
+                try {
+                    const response = await apiFetch(`${API_ROUTES.USER.FINDUSERDATA("id")}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email }),
+                    });
+
+                    if (!response.ok) throw new Error("아이디 찾기에 실패했습니다.");
+                    const data = await response.json();
+                    return data.userId;
+                } catch (err) {
+                    console.error(`findUserId 실패: ${err}`);
+                    throw err;
+                }
+                
+            },
+            findPwd: async () => {
+
             }
-        }),
+        }) as WelcomeStore,
         {
             name: 'user-storage',
             storage: createJSONStorage(() => localStorage),

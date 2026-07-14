@@ -18,6 +18,7 @@ public class User extends BaseTimeEntity {
     private String userPwd;
     private String userNickname;
     private Integer userClassAge;
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -27,11 +28,12 @@ public class User extends BaseTimeEntity {
     private List<RecentView> recentViews;
 
     @Builder
-    public User (String userId, String userPwd, String userNickname, Integer userClassAge, Role role) {
+    public User (String userId, String userPwd, String userNickname, Integer userClassAge, String email, Role role) {
         this.userId = userId;
         this.userPwd = userPwd;
         this.userNickname = userNickname;
         this.userClassAge = userClassAge;
+        this.email = email;
         this.role = (role == null) ? Role.USER : role;
     }
 }

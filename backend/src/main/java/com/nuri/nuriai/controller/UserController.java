@@ -55,4 +55,16 @@ public class UserController {
         userService.withdrawUser(user);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/find")
+    public ResponseEntity<UserDto.FindResponse> findUserId(
+            @RequestParam("findType") String findType,
+            @RequestBody UserDto.FindRequest request
+    ) {
+        if ("id".equals(findType)) {
+            return ResponseEntity.ok(userService.findUserId(request.getEmail()));
+        } else {
+            return ResponseEntity.ok(userService.findUserPwd(request.getUserId(), request.getEmail()));
+        }
+    }
 }

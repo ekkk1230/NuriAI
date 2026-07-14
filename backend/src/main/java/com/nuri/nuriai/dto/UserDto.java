@@ -3,6 +3,8 @@ package com.nuri.nuriai.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nuri.nuriai.domain.Role;
 import com.nuri.nuriai.domain.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -55,5 +57,20 @@ public class UserDto {
             this.userClassAge = user.getUserClassAge();
             this.role = user.getRole();
         }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class FindResponse {
+        private Long id;
+        private String userId;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class FindRequest {
+        private String userId;
+        private String email;
     }
 }
