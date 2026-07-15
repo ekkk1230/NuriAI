@@ -7,7 +7,9 @@ export const API_ROUTES = {
     USER: {
         BASE: `${API_BASE_URL}/api/users`,
         WITHDRAW: `${API_BASE_URL}/api/users/withdraw`,
-        FINDUSERDATA: (type: string) => `${API_BASE_URL}/api/users/find?findType=${type}`
+        FINDUSERDATA: (type: string) => `${API_BASE_URL}/api/users/find?findType=${type}`,
+        CHECKUSERPWD: `${API_BASE_URL}/api/users/check`,
+        CHANGEPWD: `${API_BASE_URL}/api/users/change`,
     },
     PLAN: {
         BASE: `${API_BASE_URL}/api/plans`,

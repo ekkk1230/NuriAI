@@ -18,6 +18,9 @@ interface WelcomeStore {
 
     findUserId: (email: string) => Promise<string>;
     findUserPwd: (userId: string, email: string) => Promise<void>;
+
+    checkUserPwd: (password: string) => Promise<boolean>;
+    changePwd: (password: string) => Promise<boolean>;
 };
 
 export const useWelcomeStore = create<WelcomeStore>()(
@@ -139,6 +142,38 @@ export const useWelcomeStore = create<WelcomeStore>()(
                     console.log(data)
                 } catch (err) {
                     console.error(`findUserPwd 실패: ${err}`);
+                }
+            },
+            checkUserPwd: async(password) => {
+                try {
+                    const response = await apiFetch(`${API_ROUTES.USER.CHECKUSERPWD}`, {
+                        method: 'POST',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ password: password })
+                    });
+
+                    if (!response.ok) {
+                        return false; 
+                    };
+
+                    return true;
+                } catch (err) {
+                    console.error(`checkUserPwd 실패: ${err}`);
+                    return false;
+                }
+            },
+            changePwd: async(password) => {
+                try {
+                    const response = await apiFetch(`${API_ROUTES.USER.CHANGEPWD}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ newPassword: password })
+                    });
+                    if (!response.ok) return false;
+                    return true;
+                } catch (err) {
+                    console.error(`changePwd 실패: ${err}`);
+                    return false;
                 }
             }
         }) as WelcomeStore,
