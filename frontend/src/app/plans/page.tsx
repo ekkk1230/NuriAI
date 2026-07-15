@@ -18,8 +18,9 @@ function page() {
     const searchParams = useSearchParams();
 
     const pageFromUrl = Number(searchParams.get("page")) || 0;
+    const sortFromUrl = searchParams.get("sort") || "rank";
 
-    const { planStorage, searchPlans, isFetchPlanLoading, currentPage, totalPages, totalCounts } = usePlanStore();
+    const { planStorage, searchPlans, isFetchPlanLoading, currentPage, totalPages, totalCounts, fetchPage } = usePlanStore();
 
     const { form: searchForm, handleChange } = useForm({
         searchTxt: searchParams.get("txt") || "",
@@ -28,28 +29,26 @@ function page() {
         sortType: "latest"
     });
 
-    const handlePageChange = (page: number) => {
-        router.push(`?page=${page}&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}`);
-        usePlanStore.getState().fetchPage(page);
-    };
+    const [sortType, setSortType] = useState<string>(sortFromUrl);
+    const [isMounted, setIsMounted] = useState(false);
 
-    // console.log(planStorage)
-
-   // 1. 처음 마운트 될 때 실행 (데이터가 없거나 처음 진입 시)
+   // 1. 초기 진입 처리 (상세 페이지에서 돌아온 경우 페이지 유지, 아니면 0페이지)
     useEffect(() => {
-        if (planStorage.length > 0) return;
+        const prevPath = sessionStorage.getItem("prevPath");
+        const initialPage = prevPath === "detail" ? pageFromUrl : 0;
 
-        // 데이터가 없다면 URL의 페이지 정보로 첫 로딩
-        usePlanStore.getState().searchPlans(
+        searchPlans(
             searchForm.searchTxt, 
             searchForm.searchAge, 
             searchForm.searchArea, 
-            pageFromUrl 
+            initialPage,
+            sortType
         );
+
+        return () => sessionStorage.removeItem("prevPath");
     }, []); 
 
-    const [isMounted, setIsMounted] = useState(false);
-    // 2. 검색 조건 변경 시 실행 (검색어를 칠 때)
+    // 2. 검색 조건 변경 시 (검색/필터 변경)
     useEffect(() => {
         if (!isMounted) {
             setIsMounted(true);
@@ -57,29 +56,41 @@ function page() {
         }
     
         const timer = setTimeout(() => {
-            // 검색어 변경 시 0페이지로 이동
-            router.push(`?page=0&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}`);
-            usePlanStore.getState().searchPlans(
-                searchForm.searchTxt, 
-                searchForm.searchAge, 
-                searchForm.searchArea, 
-                0
-            );
+            router.push(`?page=0&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}&sort=${sortType}`);
+            searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea, 0, sortType);
         }, 500);
         return () => clearTimeout(timer);
     }, [searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea]);
- 
-    const [sortType, setSortType] = useState<string>("rank");
+
+    // 3. 정렬 조건 변경 시
+    const handleSortChange = (type: string) => {
+       const sortMapping: { [key: string]: string } = {
+            rank: "likeCount,desc",
+            date: "createdAt,desc",
+            view: "viewCount,desc"
+        };
+
+        const sortQuery = sortMapping[type] || "createdAt,desc";
+        setSortType(type);
+        router.push(`?page=0&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}&sort=${type}`);
+        searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea, 0, sortQuery);
+    };
+
+    const handlePageChange = (page: number) => {
+        router.push(`?page=${page}&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}&sort=${sortType}`);
+        fetchPage(page);
+    };
+
+    const handleNavigate = (id: number) => {
+        sessionStorage.setItem("prevPath", "detail");
+        router.push(`/storage/${id}`);
+    }
 
     const getSortBtnClass = (value: string) => {
         const base = "p-[1rem_1.6rem] text-[1.4rem] rounded-[.8rem] transition-all";
         const active = sortType === value ? "bg-white shadow-sm font-bold text-main" : "text-gray-500";
         return `${base} ${active}`;
     };
-
-    const handleNavigate = (id: number) => {
-        router.push(`/storage/${id}`);
-    }
 
     return (
         <div className="bg-bgCard flex flex-col h-[100%] overflow-y-hidden">
@@ -127,7 +138,7 @@ function page() {
                                     <li key={item.id}>
                                         <button 
                                             type="button" 
-                                            onClick={() => setSortType(item.id)}
+                                            onClick={() => handleSortChange(item.id)}
                                             className={getSortBtnClass(item.id)}
                                         >
                                             {item.label}
