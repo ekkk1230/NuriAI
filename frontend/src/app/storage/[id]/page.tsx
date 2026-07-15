@@ -14,7 +14,7 @@ import TextModal from '@/components/Modal/modalContents/TextModal';
 
 function page() {
     const { id: planId } = useParams();
-    const { planStorage, isLoaded, fetchPlanById, fetchPlansByAuthor, likePlan, addStorage, updatePlanViewCount, deletePlans } = usePlanStore();
+    const { planStorage, isLoaded, fetchPlanById, userPlans, updatePlanViewCount, deletePlans } = usePlanStore();
     const { openModal, closeModal } = useUiStore();
     const { user } = useWelcomeStore();
 
@@ -42,7 +42,7 @@ function page() {
 
     const plan = planStorage.find(p => p.id === Number(planId));
 
-    // console.log(user)
+    console.log(userPlans)
 
     useEffect(() => {
         if (!plan?.age) return;
@@ -70,6 +70,8 @@ function page() {
 
     const currentPlanAuthor = plan.author;
     const currentAuthorPlans = planStorage.filter(p => p.author === currentPlanAuthor);
+
+    console.log(currentAuthorPlans)
 
     const handleEdit = () => {
         openModal(

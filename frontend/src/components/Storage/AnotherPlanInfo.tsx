@@ -7,12 +7,19 @@ import { Plan } from "@/type/Plan";
 import { usePlanStore } from "@/store/usePlanStore";
 import { useRouter } from 'next/navigation';
 import { useWelcomeStore } from "@/store/useWelcomeStore";
+import { useEffect } from "react";
 
 
 export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, currentAuthorPlans: Plan[] }) => {
     const route = useRouter();
     const { user } = useWelcomeStore();
-    const { fetchPlansByAuthor, fetchPlanById, likePlan, addStorage } = usePlanStore();
+    const { fetchPlansByAuthor, fetchPlanById, likePlan, addStorage, authorPlans } = usePlanStore();
+
+    useEffect(() => {
+        fetchPlansByAuthor(plan);
+    }, [plan]);
+
+    // console.log(authorPlans)
 
     if (!user) return <div>로그인이 필요한 페이지입니다.</div>;
 
@@ -72,7 +79,7 @@ export const AnotherPlanInfo = ({ plan, currentAuthorPlans }: { plan: Plan, curr
                     </div>
                     <div className="flex flex-col w-[100%] items-center gap-[.4rem] text-[1.6rem] font-semibold">
                         <p className="text-textMuted text-[1.2rem]">작성한 계획안</p>
-                        <p className="font-bold">{currentAuthorPlans.length}개</p>
+                        <p className="font-bold">{authorPlans.length}개</p>
                     </div>
                 </div>
                 <button 
