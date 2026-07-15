@@ -37,6 +37,7 @@ public class UserService {
                 .userId(request.getUserId())
                 .userPwd(encodedPassword)
                 .userNickname(request.getUserNickname())
+                .email(request.getUserEmail())
                 .userClassAge(request.getUserClassAge())
                 .build();
 
@@ -61,6 +62,8 @@ public class UserService {
             return userRepository.existsByUserId(value);
         } else if (type.equals("userNickname")) {
             return userRepository.existsByUserNickname(value);
+        } else if (type.equals("userEmail")) {
+            return userRepository.existsByEmail(value);
         }
 
         throw new IllegalArgumentException("잘못된 중복 확인 타입입니다: " + type);

@@ -65,7 +65,7 @@ public class SecurityConfig {
                     .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/api/ping").permitAll()
                     .requestMatchers("/api/users/login", "/api/users/join", "/api/users/find/**").permitAll()
-                    .requestMatchers("/api/users/userId/**", "/api/users/userNickname/**").permitAll()
+                    .requestMatchers("/api/users/userId/**", "/api/users/userNickname/**", "/api/users/userEmail/**").permitAll()
 
                     .requestMatchers("/api/users/check", "/api/mypage", "/api/inquiries", "/api/inquiries/**", "/api/recent-views/**").authenticated()
                     .requestMatchers("/api/plans/**", "/api/users/me", "/api/users/withdraw").authenticated()

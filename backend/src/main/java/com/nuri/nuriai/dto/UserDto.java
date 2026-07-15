@@ -18,6 +18,8 @@ public class UserDto {
         private String userPwd;
         @JsonProperty("userNickname")
         private String userNickname;
+        @JsonProperty("userEmail")
+        private String userEmail;
         @JsonProperty("userClassAge")
         private Integer userClassAge;
     }
