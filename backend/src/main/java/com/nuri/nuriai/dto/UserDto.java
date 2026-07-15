@@ -73,4 +73,16 @@ public class UserDto {
         private String userId;
         private String email;
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class CheckPasswordRequest {
+        private String password;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class ChangePasswordRequest {
+        private String newPassword;
+    }
 }

@@ -69,4 +69,33 @@ public class UserController {
             return ResponseEntity.ok(Map.of("message", "임시 비밀번호 이메일 발송 성공"));
         }
     }
+
+    @PostMapping("/check")
+    public ResponseEntity<?> checkPassword(
+        @RequestBody UserDto.CheckPasswordRequest request,
+        @AuthenticationPrincipal User user
+    ) {
+        boolean isMatch = userService.checkPwd(request.getPassword(), user);
+
+        if (isMatch) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    @PostMapping("/change")
+    public ResponseEntity<?> changePassword(
+        @RequestBody UserDto.ChangePasswordRequest request,
+        @AuthenticationPrincipal User user
+    ) {
+        boolean isMatch = userService.changePwd(request.getNewPassword(), user);
+
+        if (isMatch) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호 변경 실패");
+        }
+    }
+
 }

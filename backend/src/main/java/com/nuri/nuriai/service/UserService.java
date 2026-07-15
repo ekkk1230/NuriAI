@@ -117,4 +117,21 @@ public class UserService {
         }
     }
 
+    public boolean checkPwd(String password, User user) {
+        String originalPwd = user.getUserPwd();
+        return passwordEncoder.matches(password, originalPwd);
+    }
+
+    @Transactional
+    public boolean changePwd(String password, User user) {
+        User foundUser = userRepository.findByUserId(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        System.out.println("변경할 비밀번호: " + password);
+        try {
+            foundUser.changePassword(passwordEncoder.encode(password));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }
