@@ -27,15 +27,13 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
             <div className="bg-sub2-gradient p-[1.6rem] relative">
                 <p className="text-textLight text-[1.8rem] font-semibold mb-[1rem]">{plan.mainTheme}</p>
                 <ul className="flex gap-[.4rem]">
-                    <li className="flex items-center text-[1.4rem] text-textLight">
+                    <li className="flex items-center text-[1.3rem] text-textLight">
                         <FaRegCalendarAlt className="mr-[.4rem]" />
                         {plan.createdAt.split('T')[0]}
                     </li>
-                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight">{plan.age}</li>
-                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight">{plan.plans.length}개 활동</li>
-
-                    {/* 확인용 */}
-                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.4rem] text-textLight w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap">{plan.author}선생님</li>
+                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.3rem] text-textLight">{plan.age}</li>
+                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.3rem] text-textLight">{plan.plans.length}개 활동</li>
+                    <li className="before:content-['•'] before:mr-[.4rem] flex items-center text-[1.3rem] text-textLight w-[10rem] overflow-hidden text-ellipsis whitespace-nowrap">{plan.author}선생님</li>
                 </ul>
 
                 {!authorFilter && (
