@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 const initialUserValues: UserRegisterForm = {
     userId: "",
     userNickname: "",
+    userEmail: "",
     userPwd: "",
     userConfirmPwd: "",
     userClassAge: null,
@@ -27,40 +28,28 @@ function page() {
 
     const userIdRef = useRef<HTMLInputElement>(null);
     const userNicknameRef = useRef<HTMLInputElement>(null);
+    const userEmailRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
     const confirmPwdRef = useRef<HTMLInputElement>(null);
 
     const [isIdChecked, setIsIdChecked] = useState(false);
     const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+    const [isEmailChecked, setIsEmailChecked] = useState(false);
 
     const handleJoin = async () => {
-        if (!userForm.userId || !userForm.userNickname || !userForm.userPwd || !userForm.userConfirmPwd) {
-            openModal(
-                "오류",
-                "CHECK",
-                <TextModal
-                    txt={"모든 필수 항목을 입력해주세요."}
-                    onConfirm={() => {
-                        closeModal();
-                    }}
-                />
-            )
-            return;
-        };
+        // 1. 빈 항목 체크
+        if (!userForm.userId) return showValidationError("아이디를 입력해주세요.", userIdRef);
+        if (!userForm.userNickname) return showValidationError("닉네임을 입력해주세요.", userNicknameRef);
+        if (!userForm.userEmail) return showValidationError("이메일을 입력해주세요.", userEmailRef);
+        if (!userForm.userPwd) return showValidationError("비밀번호를 입력해주세요.", passwordRef);
+        if (!userForm.userConfirmPwd) return showValidationError("비밀번호 확인을 입력해주세요.", confirmPwdRef);
 
-        if (!isIdChecked || !isNicknameChecked) {
-            openModal(
-                "오류",
-                "CHECK",
-                <TextModal 
-                    txt={"아이디와 닉네임 중복확인을 해주세요."}
-                    onConfirm={() => {
-                        closeModal();
-                    }}
-                />
-            )
-            return;
-        }
+        // 2. 중복 확인 체크
+        if (!isIdChecked) return showValidationError("아이디 중복확인을 해주세요.", userIdRef);
+        if (!isNicknameChecked) return showValidationError("닉네임 중복확인을 해주세요.", userNicknameRef);
+        if (!isEmailChecked) return showValidationError("이메일 중복확인을 해주세요.", userEmailRef);
 
+        // 3. 비밀번호 오류
         if (userForm.userPwd !== userForm.userConfirmPwd) {
             openModal(
                 "비밀번호 오류",
@@ -98,15 +87,34 @@ function page() {
 
     };
 
+    const showValidationError = (message: string, ref: { current: HTMLInputElement | null }) => {
+        openModal(
+            "오류",
+            "CHECK",
+            <TextModal
+                txt={message}
+                onConfirm={() => {
+                    closeModal();
+                    ref.current?.focus();
+                }}
+            />
+        )
+    }
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e);
         if (e.target.name === "userId") setIsIdChecked(false);
         if (e.target.name === "userNickname") setIsNicknameChecked(false);
+        if (e.target.name === "userEmail") setIsEmailChecked(false);
     }
 
-    const handleDuplication = async(type: "userId" | "userNickname") => {
-        const tgText = type === "userId" ? "아이디" : "닉네임"
-        const ref = type === "userId" ? userIdRef : userNicknameRef;
+    const handleDuplication = async(type: "userId" | "userNickname" | "userEmail") => {
+        const tgText = type === "userId" 
+                    ? "아이디" 
+                    : (type === "userNickname" ? "닉네임" : "이메일");
+        const ref = type === "userId" 
+                    ? userIdRef 
+                    : (type === "userNickname" ? userNicknameRef : userEmailRef);
         const value = userForm[type];
 
         if (!value.trim()) {
@@ -117,7 +125,9 @@ function page() {
                     txt={`${tgText}을(를) 입력해주세요.`}
                     onConfirm={() => {
                         closeModal();
-                        ref.current?.focus();
+                        if (ref.current) {
+                            ref.current.focus();
+                        }
                     }} 
                 />
             )
@@ -127,7 +137,9 @@ function page() {
             const result = await confirmData(type, value);
 
             if (!result.isDuplicated) {
-                type === "userId" ? setIsIdChecked(true) : setIsNicknameChecked(true);
+                type === "userId" 
+                    ? setIsIdChecked(true) 
+                    : (type === "userNickname" ? setIsNicknameChecked(true) : setIsEmailChecked(true));
             }
 
             openModal(
@@ -165,8 +177,16 @@ function page() {
             </label>
 
             <label className="block mt-[2rem]">
+                <p className="text-[1.6rem] font-semibold mb-[1.2rem]">이메일</p>
+                <div className="flex gap-[.8rem]">
+                    <input type="text" ref={userEmailRef} onChange={handleInputChange} value={userForm.userEmail} name="userEmail" />
+                    <button type="button" onClick={() => handleDuplication("userEmail")} className="rounded-[.8rem] p-[1rem_1.4rem] bg-[#f7ecfe] text-main font-semibold text-[1.4rem] whitespace-nowrap">중복확인</button>
+                </div>
+            </label>
+
+            <label className="block mt-[2rem]">
                 <p className="text-[1.6rem] font-semibold mb-[1.2rem]">비밀번호</p>
-                <input type="password" onChange={handleInputChange} value={userForm.userPwd} name="userPwd" />
+                <input type="password" ref={passwordRef} onChange={handleInputChange} value={userForm.userPwd} name="userPwd" />
             </label>
 
             <label className="block mt-[2rem]">

@@ -2,6 +2,7 @@ export interface User {
     id?: number;
     userId: string;
     userNickname: string;
+    userEmail: string;
     userPwd: string;
     userClassAge: number | null;
     role?: string;
