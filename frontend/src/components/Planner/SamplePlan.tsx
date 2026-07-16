@@ -8,7 +8,7 @@ function SamplePlan() {
     const { planStorage, fetchAllPlans } = usePlanStore();
 
     useEffect(() => {
-        fetchAllPlans(0, "", "전체", "전체")
+        fetchAllPlans(0, "", "전체", "전체", "createdAt,desc")
     }, [fetchAllPlans]);
 
     const randomIndex = planStorage.length > 0 
