@@ -52,7 +52,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     currentDomain: "전체",
     userCollectedData: [],
     currentSort: "",
-    searchPlans: async (keyword, age, domain, page = 0, sortType = "rank") => {
+    searchPlans: async (keyword, age, domain, page = 0, sortType = "createdAt,desc") => {
         set({ currentKeyword: keyword, currentAge: age, currentDomain: domain, currentPage: page, currentSort: sortType });
         await get().fetchAllPlans(0, keyword, age, domain, sortType);
     },
@@ -60,7 +60,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         const { currentKeyword, currentAge, currentDomain, currentSort } = get();
         await get().fetchAllPlans(page, currentKeyword, currentAge, currentDomain, currentSort);
     },
-    fetchAllPlans: async (page = 0, keyword = "", age = "전체", domain = "전체", sortType = "rank") => {
+    fetchAllPlans: async (page = 0, keyword = "", age = "전체", domain = "전체", sortType = "createdAt,desc") => {
         set ({ isFetchPlanLoading: true });
         try {
             let url = `${API_ROUTES.PLAN.BASE}?page=${page}&size=12&sort=${sortType}`;

@@ -18,7 +18,7 @@ function Page() {
     const searchParams = useSearchParams();
     const authorFilter = searchParams.get("author") || "";
 
-    console.log(authorFilter)
+    // console.log(authorFilter)
 
     const router = useRouter();
     const { fetchUserPlans, fetchAllPlans, fetchUserCollectItem, fetchPlansByAuthor, authorPlans, planStorage, userPlans, userCollectPlans, deletePlans, isFetchPlanLoading } = usePlanStore();
@@ -34,11 +34,7 @@ function Page() {
 
     useEffect(() => {
         if (authorFilter) {
-<<<<<<< HEAD
             fetchPlansByAuthor({ author: decodeURIComponent(authorFilter) } as any);
-=======
-            fetchAllPlans(0, "", "", "", sortType);
->>>>>>> feature/sort
         } else if (user) {
             fetchUserPlans(user);
             fetchUserCollectItem(Number(user.id));
@@ -80,8 +76,8 @@ function Page() {
         setCheckedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id] );
     };
 
-    const paginatedPlans = authorFilter ? authorPlans : displayedPlans.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
-    const totalLocalPages = authorFilter ? Math.ceil(authorPlans.length / ITEMS_PER_PAGE) : Math.ceil(displayedPlans.length / ITEMS_PER_PAGE);
+    const paginatedPlans = displayedPlans.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
+    const totalLocalPages = Math.ceil(displayedPlans.length / ITEMS_PER_PAGE);
 
     const handleLocalPageChange = (page: number) => {
         setCurrentPage(page);
@@ -159,7 +155,7 @@ function Page() {
                     <LoadingFetchPlans type="storage" />
                 ) : paginatedPlans.length >= 1 ? (
                     <>
-                        <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{authorFilter ? authorPlans.length : displayedPlans.length}개</span>의 계획안</p>
+                        <p className="text-textMuted text-[1.4rem] font-semibold mb-[1.2rem]">총 <span className="text-main font-bold">{displayedPlans.length}개</span>의 계획안</p>
                         <div className="grid gap-[1.8rem_1.6rem] grid-cols-4">
                             {paginatedPlans.map((plan, idx) => (
                                 <PlanItem 

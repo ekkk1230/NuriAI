@@ -18,7 +18,7 @@ function page() {
     const searchParams = useSearchParams();
 
     const pageFromUrl = Number(searchParams.get("page")) || 0;
-    const sortFromUrl = searchParams.get("sort") || "rank";
+    const sortFromUrl = searchParams.get("sort") || "createdAt";
 
     const { planStorage, searchPlans, isFetchPlanLoading, currentPage, totalPages, totalCounts, fetchPage } = usePlanStore();
 
@@ -26,7 +26,7 @@ function page() {
         searchTxt: searchParams.get("txt") || "",
         searchAge: searchParams.get("age") || "",
         searchArea: searchParams.get("area") || "",
-        sortType: "latest"
+        sortType: "createdAt"
     });
 
     const [sortType, setSortType] = useState<string>(sortFromUrl);
@@ -56,21 +56,16 @@ function page() {
         }
     
         const timer = setTimeout(() => {
+            const sortQuery = `${sortType},desc`;
             router.push(`?page=0&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}&sort=${sortType}`);
-            searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea, 0, sortType);
+            searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea, 0, sortQuery);
         }, 500);
         return () => clearTimeout(timer);
-    }, [searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea]);
+    }, [searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea, sortType]);
 
     // 3. 정렬 조건 변경 시
     const handleSortChange = (type: string) => {
-       const sortMapping: { [key: string]: string } = {
-            rank: "likeCount,desc",
-            date: "createdAt,desc",
-            view: "viewCount,desc"
-        };
-
-        const sortQuery = sortMapping[type] || "createdAt,desc";
+        const sortQuery = `${type},desc`;
         setSortType(type);
         router.push(`?page=0&txt=${searchForm.searchTxt}&age=${searchForm.searchAge}&area=${searchForm.searchArea}&sort=${type}`);
         searchPlans(searchForm.searchTxt, searchForm.searchAge, searchForm.searchArea, 0, sortQuery);
@@ -131,9 +126,9 @@ function page() {
                             <ul className="flex p-[.4rem] rounded-[.8rem] bg-[#efefef] gap-[.4rem]">
                             <ul className="flex p-[.4rem] rounded-[.8rem] bg-[#efefef] gap-[.4rem]">
                                 {[
-                                    { id: "rank", label: "인기순" },
-                                    { id: "date", label: "최신순" },
-                                    { id: "view", label: "조회순" }
+                                    { id: "likeCount", label: "인기순" },
+                                    { id: "createdAt", label: "최신순" },
+                                    { id: "viewCount", label: "조회순" }
                                 ].map((item) => (
                                     <li key={item.id}>
                                         <button 
