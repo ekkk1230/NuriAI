@@ -9,7 +9,7 @@ interface PlanStore {
     isLoaded: boolean;
     currentCreatePlan: Plan[];
     isFetchPlanLoading: boolean;
-    fetchAllPlans: (page: number, keyword: string, age: string, domain: string) => Promise<void>;
+    fetchAllPlans: (page: number, keyword: string, age: string, domain: string, sortType: string) => Promise<void>;
     fetchPlanById: (id: number) => Promise<void>;
     updatePlanViewCount: (id: number) => Promise<void>;
     fetchUserPlans: (user: User)  => Promise<void>;
@@ -33,9 +33,10 @@ interface PlanStore {
     currentKeyword: string;
     currentAge: string;
     currentDomain: string;
-    searchPlans: (keyword: string, age: string, domain: string, page: number) => Promise<void>;
+    searchPlans: (keyword: string, age: string, domain: string, page: number, sortType: string) => Promise<void>;
     fetchPage: (page: number) => Promise<void>;
     userCollectedData: Plan[];
+    currentSort: string;
 };
 
 export const usePlanStore = create<PlanStore>((set, get) => ({
@@ -50,18 +51,19 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
     currentAge: "전체",
     currentDomain: "전체",
     userCollectedData: [],
-    searchPlans: async (keyword, age, domain, page = 0) => {
-        set({ currentKeyword: keyword, currentAge: age, currentDomain: domain, currentPage: page });
-        await get().fetchAllPlans(0, keyword, age, domain);
+    currentSort: "",
+    searchPlans: async (keyword, age, domain, page = 0, sortType = "rank") => {
+        set({ currentKeyword: keyword, currentAge: age, currentDomain: domain, currentPage: page, currentSort: sortType });
+        await get().fetchAllPlans(0, keyword, age, domain, sortType);
     },
     fetchPage: async (page) => {
-        const { currentKeyword, currentAge, currentDomain } = get();
-        await get().fetchAllPlans(page, currentKeyword, currentAge, currentDomain);
+        const { currentKeyword, currentAge, currentDomain, currentSort } = get();
+        await get().fetchAllPlans(page, currentKeyword, currentAge, currentDomain, currentSort);
     },
-    fetchAllPlans: async (page = 0, keyword = "", age = "전체", domain = "전체") => {
+    fetchAllPlans: async (page = 0, keyword = "", age = "전체", domain = "전체", sortType = "rank") => {
         set ({ isFetchPlanLoading: true });
         try {
-            let url = `${API_ROUTES.PLAN.BASE}?page=${page}&size=12`;
+            let url = `${API_ROUTES.PLAN.BASE}?page=${page}&size=12&sort=${sortType}`;
             if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
             if (age && age !== "전체") url += `&age=${encodeURIComponent(age)}`;
             if (domain && domain !== "전체") url += `&domain=${encodeURIComponent(domain)}`;
@@ -77,6 +79,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
                 totalPages: data.totalPages,
                 totalCounts: data.totalElements,
                 currentPage: data.number,
+                currentSort: sortType,
                 isLoaded: true
             });
         } catch (err) {

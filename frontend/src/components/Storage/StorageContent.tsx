@@ -34,7 +34,11 @@ function Page() {
 
     useEffect(() => {
         if (authorFilter) {
+<<<<<<< HEAD
             fetchPlansByAuthor({ author: decodeURIComponent(authorFilter) } as any);
+=======
+            fetchAllPlans(0, "", "", "", sortType);
+>>>>>>> feature/sort
         } else if (user) {
             fetchUserPlans(user);
             fetchUserCollectItem(Number(user.id));

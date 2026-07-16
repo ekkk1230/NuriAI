@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j; // log 사용을 위해 추가
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +44,17 @@ public class PlanService {
     private final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=";
 
     public Page<PlanDto.GeminiResponse> getAll(String keyword, String age, String area, Pageable pageable) {
-        Page<Plan> planPage = planRepository.findByConditions(keyword, age, area, pageable);
+        // 1. 정렬 조건 필터링 (rank -> likeCount)
+        Pageable adjustedPageable = pageable;
+        if (pageable.getSort().getOrderFor("rank") != null) {
+            Sort sort = Sort.by(pageable.getSort().getOrderFor("rank").getDirection(), "likeCount");
+            adjustedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        }
+
+        // 2. 리포지토리 조회
+        Page<Plan> planPage = planRepository.findByConditions(keyword, age, area, adjustedPageable);
+
+        // 3. Page<Plan> -> Page<GeminiResponse> 변환
         return planPage.map(PlanDto.GeminiResponse::new);
     }
 

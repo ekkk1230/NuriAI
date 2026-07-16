@@ -20,7 +20,7 @@ export const MyPlanInfo = ({ currentAuthorPlans }: { currentAuthorPlans: Plan[] 
         }
     }, [])
 
-    console.log(user)
+    // console.log(user)
 
     const utilItemClass = "flex px-[1.6rem] gap-[.4rem] text-[1.6rem] font-bold items-center"
     const utilBtnClass = "flex gap-[.4rem] items-center text-textLight justify-center rounded-[.8rem] text-[1.6rem] font-semibold p-[1rem_1.8rem] w-full";

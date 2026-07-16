@@ -139,7 +139,7 @@ export const useWelcomeStore = create<WelcomeStore>()(
 
                     if (!response.ok) throw new Error("비밀번호 찾기에 실패했습니다.");
                     const data = await response.json();
-                    console.log(data)
+                    // console.log(data)
                 } catch (err) {
                     console.error(`findUserPwd 실패: ${err}`);
                 }
