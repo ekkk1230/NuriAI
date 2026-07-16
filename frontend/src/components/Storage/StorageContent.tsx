@@ -34,7 +34,7 @@ function Page() {
 
     useEffect(() => {
         if (authorFilter) {
-            fetchAllPlans(0, "", "", "");
+            fetchAllPlans(0, "", "", "", sortType);
         } else if (user) {
             fetchUserPlans(user);
             fetchUserCollectItem(Number(user.id));
