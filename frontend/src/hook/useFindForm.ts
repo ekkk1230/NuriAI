@@ -10,6 +10,7 @@ export const useFindForm = () => {
     const findPwdApi = async (userId: string, email: string) => {
         return await findUserPwd(userId, email);
         // console.log(userId, email)
+        // console.log(tempPassword)
     };
 
     return {

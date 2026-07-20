@@ -24,7 +24,7 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
     return (
         <div className="rounded-[2.4rem] bg-bgCard hover:-top-[.5rem] relative cursor-pointer transition-all duration-200 border border-solid border-[#eee] shadow-sm overflow-hidden" onClick={onClick}>
             
-            <div className="bg-sub2-gradient p-[1.6rem] relative">
+            <div className="bg-sub2-gradient p-[1.2rem] relative">
                 <p className="text-textLight text-[1.8rem] font-semibold mb-[1rem]">{plan.mainTheme}</p>
                 <ul className="flex gap-[.4rem]">
                     <li className="flex items-center text-[1.3rem] text-textLight">
@@ -66,7 +66,7 @@ function PlanItem({ plan, checkHandle, onClick, authorFilter }: PlanItemProps) {
                 )}
             </div>
 
-            <div className="p-[1.6rem] flex flex-col gap-[1.2rem]">
+            <div className="p-[1.2rem] flex flex-col gap-[1.2rem]">
     
                 <div className="flex flex-col gap-[0.8rem] h-[12rem] overflow-hidden">
                     {plan.plans.slice(0, 2).map((item: any, idx: number) => {

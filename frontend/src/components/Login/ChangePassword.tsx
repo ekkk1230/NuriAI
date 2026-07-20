@@ -46,6 +46,7 @@ export const ChangePassword = () => {
 
     return (
         <div className="p-[4rem_2rem]">
+            <p className="text-[1.4rem] font-semibold mb-[1rem]">새로운 비밀번호를 입력해주세요.</p>
             {error && <p className="text-red-500 text-[1.4rem] mb-[1rem] text-center">{error}</p>}
             <input ref={passwordRef} type="password" name="password" value={form.password} onChange={handleChange} placeholder="새로운 비밀번호를 입력하세요." />
             <input type="password" name="confirm" value={form.confirm} onChange={handleChange} className="mt-[1rem] block" placeholder="새로운 비밀번호를 다시 입력하세요." />

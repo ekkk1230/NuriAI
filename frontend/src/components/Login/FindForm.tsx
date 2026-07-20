@@ -53,7 +53,20 @@ export default function FindForm({ findType }: { findType: string}) {
                 return;
             }
     
-            await findPwdApi(userId, email);
+            console.log(email, userId)
+            const temp = await findPwdApi(userId, email);
+
+            console.log(temp)
+            
+            openModal(
+                "비밀번호 변경 성공", 
+                "CHECK", 
+                <TextModal txt={`변경된 비밀번호는 `} highlight={`${temp} `} 
+                    onConfirm={() => {
+                        router.push('/welcome/login');
+                        closeModal();
+                    }} 
+                />)
         }
     };
 
