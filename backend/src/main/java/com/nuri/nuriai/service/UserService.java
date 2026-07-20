@@ -115,8 +115,10 @@ public class UserService {
         try {
             mailSender.send(message);
             log.info("메일 발송 완료");
+            System.out.println("메일 발송 성공!");
         } catch (Exception e) {
             log.error("메일 발송 중 에러 발생: ", e);
+            e.printStackTrace();
         }
     }
 
