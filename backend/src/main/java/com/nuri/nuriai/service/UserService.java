@@ -108,6 +108,8 @@ public class UserService {
         user.changePassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
+        System.out.println("메일 발송 서비스 호출됨! 대상 이메일: " + email);
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("임시 비밀번호 안내");
