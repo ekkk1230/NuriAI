@@ -100,29 +100,16 @@ public class UserService {
     }
 
     @Transactional
-    public void findUserPwd(String userId, String email) {
+    public String findUserPwd(String userId, String email) {
         User user = userRepository.findByUserIdAndEmail(userId, email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 정보 입니다."));
 
         String newPassword = UUID.randomUUID().toString().substring(0, 8);
+//        System.out.println("변경된 비밀번호 " + newPassword);
 
         user.changePassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        System.out.println("메일 발송 서비스 호출됨! 대상 이메일: " + email);
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("eungyeongsong75@gmail.com");
-        message.setTo(email);
-        message.setSubject("임시 비밀번호 안내");
-        message.setText("발급된 임시 비밀번호는 " + newPassword + " 입니다.");
-        try {
-            mailSender.send(message);
-            log.info("메일 발송 완료");
-            System.out.println("메일 발송 성공!");
-        } catch (Exception e) {
-            log.error("메일 발송 중 에러 발생: ", e);
-            e.printStackTrace();
-        }
+        return newPassword;
     }
 
     public boolean checkPwd(String password, User user) {

@@ -35,7 +35,7 @@ public class SecurityConfig {
         return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 
-    @Value("${CORS_ALLOWED_ORIGINS}")
+    @Value("${cors.allowed-origins}")
     private String allowedOrigins;
 
     // [추가] CORS 설정 빈 등록

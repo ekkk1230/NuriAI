@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -65,8 +67,10 @@ public class UserController {
         if ("id".equals(findType)) {
             return ResponseEntity.ok(userService.findUserId(request.getEmail()));
         } else {
-            userService.findUserPwd(request.getUserId(), request.getEmail());
-            return ResponseEntity.ok(Map.of("message", "임시 비밀번호 이메일 발송 성공"));
+            String tempPassword = userService.findUserPwd(request.getUserId(), request.getEmail());
+            Map<String, String> response = new HashMap<>();
+            response.put("result", tempPassword);
+            return ResponseEntity.ok(response);
         }
     }
 
