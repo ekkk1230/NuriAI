@@ -111,6 +111,7 @@ public class UserService {
         System.out.println("메일 발송 서비스 호출됨! 대상 이메일: " + email);
 
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("eungyeongsong75@gmail.com");
         message.setTo(email);
         message.setSubject("임시 비밀번호 안내");
         message.setText("발급된 임시 비밀번호는 " + newPassword + " 입니다.");
