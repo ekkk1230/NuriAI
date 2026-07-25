@@ -65,7 +65,8 @@ public class UserController {
             @RequestBody UserDto.FindRequest request
     ) {
         if ("id".equals(findType)) {
-            return ResponseEntity.ok(userService.findUserId(request.getEmail()));
+            UserDto.FindResponse response = userService.findUserId(request.getEmail());
+            return ResponseEntity.ok(response);
         } else {
             String tempPassword = userService.findUserPwd(request.getUserId(), request.getEmail());
             Map<String, String> response = new HashMap<>();

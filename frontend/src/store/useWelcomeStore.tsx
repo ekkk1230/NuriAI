@@ -104,7 +104,8 @@ const storeCreator: StateCreator<WelcomeStore, [], []> = (set, get) => ({
         });
         if (!response.ok) throw new Error("아이디 찾기 실패");
         const data = await response.json();
-        return data.result;
+        console.log(data)
+        return data.userId;
     },
 
     findUserPwd: async (userId, email) => {
