@@ -3,8 +3,6 @@ package com.nuri.nuriai.controller;
 import com.nuri.nuriai.domain.Plan;
 import com.nuri.nuriai.domain.User;
 import com.nuri.nuriai.dto.PlanDto;
-import com.nuri.nuriai.dto.PlanLikeDto;
-import com.nuri.nuriai.dto.PlanSaveDto;
 import com.nuri.nuriai.service.PlanService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -108,15 +106,13 @@ public class PlanController {
     }
 
     @PostMapping("/{planId}/like")
-    public ResponseEntity<PlanDto.GeminiResponse> toggleLike(@PathVariable("planId") Long planId, @RequestBody PlanLikeDto.PlanLikeRequest request) {
-//        System.out.println("컨트롤러에 도착한 planId: " + planId);
-//        System.out.println("컨트롤러에 도착한 userId: " + request.getUserId());
-        return ResponseEntity.ok(planService.toggleLike(planId, request.getUserId()));
+    public ResponseEntity<PlanDto.GeminiResponse> toggleLike(@PathVariable("planId") Long planId, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(planService.toggleLike(planId, user.getId()));
     }
 
     @PostMapping("/{planId}/save")
-    public ResponseEntity<PlanDto.GeminiResponse> toggleSave(@PathVariable("planId") Long planId, @RequestBody PlanSaveDto.PlanSaveRequest request) {
-        return ResponseEntity.ok(planService.toggleSave(planId, request.getUserId()));
+    public ResponseEntity<PlanDto.GeminiResponse> toggleSave(@PathVariable("planId") Long planId, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(planService.toggleSave(planId, user.getId()));
     }
 
     @PostMapping("/{id}/view")
@@ -127,14 +123,17 @@ public class PlanController {
         return ResponseEntity.ok(planService.increaseViewCount(id, user));
     }
 
-    @GetMapping("/user/{userId}/collected")
-    public ResponseEntity<List<PlanDto.GeminiResponse>> getCollectList(@PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(planService.getCollectList(userId));
+    @GetMapping("/user/collected")
+    public ResponseEntity<List<PlanDto.GeminiResponse>> getCollectList(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(planService.getCollectList(user.getId()));
     }
 
     @PostMapping("/update")
-    public ResponseEntity<PlanDto.GeminiResponse> updatePlan(@RequestBody PlanDto.UpdatePlanRequest request) {
-        return ResponseEntity.ok(planService.updateplan(request));
+    public ResponseEntity<PlanDto.GeminiResponse> updatePlan(
+            @RequestBody PlanDto.UpdatePlanRequest request,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(planService.updateplan(request, user));
     }
 
     @PostMapping("/delete-batch")

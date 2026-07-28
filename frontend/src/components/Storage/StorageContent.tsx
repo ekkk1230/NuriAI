@@ -37,7 +37,7 @@ function Page() {
             fetchPlansByAuthor({ author: decodeURIComponent(authorFilter) } as any);
         } else if (user) {
             fetchUserPlans(user);
-            fetchUserCollectItem(Number(user.id));
+            fetchUserCollectItem();
         }
     }, [user, authorFilter]);
 
@@ -91,7 +91,7 @@ function Page() {
             setCheckedIds([]);
             if (user) {
                 fetchUserPlans(user);
-                fetchUserCollectItem(Number(user.id));
+                fetchUserCollectItem();
             }
         } catch (error) {
             console.error("삭제 실패:", error);

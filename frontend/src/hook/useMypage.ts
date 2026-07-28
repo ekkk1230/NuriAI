@@ -16,7 +16,7 @@ export const useMypage = () => {
         // console.log(user?.role)
         if (user) {
             fetchUserPlans(user);
-            fetchUserCollectItem(Number(user.id));
+            fetchUserCollectItem();
             fetchRecentViewPlans();
             fetchRecentStatistics();
 

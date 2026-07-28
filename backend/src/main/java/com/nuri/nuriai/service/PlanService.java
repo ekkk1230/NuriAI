@@ -319,8 +319,13 @@ public class PlanService {
     }
 
     @Transactional
-    public PlanDto.GeminiResponse updateplan(PlanDto.UpdatePlanRequest request) {
+    public PlanDto.GeminiResponse updateplan(PlanDto.UpdatePlanRequest request, User user) {
         Plan plan = planRepository.findById(request.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계획안 입니다." + request.getId()));
+
+        if (plan.getAuthor() == null || !plan.getAuthor().equals(user.getUserNickname())) {
+            throw new IllegalArgumentException("본인이 작성한 계획안만 수정할 수 있습니다.");
+        }
+
         List<Activity> newActivities = request.getPlans().stream().map(detail -> {
             return Activity.builder()
                     .domain(detail.getDomain())

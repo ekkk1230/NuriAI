@@ -19,7 +19,7 @@ export const API_ROUTES = {
         LIKE: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/like`,
         SAVE: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/save`,
         VIEW: (planId: number) => `${API_BASE_URL}/api/plans/${planId}/view`,
-        COLLECTED: (userId: number) => `${API_BASE_URL}/api/plans/user/${userId}/collected`,
+        COLLECTED: `${API_BASE_URL}/api/plans/user/collected`,
         UPDATE: `${API_BASE_URL}/api/plans/update`,
         DELETEMYITEMS: `${API_BASE_URL}/api/plans/delete-batch`,
         RECENT: `${API_BASE_URL}/api/plans/statistics/recent`,
