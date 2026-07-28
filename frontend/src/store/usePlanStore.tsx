@@ -14,7 +14,7 @@ interface PlanStore {
     updatePlanViewCount: (id: number) => Promise<void>;
     fetchUserPlans: (user: User)  => Promise<void>;
     fetchPlansByAuthor: (plan: Plan) => Promise<void>;
-    fetchUserCollectItem: (userId: number) => Promise<void>;
+    fetchUserCollectItem: () => Promise<void>;
     userPlans: Plan[];
     userCollectPlans: Plan[];
     authorPlans: Plan[];
@@ -159,9 +159,9 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
             set({ isLoaded: true }); 
         }
     },
-    fetchUserCollectItem: async (userId) => {
+    fetchUserCollectItem: async () => {
         try {
-            const response = await apiFetch(API_ROUTES.PLAN.COLLECTED(userId));
+            const response = await apiFetch(API_ROUTES.PLAN.COLLECTED);
             const data = await response.json();
             
             // console.log("서버가 보내준 데이터 구조:", data);
@@ -242,7 +242,6 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.LIKE(plan.id)}`, {
                 method: "POST",
-                body: JSON.stringify({ userId: user.id }),
             });
             // console.log(response)
 
@@ -259,7 +258,6 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
         try {
             const response = await apiFetch(`${API_ROUTES.PLAN.SAVE(plan.id)}`, {
                 method: "POST",
-                body: JSON.stringify({ userId: user.id }),
             });
             if (!response.ok) throw new Error("계획안 저장 실패");
             const updatedPlanData = await response.json();
@@ -267,7 +265,7 @@ export const usePlanStore = create<PlanStore>((set, get) => ({
                 planStorage: state.planStorage.map(p => p.id === plan.id ? { ...p, ...updatedPlanData} : p),
             }));
             
-            get().fetchUserCollectItem(user?.id!);
+            get().fetchUserCollectItem();
         } catch (err) {
             console.error(`addStorage 실패: ${err}`);
         }
