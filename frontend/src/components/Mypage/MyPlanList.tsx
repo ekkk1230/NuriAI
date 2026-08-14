@@ -31,26 +31,34 @@ export default function MyPlanList() {
                 ? (
                     <>
                         <ul>
-                            {userPlans.slice(0, 4).map(p => (
-                                <li key={p.id} className="relative flex flex-wrap flex-row items-center w-full p-[1.4rem_1.2rem]">
-                                    <div className="w-[5rem] h-[5rem] flex items-center justify-center bg-act0 rounded-[1.2rem] mr-[1.6rem]">
-                                        <PiBookOpenTextLight className="text-act0-text text-[3rem]" />
-                                    </div>
-                                    <div className="w-[calc(100%-6.6rem)]">
-                                        <Link href={`/storage/${p.id}`}>
-                                            <p className="font-bold text-[1.6rem] mb-[.4rem]">{p.mainTheme}</p>
-                                        </Link>
-                                        <div className="flex gap-[1rem] font-semibold text-textMuted">
-                                            <p className="text-[1.4rem]">{p.plans.map(plan => ( plan.domain ))}</p>
-                                            <p className="text-[1.4rem]">{p.age}</p>
+                            {userPlans.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                                .slice(0, 4).map(p => (
+                                    <li key={p.id} className="relative flex flex-wrap flex-row items-center w-full p-[1.4rem_1.2rem]">
+                                        <div className="w-[5rem] h-[5rem] flex items-center justify-center bg-act0 rounded-[1.2rem] mr-[1.6rem]">
+                                            <PiBookOpenTextLight className="text-act0-text text-[3rem]" />
                                         </div>
-                                    </div>
-                                    <div className="absolute top-[50%] right-0 translate-[-50%]">
-                                        <div className="flex items-center text-[1.4rem] text-[#777] gap-[.8rem]"><LuEye className="text-[1.4rem] text-[#777]" /><span className="font-bold min-w-[2rem]">{p.viewCount}</span></div>
-                                        <div className="flex items-center text-[1.4rem] text-[#d020e4] gap-[.8rem]"><CiHeart className="text-[1.4rem] text-[#d020e4]" /><span className="font-bold min-w-[2rem]">{p.likeCount}</span></div>
-                                    </div>
-                                </li>
-                            ))}
+                                        <div className="w-[calc(100%-6.6rem)]">
+                                            <Link href={`/storage/${p.id}`}>
+                                                <p className="font-bold text-[1.6rem] mb-[.4rem]">{p.mainTheme}</p>
+                                            </Link>
+                                            <div className="flex gap-[1rem] font-semibold text-textMuted">
+                                                <div className="flex">
+                                                    {p.plans.map(plan => {
+                                                        return (
+                                                            <p key={plan.id} className="text-[1.4rem] not-last:after:content-['·'] after:mx-[.2rem]">{plan.domain}</p>
+                                                        )
+                                                    })}
+                                                </div>
+                                                <p className="text-[1.4rem]">{p.age}</p>
+                                            </div>
+                                        </div>
+                                        <div className="absolute top-[50%] right-0 translate-[-50%]">
+                                            <div className="flex items-center text-[1.4rem] text-[#777] gap-[.8rem]"><LuEye className="text-[1.4rem] text-[#777]" /><span className="font-bold min-w-[2rem]">{p.viewCount}</span></div>
+                                            <div className="flex items-center text-[1.4rem] text-[#d020e4] gap-[.8rem]"><CiHeart className="text-[1.4rem] text-[#d020e4]" /><span className="font-bold min-w-[2rem]">{p.likeCount}</span></div>
+                                        </div>
+                                    </li>
+                                ))
+                            }
                         </ul>
                         <Link href="/storage" className="flex gap-[.4rem] items-center absolute top-[2rem] right-[2rem] !text-mainLight text-[1.4rem] font-semibold">전체 보기 <FaArrowRight className="text-mainLight text-[1.2rem]" /></Link>
                     </>
