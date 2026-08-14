@@ -53,7 +53,7 @@ function page() {
 			<section className="py-[8rem]">
 				<div className="mx-auto mb-16 text-center">
 					<p className="text-[4rem] font-bold mb-6">AI가 생성한 계획안 미리보기</p>
-					<p className="text-[1.8rem] text-textMuted font-medium">로그인 없이도 고퀄리티 교육 계획안 샘플을 확인해보세요.</p>
+					{/* <p className="text-[1.8rem] text-textMuted font-medium">로그인 없이도 고퀄리티 교육 계획안 샘플을 확인해보세요.</p> */}
 				</div>
 
 				<SamplePlan />
